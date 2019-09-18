@@ -1,0 +1,731 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="OrgManModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="AppUser">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserDomain" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="UserName" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="DisplayName" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="Creation" Type="datetime" Nullable="false" />
+          <Property Name="CreationUser" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="LastUpdate" Type="datetime" />
+          <Property Name="LastUpdateUser" Type="nvarchar" MaxLength="50" />
+          <Property Name="RowVersion" Type="int" Nullable="false" />
+          <Property Name="IsAdmin" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AppUserSettings">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="AppUserId" Type="int" Nullable="false" />
+          <Property Name="SettingName" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="SettingValue" Type="nvarchar" MaxLength="255" />
+          <Property Name="Creation" Type="datetime" Nullable="false" />
+          <Property Name="CreationUser" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="LastUpdate" Type="datetime" />
+          <Property Name="LastUpdateUser" Type="nvarchar" MaxLength="50" />
+          <Property Name="RowVersion" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Reminders">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="AppUserId" Type="int" Nullable="false" />
+          <Property Name="TreeItemId" Type="int" Nullable="false" />
+          <Property Name="Filename" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="ReminderDate" Type="datetime" Nullable="false" />
+          <Property Name="Done" Type="bit" Nullable="false" />
+          <Property Name="Creation" Type="datetime" Nullable="false" />
+          <Property Name="CreationUser" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="LastUpdate" Type="datetime" />
+          <Property Name="LastUpdateUser" Type="nvarchar" MaxLength="50" />
+          <Property Name="RowVersion" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="RootPaths">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TreeItemId" Type="int" Nullable="false" />
+          <Property Name="RootPath" Type="nvarchar" MaxLength="255" />
+          <Property Name="Creation" Type="datetime" Nullable="false" />
+          <Property Name="CreationUser" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="LastUpdate" Type="datetime" />
+          <Property Name="LastUpdateUser" Type="nvarchar" MaxLength="50" />
+          <Property Name="RowVersion" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Settings">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SettingName" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="SettingValue" Type="nvarchar" MaxLength="255" />
+          <Property Name="Creation" Type="datetime" Nullable="false" />
+          <Property Name="CreationUser" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="LastUpdate" Type="datetime" />
+          <Property Name="LastUpdateUser" Type="nvarchar" MaxLength="50" />
+          <Property Name="RowVersion" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="TreeItemFiles">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TreeItemId" Type="int" Nullable="false" />
+          <Property Name="Filename" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="SortOrder" Type="int" Nullable="false" />
+          <Property Name="Creation" Type="datetime" Nullable="false" />
+          <Property Name="CreationUser" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="LastUpdate" Type="datetime" />
+          <Property Name="LastUpdateUser" Type="nvarchar" MaxLength="50" />
+          <Property Name="RowVersion" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="TreeItemGroupRights">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TreeItemId" Type="int" Nullable="false" />
+          <Property Name="GroupId" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="AccessRight" Type="tinyint" Nullable="false" />
+          <Property Name="Creation" Type="datetime" Nullable="false" />
+          <Property Name="CreationUser" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="LastUpdate" Type="datetime" />
+          <Property Name="LastUpdateUser" Type="nvarchar" MaxLength="50" />
+          <Property Name="RowVersion" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="TreeItems">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="NodeText" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="ParentNodeId" Type="int" />
+          <Property Name="SortOrder" Type="int" />
+          <Property Name="ChildrenSortBy" Type="tinyint" Nullable="false" />
+          <Property Name="ChildrenSortWay" Type="tinyint" Nullable="false" />
+          <Property Name="Creation" Type="datetime" Nullable="false" />
+          <Property Name="CreationUser" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="LastUpdate" Type="datetime" />
+          <Property Name="LastUpdateUser" Type="nvarchar" MaxLength="50" />
+          <Property Name="RowVersion" Type="int" Nullable="false" />
+          <Property Name="FilesSortBy" Type="tinyint" Nullable="false" />
+          <Property Name="FilesSortWay" Type="tinyint" Nullable="false" />
+        </EntityType>
+        <EntityType Name="TreeItemUserRights">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TreeItemId" Type="int" Nullable="false" />
+          <Property Name="UserId" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="AccessRight" Type="tinyint" Nullable="false" />
+          <Property Name="Creation" Type="datetime" Nullable="false" />
+          <Property Name="CreationUser" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="LastUpdate" Type="datetime" />
+          <Property Name="LastUpdateUser" Type="nvarchar" MaxLength="50" />
+          <Property Name="RowVersion" Type="int" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_AppUserSettings_AppUser">
+          <End Role="AppUser" Type="Self.AppUser" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="AppUserSettings" Type="Self.AppUserSettings" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AppUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AppUserSettings">
+              <PropertyRef Name="AppUserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Reminders_AppUser">
+          <End Role="AppUser" Type="Self.AppUser" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Reminders" Type="Self.Reminders" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AppUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Reminders">
+              <PropertyRef Name="AppUserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Reminders_TreeItem">
+          <End Role="TreeItems" Type="Self.TreeItems" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Reminders" Type="Self.Reminders" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TreeItems">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Reminders">
+              <PropertyRef Name="TreeItemId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_RootPath_TreeItem">
+          <End Role="TreeItems" Type="Self.TreeItems" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="RootPaths" Type="Self.RootPaths" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TreeItems">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="RootPaths">
+              <PropertyRef Name="TreeItemId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TreeItemFile_TreeItem">
+          <End Role="TreeItems" Type="Self.TreeItems" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="TreeItemFiles" Type="Self.TreeItemFiles" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TreeItems">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TreeItemFiles">
+              <PropertyRef Name="TreeItemId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TreeItemGroupRights_TreeItem">
+          <End Role="TreeItems" Type="Self.TreeItems" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="TreeItemGroupRights" Type="Self.TreeItemGroupRights" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TreeItems">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TreeItemGroupRights">
+              <PropertyRef Name="TreeItemId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TreeItemUserRights_TreeItem">
+          <End Role="TreeItems" Type="Self.TreeItems" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="TreeItemUserRights" Type="Self.TreeItemUserRights" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TreeItems">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TreeItemUserRights">
+              <PropertyRef Name="TreeItemId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="OrgManModelStoreContainer">
+          <EntitySet Name="AppUser" EntityType="Self.AppUser" Schema="OrgMan" store:Type="Tables" />
+          <EntitySet Name="AppUserSettings" EntityType="Self.AppUserSettings" Schema="OrgMan" store:Type="Tables" />
+          <EntitySet Name="Reminders" EntityType="Self.Reminders" Schema="OrgMan" store:Type="Tables" />
+          <EntitySet Name="RootPaths" EntityType="Self.RootPaths" Schema="OrgMan" store:Type="Tables" />
+          <EntitySet Name="Settings" EntityType="Self.Settings" Schema="OrgMan" store:Type="Tables" />
+          <EntitySet Name="TreeItemFiles" EntityType="Self.TreeItemFiles" Schema="OrgMan" store:Type="Tables" />
+          <EntitySet Name="TreeItemGroupRights" EntityType="Self.TreeItemGroupRights" Schema="OrgMan" store:Type="Tables" />
+          <EntitySet Name="TreeItems" EntityType="Self.TreeItems" Schema="OrgMan" store:Type="Tables" />
+          <EntitySet Name="TreeItemUserRights" EntityType="Self.TreeItemUserRights" Schema="OrgMan" store:Type="Tables" />
+          <AssociationSet Name="FK_AppUserSettings_AppUser" Association="Self.FK_AppUserSettings_AppUser">
+            <End Role="AppUser" EntitySet="AppUser" />
+            <End Role="AppUserSettings" EntitySet="AppUserSettings" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Reminders_AppUser" Association="Self.FK_Reminders_AppUser">
+            <End Role="AppUser" EntitySet="AppUser" />
+            <End Role="Reminders" EntitySet="Reminders" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Reminders_TreeItem" Association="Self.FK_Reminders_TreeItem">
+            <End Role="TreeItems" EntitySet="TreeItems" />
+            <End Role="Reminders" EntitySet="Reminders" />
+          </AssociationSet>
+          <AssociationSet Name="FK_RootPath_TreeItem" Association="Self.FK_RootPath_TreeItem">
+            <End Role="TreeItems" EntitySet="TreeItems" />
+            <End Role="RootPaths" EntitySet="RootPaths" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TreeItemFile_TreeItem" Association="Self.FK_TreeItemFile_TreeItem">
+            <End Role="TreeItems" EntitySet="TreeItems" />
+            <End Role="TreeItemFiles" EntitySet="TreeItemFiles" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TreeItemGroupRights_TreeItem" Association="Self.FK_TreeItemGroupRights_TreeItem">
+            <End Role="TreeItems" EntitySet="TreeItems" />
+            <End Role="TreeItemGroupRights" EntitySet="TreeItemGroupRights" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TreeItemUserRights_TreeItem" Association="Self.FK_TreeItemUserRights_TreeItem">
+            <End Role="TreeItems" EntitySet="TreeItems" />
+            <End Role="TreeItemUserRights" EntitySet="TreeItemUserRights" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="OrgManModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="OrgManEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Settings" EntityType="OrgManModel.Setting" />
+          <EntitySet Name="AppUsers" EntityType="OrgManModel.AppUser" />
+          <EntitySet Name="AppUserSettings" EntityType="OrgManModel.AppUserSetting" />
+          <AssociationSet Name="FK_AppUserSettings_AppUser" Association="OrgManModel.FK_AppUserSettings_AppUser">
+            <End Role="AppUser" EntitySet="AppUsers" />
+            <End Role="AppUserSetting" EntitySet="AppUserSettings" />
+          </AssociationSet>
+          <EntitySet Name="RootPaths" EntityType="OrgManModel.RootPath" />
+          <EntitySet Name="TreeItems" EntityType="OrgManModel.TreeItem" />
+          <AssociationSet Name="FK_RootPath_TreeItem" Association="OrgManModel.FK_RootPath_TreeItem">
+            <End Role="TreeItem" EntitySet="TreeItems" />
+            <End Role="RootPath" EntitySet="RootPaths" />
+          </AssociationSet>
+          <EntitySet Name="TreeItemGroupRights" EntityType="OrgManModel.TreeItemGroupRight" />
+          <AssociationSet Name="FK_TreeItemGroupRights_TreeItem" Association="OrgManModel.FK_TreeItemGroupRights_TreeItem">
+            <End Role="TreeItem" EntitySet="TreeItems" />
+            <End Role="TreeItemGroupRight" EntitySet="TreeItemGroupRights" />
+          </AssociationSet>
+          <EntitySet Name="TreeItemUserRights" EntityType="OrgManModel.TreeItemUserRight" />
+          <AssociationSet Name="FK_TreeItemUserRights_TreeItem" Association="OrgManModel.FK_TreeItemUserRights_TreeItem">
+            <End Role="TreeItem" EntitySet="TreeItems" />
+            <End Role="TreeItemUserRight" EntitySet="TreeItemUserRights" />
+          </AssociationSet>
+          <EntitySet Name="Reminders" EntityType="OrgManModel.Reminder" />
+          <AssociationSet Name="FK_Reminders_AppUser" Association="OrgManModel.FK_Reminders_AppUser">
+            <End Role="AppUser" EntitySet="AppUsers" />
+            <End Role="Reminder" EntitySet="Reminders" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Reminders_TreeItem" Association="OrgManModel.FK_Reminders_TreeItem">
+            <End Role="TreeItem" EntitySet="TreeItems" />
+            <End Role="Reminder" EntitySet="Reminders" />
+          </AssociationSet>
+          <EntitySet Name="TreeItemFiles" EntityType="OrgManModel.TreeItemFile" />
+          <AssociationSet Name="FK_TreeItemFile_TreeItem" Association="OrgManModel.FK_TreeItemFile_TreeItem">
+            <End Role="TreeItem" EntitySet="TreeItems" />
+            <End Role="TreeItemFile" EntitySet="TreeItemFiles" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="Setting">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SettingName" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="SettingValue" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Creation" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CreationUser" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="LastUpdate" Type="DateTime" Precision="3" />
+          <Property Name="LastUpdateUser" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="RowVersion" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AppUser">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserDomain" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="UserName" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="DisplayName" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Creation" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CreationUser" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="LastUpdate" Type="DateTime" Precision="3" />
+          <Property Name="LastUpdateUser" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="RowVersion" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="AppUserSettings" Relationship="OrgManModel.FK_AppUserSettings_AppUser" FromRole="AppUser" ToRole="AppUserSetting" />
+          <Property Name="IsAdmin" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Reminders" Relationship="OrgManModel.FK_Reminders_AppUser" FromRole="AppUser" ToRole="Reminder" />
+        </EntityType>
+        <EntityType Name="AppUserSetting">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AppUserId" Type="Int32" Nullable="false" />
+          <Property Name="SettingName" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="SettingValue" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Creation" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CreationUser" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="LastUpdate" Type="DateTime" Precision="3" />
+          <Property Name="LastUpdateUser" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="RowVersion" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="AppUser" Relationship="OrgManModel.FK_AppUserSettings_AppUser" FromRole="AppUserSetting" ToRole="AppUser" />
+        </EntityType>
+        <Association Name="FK_AppUserSettings_AppUser">
+          <End Type="OrgManModel.AppUser" Role="AppUser" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="OrgManModel.AppUserSetting" Role="AppUserSetting" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AppUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AppUserSetting">
+              <PropertyRef Name="AppUserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="RootPath">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TreeItemId" Type="Int32" Nullable="false" />
+          <Property Name="RootPath1" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Creation" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CreationUser" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="LastUpdate" Type="DateTime" Precision="3" />
+          <Property Name="LastUpdateUser" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="RowVersion" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="TreeItem" Relationship="OrgManModel.FK_RootPath_TreeItem" FromRole="RootPath" ToRole="TreeItem" />
+        </EntityType>
+        <EntityType Name="TreeItem">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="NodeText" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="ParentNodeId" Type="Int32" />
+          <Property Name="SortOrder" Type="Int32" Nullable="false" />
+          <Property Name="ChildrenSortBy" Type="Byte" Nullable="false" />
+          <Property Name="ChildrenSortWay" Type="Byte" Nullable="false" />
+          <Property Name="Creation" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CreationUser" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="LastUpdate" Type="DateTime" Precision="3" />
+          <Property Name="LastUpdateUser" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="RowVersion" Type="Int32" Nullable="false" />
+          <Property Name="FilesSortBy" Type="Byte" Nullable="false" />
+          <Property Name="FilesSortWay" Type="Byte" Nullable="false" />
+          <NavigationProperty Name="RootPaths" Relationship="OrgManModel.FK_RootPath_TreeItem" FromRole="TreeItem" ToRole="RootPath" />
+          <NavigationProperty Name="TreeItemGroupRights" Relationship="OrgManModel.FK_TreeItemGroupRights_TreeItem" FromRole="TreeItem" ToRole="TreeItemGroupRight" />
+          <NavigationProperty Name="TreeItemUserRights" Relationship="OrgManModel.FK_TreeItemUserRights_TreeItem" FromRole="TreeItem" ToRole="TreeItemUserRight" />
+          <NavigationProperty Name="Reminders" Relationship="OrgManModel.FK_Reminders_TreeItem" FromRole="TreeItem" ToRole="Reminder" />
+          <NavigationProperty Name="TreeItemFiles" Relationship="OrgManModel.FK_TreeItemFile_TreeItem" FromRole="TreeItem" ToRole="TreeItemFile" />
+        </EntityType>
+        <Association Name="FK_RootPath_TreeItem">
+          <End Type="OrgManModel.TreeItem" Role="TreeItem" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="OrgManModel.RootPath" Role="RootPath" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TreeItem">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="RootPath">
+              <PropertyRef Name="TreeItemId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="TreeItemGroupRight">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TreeItemId" Type="Int32" Nullable="false" />
+          <Property Name="GroupId" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="AccessRight" Type="Byte" Nullable="false" />
+          <Property Name="Creation" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CreationUser" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="LastUpdate" Type="DateTime" Precision="3" />
+          <Property Name="LastUpdateUser" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="RowVersion" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="TreeItem" Relationship="OrgManModel.FK_TreeItemGroupRights_TreeItem" FromRole="TreeItemGroupRight" ToRole="TreeItem" />
+        </EntityType>
+        <Association Name="FK_TreeItemGroupRights_TreeItem">
+          <End Type="OrgManModel.TreeItem" Role="TreeItem" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="OrgManModel.TreeItemGroupRight" Role="TreeItemGroupRight" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TreeItem">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TreeItemGroupRight">
+              <PropertyRef Name="TreeItemId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="TreeItemUserRight">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TreeItemId" Type="Int32" Nullable="false" />
+          <Property Name="UserId" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="AccessRight" Type="Byte" Nullable="false" />
+          <Property Name="Creation" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CreationUser" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="LastUpdate" Type="DateTime" Precision="3" />
+          <Property Name="LastUpdateUser" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="RowVersion" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="TreeItem" Relationship="OrgManModel.FK_TreeItemUserRights_TreeItem" FromRole="TreeItemUserRight" ToRole="TreeItem" />
+        </EntityType>
+        <Association Name="FK_TreeItemUserRights_TreeItem">
+          <End Type="OrgManModel.TreeItem" Role="TreeItem" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="OrgManModel.TreeItemUserRight" Role="TreeItemUserRight" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TreeItem">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TreeItemUserRight">
+              <PropertyRef Name="TreeItemId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Reminder">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AppUserId" Type="Int32" Nullable="false" />
+          <Property Name="TreeItemId" Type="Int32" Nullable="false" />
+          <Property Name="Filename" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="ReminderDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Done" Type="Boolean" Nullable="false" />
+          <Property Name="Creation" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CreationUser" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="LastUpdate" Type="DateTime" Precision="3" />
+          <Property Name="LastUpdateUser" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="RowVersion" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="AppUser" Relationship="OrgManModel.FK_Reminders_AppUser" FromRole="Reminder" ToRole="AppUser" />
+          <NavigationProperty Name="TreeItem" Relationship="OrgManModel.FK_Reminders_TreeItem" FromRole="Reminder" ToRole="TreeItem" />
+        </EntityType>
+        <Association Name="FK_Reminders_AppUser">
+          <End Type="OrgManModel.AppUser" Role="AppUser" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="OrgManModel.Reminder" Role="Reminder" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AppUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Reminder">
+              <PropertyRef Name="AppUserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Reminders_TreeItem">
+          <End Type="OrgManModel.TreeItem" Role="TreeItem" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="OrgManModel.Reminder" Role="Reminder" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TreeItem">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Reminder">
+              <PropertyRef Name="TreeItemId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="TreeItemFile">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TreeItemId" Type="Int32" Nullable="false" />
+          <Property Name="Filename" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="SortOrder" Type="Int32" Nullable="false" />
+          <Property Name="Creation" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CreationUser" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="LastUpdate" Type="DateTime" Precision="3" />
+          <Property Name="LastUpdateUser" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="RowVersion" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="TreeItem" Relationship="OrgManModel.FK_TreeItemFile_TreeItem" FromRole="TreeItemFile" ToRole="TreeItem" />
+        </EntityType>
+        <Association Name="FK_TreeItemFile_TreeItem">
+          <End Type="OrgManModel.TreeItem" Role="TreeItem" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="OrgManModel.TreeItemFile" Role="TreeItemFile" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TreeItem">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TreeItemFile">
+              <PropertyRef Name="TreeItemId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="OrgManModelStoreContainer" CdmEntityContainer="OrgManEntities">
+          <EntitySetMapping Name="Settings">
+            <EntityTypeMapping TypeName="OrgManModel.Setting">
+              <MappingFragment StoreEntitySet="Settings">
+                <ScalarProperty Name="RowVersion" ColumnName="RowVersion" />
+                <ScalarProperty Name="LastUpdateUser" ColumnName="LastUpdateUser" />
+                <ScalarProperty Name="LastUpdate" ColumnName="LastUpdate" />
+                <ScalarProperty Name="CreationUser" ColumnName="CreationUser" />
+                <ScalarProperty Name="Creation" ColumnName="Creation" />
+                <ScalarProperty Name="SettingValue" ColumnName="SettingValue" />
+                <ScalarProperty Name="SettingName" ColumnName="SettingName" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AppUsers">
+            <EntityTypeMapping TypeName="OrgManModel.AppUser">
+              <MappingFragment StoreEntitySet="AppUser">
+                <ScalarProperty Name="IsAdmin" ColumnName="IsAdmin" />
+                <ScalarProperty Name="RowVersion" ColumnName="RowVersion" />
+                <ScalarProperty Name="LastUpdateUser" ColumnName="LastUpdateUser" />
+                <ScalarProperty Name="LastUpdate" ColumnName="LastUpdate" />
+                <ScalarProperty Name="CreationUser" ColumnName="CreationUser" />
+                <ScalarProperty Name="Creation" ColumnName="Creation" />
+                <ScalarProperty Name="DisplayName" ColumnName="DisplayName" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="UserDomain" ColumnName="UserDomain" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AppUserSettings">
+            <EntityTypeMapping TypeName="OrgManModel.AppUserSetting">
+              <MappingFragment StoreEntitySet="AppUserSettings">
+                <ScalarProperty Name="RowVersion" ColumnName="RowVersion" />
+                <ScalarProperty Name="LastUpdateUser" ColumnName="LastUpdateUser" />
+                <ScalarProperty Name="LastUpdate" ColumnName="LastUpdate" />
+                <ScalarProperty Name="CreationUser" ColumnName="CreationUser" />
+                <ScalarProperty Name="Creation" ColumnName="Creation" />
+                <ScalarProperty Name="SettingValue" ColumnName="SettingValue" />
+                <ScalarProperty Name="SettingName" ColumnName="SettingName" />
+                <ScalarProperty Name="AppUserId" ColumnName="AppUserId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RootPaths">
+            <EntityTypeMapping TypeName="OrgManModel.RootPath">
+              <MappingFragment StoreEntitySet="RootPaths">
+                <ScalarProperty Name="RowVersion" ColumnName="RowVersion" />
+                <ScalarProperty Name="LastUpdateUser" ColumnName="LastUpdateUser" />
+                <ScalarProperty Name="LastUpdate" ColumnName="LastUpdate" />
+                <ScalarProperty Name="CreationUser" ColumnName="CreationUser" />
+                <ScalarProperty Name="Creation" ColumnName="Creation" />
+                <ScalarProperty Name="RootPath1" ColumnName="RootPath" />
+                <ScalarProperty Name="TreeItemId" ColumnName="TreeItemId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TreeItems">
+            <EntityTypeMapping TypeName="OrgManModel.TreeItem">
+              <MappingFragment StoreEntitySet="TreeItems">
+                <ScalarProperty Name="FilesSortWay" ColumnName="FilesSortWay" />
+                <ScalarProperty Name="FilesSortBy" ColumnName="FilesSortBy" />
+                <ScalarProperty Name="RowVersion" ColumnName="RowVersion" />
+                <ScalarProperty Name="LastUpdateUser" ColumnName="LastUpdateUser" />
+                <ScalarProperty Name="LastUpdate" ColumnName="LastUpdate" />
+                <ScalarProperty Name="CreationUser" ColumnName="CreationUser" />
+                <ScalarProperty Name="Creation" ColumnName="Creation" />
+                <ScalarProperty Name="ChildrenSortWay" ColumnName="ChildrenSortWay" />
+                <ScalarProperty Name="ChildrenSortBy" ColumnName="ChildrenSortBy" />
+                <ScalarProperty Name="SortOrder" ColumnName="SortOrder" />
+                <ScalarProperty Name="ParentNodeId" ColumnName="ParentNodeId" />
+                <ScalarProperty Name="NodeText" ColumnName="NodeText" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TreeItemGroupRights">
+            <EntityTypeMapping TypeName="OrgManModel.TreeItemGroupRight">
+              <MappingFragment StoreEntitySet="TreeItemGroupRights">
+                <ScalarProperty Name="RowVersion" ColumnName="RowVersion" />
+                <ScalarProperty Name="LastUpdateUser" ColumnName="LastUpdateUser" />
+                <ScalarProperty Name="LastUpdate" ColumnName="LastUpdate" />
+                <ScalarProperty Name="CreationUser" ColumnName="CreationUser" />
+                <ScalarProperty Name="Creation" ColumnName="Creation" />
+                <ScalarProperty Name="AccessRight" ColumnName="AccessRight" />
+                <ScalarProperty Name="GroupId" ColumnName="GroupId" />
+                <ScalarProperty Name="TreeItemId" ColumnName="TreeItemId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TreeItemUserRights">
+            <EntityTypeMapping TypeName="OrgManModel.TreeItemUserRight">
+              <MappingFragment StoreEntitySet="TreeItemUserRights">
+                <ScalarProperty Name="RowVersion" ColumnName="RowVersion" />
+                <ScalarProperty Name="LastUpdateUser" ColumnName="LastUpdateUser" />
+                <ScalarProperty Name="LastUpdate" ColumnName="LastUpdate" />
+                <ScalarProperty Name="CreationUser" ColumnName="CreationUser" />
+                <ScalarProperty Name="Creation" ColumnName="Creation" />
+                <ScalarProperty Name="AccessRight" ColumnName="AccessRight" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="TreeItemId" ColumnName="TreeItemId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Reminders">
+            <EntityTypeMapping TypeName="OrgManModel.Reminder">
+              <MappingFragment StoreEntitySet="Reminders">
+                <ScalarProperty Name="RowVersion" ColumnName="RowVersion" />
+                <ScalarProperty Name="LastUpdateUser" ColumnName="LastUpdateUser" />
+                <ScalarProperty Name="LastUpdate" ColumnName="LastUpdate" />
+                <ScalarProperty Name="CreationUser" ColumnName="CreationUser" />
+                <ScalarProperty Name="Creation" ColumnName="Creation" />
+                <ScalarProperty Name="Done" ColumnName="Done" />
+                <ScalarProperty Name="ReminderDate" ColumnName="ReminderDate" />
+                <ScalarProperty Name="Filename" ColumnName="Filename" />
+                <ScalarProperty Name="TreeItemId" ColumnName="TreeItemId" />
+                <ScalarProperty Name="AppUserId" ColumnName="AppUserId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TreeItemFiles">
+            <EntityTypeMapping TypeName="OrgManModel.TreeItemFile">
+              <MappingFragment StoreEntitySet="TreeItemFiles">
+                <ScalarProperty Name="RowVersion" ColumnName="RowVersion" />
+                <ScalarProperty Name="LastUpdateUser" ColumnName="LastUpdateUser" />
+                <ScalarProperty Name="LastUpdate" ColumnName="LastUpdate" />
+                <ScalarProperty Name="CreationUser" ColumnName="CreationUser" />
+                <ScalarProperty Name="Creation" ColumnName="Creation" />
+                <ScalarProperty Name="SortOrder" ColumnName="SortOrder" />
+                <ScalarProperty Name="Filename" ColumnName="Filename" />
+                <ScalarProperty Name="TreeItemId" ColumnName="TreeItemId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="ed53864ffd76458bad82ede0ac10e425" Name="Diagram1">
+        <EntityTypeShape EntityType="OrgManModel.Setting" Width="1.5" PointX="11.125" PointY="1" />
+        <EntityTypeShape EntityType="OrgManModel.AppUser" Width="1.5" PointX="5.375" PointY="1" />
+        <EntityTypeShape EntityType="OrgManModel.AppUserSetting" Width="1.5" PointX="7.625" PointY="1" />
+        <AssociationConnector Association="OrgManModel.FK_AppUserSettings_AppUser" />
+        <EntityTypeShape EntityType="OrgManModel.RootPath" Width="1.5" PointX="3.125" PointY="0.625" />
+        <EntityTypeShape EntityType="OrgManModel.TreeItem" Width="1.5" PointX="0.5" PointY="0.75" />
+        <AssociationConnector Association="OrgManModel.FK_RootPath_TreeItem" />
+        <EntityTypeShape EntityType="OrgManModel.TreeItemGroupRight" Width="1.875" PointX="3.375" PointY="8" />
+        <AssociationConnector Association="OrgManModel.FK_TreeItemGroupRights_TreeItem" />
+        <EntityTypeShape EntityType="OrgManModel.TreeItemUserRight" Width="1.75" PointX="3.25" PointY="4.625" />
+        <AssociationConnector Association="OrgManModel.FK_TreeItemUserRights_TreeItem" />
+        <EntityTypeShape EntityType="OrgManModel.Reminder" Width="1.5" PointX="5.875" PointY="5" />
+        <AssociationConnector Association="OrgManModel.FK_Reminders_AppUser" />
+        <AssociationConnector Association="OrgManModel.FK_Reminders_TreeItem" />
+        <EntityTypeShape EntityType="OrgManModel.TreeItemFile" Width="1.5" PointX="0.875" PointY="6.375" />
+        <AssociationConnector Association="OrgManModel.FK_TreeItemFile_TreeItem" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
