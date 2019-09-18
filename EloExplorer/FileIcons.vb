@@ -180,12 +180,12 @@ ErrorHandler:
         End If
     End Sub
 
-    Public Function GetFiles(folder As String) As List(Of OrgManFileInfo)
-        Dim foundFiles As New List(Of OrgManFileInfo)
+    Public Function GetFiles(folder As String) As List(Of EloExplorerFileInfo)
+        Dim foundFiles As New List(Of EloExplorerFileInfo)
         Dim foundFile As String
         foundFile = Dir(folder, vbNormal + vbHidden + vbSystem) ' Ersten Eintrag abrufen.
         Do While foundFile <> ""    ' Schleife beginnen.
-            Dim file As OrgManFileInfo = GetFileInfo(folder, foundFile)
+            Dim file As EloExplorerFileInfo = GetFileInfo(folder, foundFile)
             foundFiles.Add(file)
             foundFile = Dir()   ' Nächsten Eintrag abrufen.
             Application.DoEvents()
@@ -193,8 +193,8 @@ ErrorHandler:
         GetFiles = foundFiles
     End Function
 
-    Public Function GetFileInfo(folder As String, filename As String) As OrgManFileInfo
-        Dim file As New OrgManFileInfo With {
+    Public Function GetFileInfo(folder As String, filename As String) As EloExplorerFileInfo
+        Dim file As New EloExplorerFileInfo With {
             .FilePath = folder,
             .Filename = filename,
             .FileLen = FileLen(folder & filename),

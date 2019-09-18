@@ -1,18 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\CefSharp.WinForms.73.1.130\build\CefSharp.WinForms.props" Condition="Exists('..\packages\CefSharp.WinForms.73.1.130\build\CefSharp.WinForms.props')" />
-  <Import Project="..\packages\CefSharp.Common.73.1.130\build\CefSharp.Common.props" Condition="Exists('..\packages\CefSharp.Common.73.1.130\build\CefSharp.Common.props')" />
-  <Import Project="..\packages\cef.redist.x86.73.1.13\build\cef.redist.x86.props" Condition="Exists('..\packages\cef.redist.x86.73.1.13\build\cef.redist.x86.props')" />
-  <Import Project="..\packages\cef.redist.x64.73.1.13\build\cef.redist.x64.props" Condition="Exists('..\packages\cef.redist.x64.73.1.13\build\cef.redist.x64.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{8BB07123-8D18-4BCC-892D-8E11B4ED3763}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <StartupObject>OrgMan.My.MyApplication</StartupObject>
-    <RootNamespace>OrgMan</RootNamespace>
-    <AssemblyName>OrgMan</AssemblyName>
+    <StartupObject>EloExplorer.My.MyApplication</StartupObject>
+    <RootNamespace>EloExplorer</RootNamespace>
+    <AssemblyName>EloExplorer</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>WindowsForms</MyType>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
@@ -53,7 +49,7 @@
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
     <OutputPath>bin\Debug\</OutputPath>
-    <DocumentationFile>OrgMan.xml</DocumentationFile>
+    <DocumentationFile>EloExplorer.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -63,7 +59,7 @@
     <DefineTrace>true</DefineTrace>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DocumentationFile>OrgMan.xml</DocumentationFile>
+    <DocumentationFile>EloExplorer.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
   </PropertyGroup>
   <PropertyGroup>
@@ -79,7 +75,7 @@
     <OptionInfer>On</OptionInfer>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>OrgMan.ico</ApplicationIcon>
+    <ApplicationIcon>MainIconD.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>My Project\app.manifest</ApplicationManifest>
@@ -104,7 +100,7 @@
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
     <OutputPath>bin\Main\</OutputPath>
-    <DocumentationFile>OrgMan.xml</DocumentationFile>
+    <DocumentationFile>EloExplorer.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
@@ -116,7 +112,7 @@
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
     <OutputPath>bin\Local\</OutputPath>
-    <DocumentationFile>OrgMan.xml</DocumentationFile>
+    <DocumentationFile>EloExplorer.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -128,7 +124,7 @@
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
     <OutputPath>bin\x86\Debug\</OutputPath>
-    <DocumentationFile>OrgMan.xml</DocumentationFile>
+    <DocumentationFile>EloExplorer.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
@@ -138,7 +134,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <DefineTrace>true</DefineTrace>
     <OutputPath>bin\x86\Release\</OutputPath>
-    <DocumentationFile>OrgMan.xml</DocumentationFile>
+    <DocumentationFile>EloExplorer.xml</DocumentationFile>
     <Optimize>true</Optimize>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
     <DebugType>pdbonly</DebugType>
@@ -151,7 +147,7 @@
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
     <OutputPath>bin\x86\Main\</OutputPath>
-    <DocumentationFile>OrgMan.xml</DocumentationFile>
+    <DocumentationFile>EloExplorer.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
@@ -163,7 +159,7 @@
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
     <OutputPath>bin\x86\Local\</OutputPath>
-    <DocumentationFile>OrgMan.xml</DocumentationFile>
+    <DocumentationFile>EloExplorer.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
@@ -235,12 +231,6 @@
     <Compile Include="Forms\DlgFileImport.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\DlgReminder.Designer.vb">
-      <DependentUpon>DlgReminder.vb</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\DlgReminder.vb">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Forms\DlgScanImport.Designer.vb">
       <DependentUpon>DlgScanImport.vb</DependentUpon>
     </Compile>
@@ -268,13 +258,12 @@
     </Compile>
     <Compile Include="FileIcons.vb" />
     <Compile Include="Database\MsSqlConnector.vb" />
-    <Compile Include="Database\MsAccessConnector.vb" />
     <Compile Include="Database\OrgManDbConfiguration.vb" />
     <Compile Include="Database\OrgManDbConnectionInterceptor.vb" />
-    <Compile Include="OrgManGlobals.vb" />
+    <Compile Include="EloExplorerGlobals.vb" />
     <Compile Include="Types\OrgManAccessRight.vb" />
     <Compile Include="Types\OrgManEnums.vb" />
-    <Compile Include="OrgManFileInfo.vb" />
+    <Compile Include="EloExplorerFileInfo.vb" />
     <Compile Include="Forms\FrmMain.vb">
       <SubType>Form</SubType>
     </Compile>
@@ -344,9 +333,6 @@
     <EmbeddedResource Include="Forms\DlgFileImport.resx">
       <DependentUpon>DlgFileImport.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\DlgReminder.resx">
-      <DependentUpon>DlgReminder.vb</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\DlgScanImport.resx">
       <DependentUpon>DlgScanImport.vb</DependentUpon>
     </EmbeddedResource>
@@ -415,8 +401,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Database\createOrgMan.sql" />
-    <Content Include="Database\OrgMan.accdb" />
-    <Content Include="OrgMan.ico" />
     <Content Include="Database\OrgManModel.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>OrgManModel.Context.vb</LastGenOutput>
@@ -427,6 +411,7 @@
       <DependentUpon>OrgManModel.edmx</DependentUpon>
       <LastGenOutput>OrgManModel.vb</LastGenOutput>
     </Content>
+    <Content Include="MainIconD.ico" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="IWshRuntimeLibrary">
@@ -560,19 +545,4 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
-  <Import Project="..\packages\Microsoft.VisualStudio.SlowCheetah.3.2.20\build\Microsoft.VisualStudio.SlowCheetah.targets" Condition="Exists('..\packages\Microsoft.VisualStudio.SlowCheetah.3.2.20\build\Microsoft.VisualStudio.SlowCheetah.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Microsoft.VisualStudio.SlowCheetah.3.2.20\build\Microsoft.VisualStudio.SlowCheetah.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.VisualStudio.SlowCheetah.3.2.20\build\Microsoft.VisualStudio.SlowCheetah.targets'))" />
-    <Error Condition="!Exists('..\packages\cef.redist.x64.73.1.13\build\cef.redist.x64.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\cef.redist.x64.73.1.13\build\cef.redist.x64.props'))" />
-    <Error Condition="!Exists('..\packages\cef.redist.x86.73.1.13\build\cef.redist.x86.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\cef.redist.x86.73.1.13\build\cef.redist.x86.props'))" />
-    <Error Condition="!Exists('..\packages\CefSharp.Common.73.1.130\build\CefSharp.Common.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CefSharp.Common.73.1.130\build\CefSharp.Common.props'))" />
-    <Error Condition="!Exists('..\packages\CefSharp.Common.73.1.130\build\CefSharp.Common.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CefSharp.Common.73.1.130\build\CefSharp.Common.targets'))" />
-    <Error Condition="!Exists('..\packages\CefSharp.WinForms.73.1.130\build\CefSharp.WinForms.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CefSharp.WinForms.73.1.130\build\CefSharp.WinForms.props'))" />
-    <Error Condition="!Exists('..\packages\CefSharp.WinForms.73.1.130\build\CefSharp.WinForms.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CefSharp.WinForms.73.1.130\build\CefSharp.WinForms.targets'))" />
-  </Target>
-  <Import Project="..\packages\CefSharp.Common.73.1.130\build\CefSharp.Common.targets" Condition="Exists('..\packages\CefSharp.Common.73.1.130\build\CefSharp.Common.targets')" />
-  <Import Project="..\packages\CefSharp.WinForms.73.1.130\build\CefSharp.WinForms.targets" Condition="Exists('..\packages\CefSharp.WinForms.73.1.130\build\CefSharp.WinForms.targets')" />
 </Project>

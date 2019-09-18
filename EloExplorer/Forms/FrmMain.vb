@@ -12,7 +12,7 @@ Public Class FrmMain
     Public dbc As IDatabaseConnector
     Public IsAdmin As Boolean
     Public TemplateFolderName As String, DefaultRootPath As String
-    Public chrome As ChromiumWebBrowser, chromeExe As String
+    'Public chrome As ChromiumWebBrowser, chromeExe As String
 
     Friend AdGroups As IList(Of WinAdGroupPrincipal)
     Friend AdUsers As IList(Of WinAdUserPrincipal)
@@ -45,20 +45,6 @@ Public Class FrmMain
     Private Shared Function ShellExecuteEx(ByRef lpExecInfo As SHELLEXECUTEINFO) As Boolean
     End Function
 
-    Private Sub SetEnvironment(env As String)
-        OrgManGlobals.AppEnvironment = env 'todo
-        DropDownEnvironment.Text = OrgManGlobals.AppEnvironment
-    End Sub
-
-    Private Sub InitChromeControl()
-        Dim settings = New CefSettings()
-        CefSharp.Cef.Initialize(settings)
-        chrome = New ChromiumWebBrowser()
-        Me.FilesSplitContainer.Panel1.Controls.Add(Me.chrome)
-        Me.chrome.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.chrome.Visible = False
-    End Sub
-
     Private Sub FrmMain_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         'Dim args = New ApplicationHelper().GetStartUpParameters()
         'For Each a In args
@@ -67,62 +53,50 @@ Public Class FrmMain
         '        OrgManGlobals.AppEnvironment = a.Substring(a.IndexOf("=") + 1)
         '    End If
         'Next
-        If String.IsNullOrEmpty(OrgManGlobals.AppEnvironment) Then
-            SetEnvironment(RegistryHandler.GetStringValue(Application.ProductName, "Environment", My.Settings.EnvironmentName))
-            Me.Refresh()
-        End If
         Dim s As New SplashScreen()
-        s.LabelInfo.Text = "OrgMan " + Application.ProductVersion + " [" + OrgManGlobals.AppEnvironment + "] wird geladen. Einen Moment noch..."
+        s.LabelInfo.Text = "OrgMan " + Application.ProductVersion + " [" + EloExplorerGlobals.AppEnvironment + "] wird geladen. Einen Moment noch..."
         s.Show(Me)
         s.Refresh()
         Thread.Sleep(100)
-        If My.Settings.DatabaseMode = "MsAccess" Then
-            dbc = New MsAccessConnector
-        Else
-            dbc = New MsSqlConnector
-        End If
-        Try
-            If Not dbc.HasAccess() Then
-                MsgBox("Sie haben keine Berechtigung, den Organisationsmanager zu benutzen!" & vbCrLf & "Bitte wenden Sie sich an den Administrator.", MsgBoxStyle.Exclamation, "Hinweis")
-                End
-            End If
-        Catch ex As Exception
-            MsgBox("Es ist ein Fehler aufgetreten beim Verbinden mit der Datenbank!" & vbCrLf & ex.Message, MsgBoxStyle.Critical, "Fehler beim Starten")
-            If OrgManGlobals.AppEnvironment <> My.Settings.EnvironmentName Then
-                MsgBox("Es wird versucht, die Standard-Umgebung [" & My.Settings.EnvironmentName & "] zu starten...", MsgBoxStyle.Information, "Hinweis")
-                RegistryHandler.SetStringValue(Application.ProductName, "Environment", My.Settings.EnvironmentName)
-                Application.Restart()
-            End If
-            End
-        End Try
-        IsAdmin = dbc.IsAdmin()
-        If My.Settings.EnvironmentName = "Prod" And OrgManGlobals.AppEnvironment <> "Prod" And Not IsAdmin Then
+        'dbc = New MsSqlConnector
+        'Try
+        '    If Not dbc.HasAccess() Then
+        '        MsgBox("Sie haben keine Berechtigung, den Organisationsmanager zu benutzen!" & vbCrLf & "Bitte wenden Sie sich an den Administrator.", MsgBoxStyle.Exclamation, "Hinweis")
+        '        End
+        '    End If
+        'Catch ex As Exception
+        '    MsgBox("Es ist ein Fehler aufgetreten beim Verbinden mit der Datenbank!" & vbCrLf & ex.Message, MsgBoxStyle.Critical, "Fehler beim Starten")
+        '    If EloExplorerGlobals.AppEnvironment <> My.Settings.EnvironmentName Then
+        '        MsgBox("Es wird versucht, die Standard-Umgebung [" & My.Settings.EnvironmentName & "] zu starten...", MsgBoxStyle.Information, "Hinweis")
+        '        RegistryHandler.SetStringValue(Application.ProductName, "Environment", My.Settings.EnvironmentName)
+        '        Application.Restart()
+        '    End If
+        '    End
+        'End Try
+        'IsAdmin = dbc.IsAdmin()
+        If My.Settings.EnvironmentName = "Prod" And EloExplorerGlobals.AppEnvironment <> "Prod" And Not IsAdmin Then
             ChangeEnvironment("Prod")
             'SetEnvironment(RegistryHandler.GetStringValue(Application.ProductName, "Environment", Properties.Settings.Default.Environment));
             'MainForm_Shown(sender, e);
             Exit Sub
         End If
-        If My.Settings.EnvironmentName = "Prod" Then
-            DropDownEnvironment.Enabled = IsAdmin
-        End If
         'InitChromeControl()
         'FindChromeExe()
         Me.MenuSecurity.Enabled = IsAdmin
         Me.MenuNewDepartment.Enabled = IsAdmin
-        FilesRefreshTimer.Enabled = My.Settings.ListAutoRefresh
-        Me.TemplateFolderName = dbc.GetDbSetting("TemplateFolderName", "Vorlagen")
-        Me.DefaultRootPath = dbc.GetDbSetting("DefaultRootPath", "C:\OrgMan")
-        Me.Text += " " + Application.ProductVersion + " [" + OrgManGlobals.AppEnvironment + "]" + If(IsAdmin, " (" + dbc.Path + ")", "")
+        'FilesRefreshTimer.Enabled = My.Settings.ListAutoRefresh
+        'Me.TemplateFolderName = dbc.GetDbSetting("TemplateFolderName", "Vorlagen")
+        'Me.DefaultRootPath = dbc.GetDbSetting("DefaultRootPath", "C:\OrgMan")
+        Me.Text += " " + Application.ProductVersion + " [" + EloExplorerGlobals.AppEnvironment + "]" + If(IsAdmin, " (" + dbc.Path + ")", "")
         Me.WindowState = GetSetting(Application.ProductName, "Window", "LastWindowState", FormWindowState.Normal)
         Me.Top = GetSetting(Application.ProductName, "Window", "LastWindowTop", Me.Top)
         Me.Left = GetSetting(Application.ProductName, "Window", "LastWindowLeft", Me.Left)
         Me.Width = GetSetting(Application.ProductName, "Window", "LastWindowWidth", Me.Width)
         Me.Height = GetSetting(Application.ProductName, "Window", "LastWindowHeight", Me.Height)
         Me.MainSplitContainer.SplitterDistance = GetSetting(Application.ProductName, "Window", "LastMainSplitterDistance", Me.MainSplitContainer.SplitterDistance)
-        If Boolean.Parse(dbc.GetDbUserSetting("ShowFilePreviewer", "False")) Then
+        If Boolean.Parse(GetSetting(Application.ProductName, "Window", "ShowFilePreviewer", "False")) Then
             Me.FilesSplitContainer.SplitterDistance = GetSetting(Application.ProductName, "Window", "LastFilesSplitterDistance", Me.FilesSplitContainer.SplitterDistance)
             MenuShowFilePreviewer.Checked = True
-            MenuReminderShowFilePreviewer.Checked = True
         Else
             HideFilePreviewer()
         End If
@@ -144,49 +118,16 @@ Public Class FrmMain
         Me.FilesSplitContainer.Panel2.Show()
     End Sub
 
-    Private Sub FindChromeExe()
-        ScanFolder("C:\Program Files", "chrome.exe")
-        If chromeExe Is Nothing Then
-            ScanFolder("C:\Program Files (x86)", "chrome.exe")
-        End If
-    End Sub
-
-    Private Sub ScanFolder(path As String, pattern As String)
-        Try
-            If Not chromeExe Is Nothing Then
-                Exit Sub
-            End If
-
-            For Each file In Directory.EnumerateFiles(path, pattern)
-                chromeExe = file
-                Exit Sub
-            Next
-
-            For Each folder In Directory.EnumerateDirectories(path)
-                ScanFolder(folder, pattern)
-            Next
-
-        Catch uae As UnauthorizedAccessException
-            Console.WriteLine("Error: " + path)
-        End Try
-
-    End Sub
-
     Private Sub LoadTree()
         ClearFilePreview()
-        LvwReminders.Items.Clear()
         LvwFiles.Items.Clear()
         TvwExplorer.Nodes.Clear()
-        Dim reminder = TvwExplorer.Nodes.Add("reminder", "Wiedervorlagen", "Reminder.ico", "Reminder.ico")
-        reminder.Tag = New OrgManTreeItem()
-        RefreshReminders()
-        Dim rootNodes As List(Of OrgManTreeItem) = dbc.GetRootTreeItems()
-        rootNodes = SortNodesByConfig(rootNodes, Convert.ToInt32(dbc.GetDbSetting("RootChildrenSortBy", "0")), Convert.ToInt32(dbc.GetDbSetting("RootChildrenSortWay", "0")))
-        For Each rootNode In rootNodes
-            AddTreeNode(Nothing, rootNode, rootNode.NodeText, True)
-        Next
+        'Dim rootNodes As List(Of OrgManTreeItem) = dbc.GetRootTreeItems()
+        'rootNodes = SortNodesByConfig(rootNodes, Convert.ToInt32(dbc.GetDbSetting("RootChildrenSortBy", "0")), Convert.ToInt32(dbc.GetDbSetting("RootChildrenSortWay", "0")))
+        'For Each rootNode In rootNodes
+        '    AddTreeNode(Nothing, rootNode, rootNode.NodeText, True)
+        'Next
         TvwExplorer.SelectedNode = Nothing
-        TreeNodeClick(reminder)
     End Sub
 
     Private Function AddTreeNode(parentNode As TreeNode, newItem As OrgManTreeItem, caption As String, noSelect As Boolean) As TreeNode
@@ -205,11 +146,7 @@ Public Class FrmMain
         ElseIf Not parentNode Is Nothing And Not noSelect Then
             parentNode.Expand()
             TvwExplorer.SelectedNode = node
-            If IsBrowserNode(TvwExplorer.SelectedNode) Then
-                LoadBrowser(newItem.RootPath)
-            Else
-                LoadFiles()
-            End If
+            LoadFiles()
         End If
         AddTreeNode = node
     End Function
@@ -346,8 +283,8 @@ mRetry:
         Dim sourcePath As String = GetFullPathOfNode(copyNode)
         Dim importPath As String = GetFullPathOfNode(newNode)
         Dim treeItem = DirectCast(newNode.Tag, OrgManTreeItem)
-        Dim files As List(Of OrgManFileInfo) = GetFiles(sourcePath)
-        Dim cp As Integer, file As OrgManFileInfo
+        Dim files As List(Of EloExplorerFileInfo) = GetFiles(sourcePath)
+        Dim cp As Integer, file As EloExplorerFileInfo
         For cp = 0 To files.Count - 1
             file = files.Item(cp)
             ImportFile(treeItem, importPath, sourcePath & file.Filename, DragDropEffects.Copy, True)
@@ -399,9 +336,7 @@ mRetry:
             If newRootPath <> "" Then
                 rootNode = AddNewTreeItem(New OrgManTreeItem(), newText, False, newRootPath)
                 If Not rootNode Is Nothing Then
-                    If Not IsBrowserNode(rootNode.Node) Then
-                        newNode = AddNewTreeItem(rootNode, Me.TemplateFolderName, True, "")
-                    End If
+                    newNode = AddNewTreeItem(rootNode, Me.TemplateFolderName, True, "")
                 End If
                 rootNode?.Node.Expand()
             End If
@@ -414,7 +349,7 @@ mRetry:
             e.Cancel = True
             Exit Sub
         End If
-        dbc.Close()
+        'dbc.Close()
         SaveSetting(Application.ProductName, "Window", "LastWindowState", Me.WindowState)
         SaveSetting(Application.ProductName, "Window", "LastWindowTop", Me.Top)
         SaveSetting(Application.ProductName, "Window", "LastWindowLeft", Me.Left)
@@ -529,11 +464,9 @@ mRetry:
             MsgBox("Der Vorlagen-Ordner darf nicht gelöscht werden!", MsgBoxStyle.Exclamation, "Hinweis")
         ElseIf MsgBox("Knoten " & TvwExplorer.SelectedNode.Text & " unwiderruflich löschen?", MsgBoxStyle.Question + MsgBoxStyle.YesNo, "Nachfrage") = MsgBoxResult.Yes Then
             Dim includeFiles As Boolean
-            If Not IsBrowserNode(TvwExplorer.SelectedNode) Then
-                If MsgBox("Wollen Sie auch die im Knoten " & TvwExplorer.SelectedNode.Text & " enthaltenen Dateien samt Unterordner löschen?", MsgBoxStyle.Exclamation + MsgBoxStyle.YesNo, "Nachfrage") = MsgBoxResult.Yes Then
-                    If MsgBox("Ganz sicher?", MsgBoxStyle.Exclamation + MsgBoxStyle.YesNo, "Nachfrage") = MsgBoxResult.Yes Then
-                        includeFiles = True
-                    End If
+            If MsgBox("Wollen Sie auch die im Knoten " & TvwExplorer.SelectedNode.Text & " enthaltenen Dateien samt Unterordner löschen?", MsgBoxStyle.Exclamation + MsgBoxStyle.YesNo, "Nachfrage") = MsgBoxResult.Yes Then
+                If MsgBox("Ganz sicher?", MsgBoxStyle.Exclamation + MsgBoxStyle.YesNo, "Nachfrage") = MsgBoxResult.Yes Then
+                    includeFiles = True
                 End If
             End If
             DeleteTreeItem(TvwExplorer.SelectedNode, includeFiles)
@@ -541,11 +474,6 @@ mRetry:
             LvwFiles.Items.Clear()
         End If
     End Sub
-
-    Private Function IsBrowserNode(node As TreeNode) As Boolean
-        Dim onode As OrgManTreeItem = DirectCast(node.Tag, OrgManTreeItem)
-        IsBrowserNode = (onode.RootPath?.ToLower() Like "http*")
-    End Function
 
     Private Function GetUrlFromNode(node As TreeNode) As String
         Dim onode As OrgManTreeItem = DirectCast(node.Tag, OrgManTreeItem)
@@ -567,8 +495,8 @@ mRetry:
 
     Private Sub DeleteFiles(node As TreeNode)
         Dim fullPath As String = GetFullPathOfNode(node)
-        Dim files As List(Of OrgManFileInfo) = GetFiles(fullPath)
-        Dim cp As Integer, file As OrgManFileInfo
+        Dim files As List(Of EloExplorerFileInfo) = GetFiles(fullPath)
+        Dim cp As Integer, file As EloExplorerFileInfo
         Dim treeItemId As Integer = GetIdFromTag(node.Tag)
         For cp = 0 To files.Count - 1
             file = files.Item(cp)
@@ -709,13 +637,7 @@ mRetry:
         If TvwExplorer.SelectedNode Is Nothing Then
             Exit Sub
         End If
-        If TvwExplorer.SelectedNode.Name = "reminder" Then
-            TvwExplorer.ContextMenuStrip = ContextMenuExplorerReminder
-            LoadReminders()
-            Exit Sub
-        Else
-            TvwExplorer.ContextMenuStrip = ContextMenuExplorer
-        End If
+        TvwExplorer.ContextMenuStrip = ContextMenuExplorer
         Dim node As OrgManTreeItem = DirectCast(TvwExplorer.SelectedNode.Tag, OrgManTreeItem)
         SetTreeContextMenu(True)
         MenuComboFolderSortBy.SelectedIndex = Convert.ToInt32(node.ChildrenSortBy)
@@ -744,60 +666,15 @@ mRetry:
             MenuDelete.Enabled = False
             MenuRename.Enabled = False
         End If
-        If IsBrowserNode(TvwExplorer.SelectedNode) Then
-            MenuNewFolder.Enabled = False
-            MenuOpenInExplorer.Text = "Öffnen in Chrome"
-            LoadBrowser(node.RootPath)
-        Else
-            MenuNewFolder.Enabled = True
-            MenuOpenInExplorer.Text = "Öffnen in Explorer"
-            LoadFiles()
-        End If
+        MenuNewFolder.Enabled = True
+        MenuOpenInExplorer.Text = "Öffnen in Explorer"
+        LoadFiles()
     End Sub
 
     Private Sub ClearFilePreview()
         If Not Me.FilesSplitContainer.Panel2Collapsed Then
             FilePreviewHandlerHost.Open(String.Empty)
         End If
-    End Sub
-
-    Private Sub LoadReminders()
-        ClearFilePreview()
-        LvwReminders.Visible = True
-        MsBrowser.Visible = False
-        LvwFiles.Visible = False
-        LvwReminders.Items.Clear()
-        Dim reminders = dbc.GetReminders()
-        Dim cp As Integer
-        For Each reminder In reminders
-            cp = cp + 1
-            Dim homeNode = GetTreeNodeByKey("C" & reminder.TreeItemId)
-            If homeNode Is Nothing Then
-                homeNode = GetTreeNodeByKey("R" & reminder.TreeItemId)
-            End If
-            Dim filePath As String = GetFullPathOfNode(homeNode)
-            Dim fileinfo = FileIcons.GetFileInfo(filePath, reminder.Filename), filetype As String
-            Dim sIcon As String = AddIconToImageList(filePath, reminder.Filename, ImageListFiles, "file", filetype)
-            Dim item = LvwReminders.Items.Add("R" & cp, reminder.Filename, sIcon)
-            item.Tag = reminder
-            item.SubItems.Add(GetRootNodeOfNode(homeNode).Text)
-            item.SubItems.Add(GetTreePathOfNode(homeNode))
-            item.SubItems.Add(reminder.ReminderDate.ToString())
-            item.SubItems.Add(fileinfo.FileDateTime.ToString())
-            item.SubItems.Add(fileinfo.FileType)
-            item.SubItems.Add(fileinfo.FileLen.ToString("#,##0"))
-        Next
-        StatusLabelInfo.Text = reminders.Count & " Wiedervolage(n)"
-    End Sub
-
-    Private Sub LoadBrowser(sURL As String)
-        LvwFiles.Visible = False
-        LvwReminders.Visible = False
-        'chrome.Visible = True
-        'chrome.Load(sURL)
-        MsBrowser.Visible = True
-        MsBrowser.Navigate(sURL)
-        StatusLabelInfo.Text = sURL
     End Sub
 
     Private Sub LoadFiles()
@@ -810,8 +687,6 @@ mRetry:
             Thread.Sleep(200)
         Loop
         'chrome.Visible = False
-        MsBrowser.Visible = False
-        LvwReminders.Visible = False
         LvwFiles.Visible = True
         ClearFilePreview()
         LvwFiles.Items.Clear()
@@ -819,9 +694,9 @@ mRetry:
         If fullPath Like "http*" Then
             Exit Sub
         End If
-        Dim files As List(Of OrgManFileInfo) = GetFiles(fullPath)
+        Dim files As List(Of EloExplorerFileInfo) = GetFiles(fullPath)
         Dim treeItem = DirectCast(TvwExplorer.SelectedNode.Tag, OrgManTreeItem)
-        Dim cp As Integer, file As OrgManFileInfo
+        Dim cp As Integer, file As EloExplorerFileInfo
         For cp = 0 To files.Count - 1
             file = files.Item(cp)
             file.TreeItemFile = dbc.GetTreeItemFile(treeItem.Id, file.Filename)
@@ -837,7 +712,7 @@ mRetry:
         End If
     End Sub
 
-    Private Function SortFilesByConfig(selectedNode As OrgManTreeItem, childNodes As List(Of OrgManFileInfo)) As List(Of OrgManFileInfo)
+    Private Function SortFilesByConfig(selectedNode As OrgManTreeItem, childNodes As List(Of EloExplorerFileInfo)) As List(Of EloExplorerFileInfo)
         Select Case selectedNode.FilesSortBy
             Case OrgManEnums.FilesSortBy.Type
                 SortFilesByConfig = IIf(selectedNode.FilesSortWay = OrgManEnums.SortWay.Ascending, childNodes.OrderBy(Function(x) x.FileType).ToList(), childNodes.OrderByDescending(Function(x) x.FileType).ToList())
@@ -852,7 +727,7 @@ mRetry:
         End Select
     End Function
 
-    Private Function AddFileItem(treeItemId As Integer, file As OrgManFileInfo, count As Integer) As ListViewItem
+    Private Function AddFileItem(treeItemId As Integer, file As EloExplorerFileInfo, count As Integer) As ListViewItem
         Dim item As ListViewItem
         Dim reminderDate As Date = dbc.GetReminderDate(treeItemId, file.Filename)
         If ListViewItemExists(file.Filename) Then
@@ -1351,10 +1226,6 @@ mRetry:
         On Error Resume Next
         If TvwExplorer.SelectedNode Is Nothing Then
             Exit Sub
-        ElseIf TvwExplorer.SelectedNode.Name = "reminder" Then
-            Exit Sub
-        ElseIf IsBrowserNode(TvwExplorer.SelectedNode) Then
-            Exit Sub
         End If
         FilesRefreshTimerIsRunning = True
         Dim sPath As String = GetFullPathOfNode(TvwExplorer.SelectedNode)
@@ -1407,22 +1278,12 @@ mRetry:
         If TvwExplorer.SelectedNode Is Nothing Then
             Exit Sub
         End If
-        If Not IsBrowserNode(TvwExplorer.SelectedNode) Then
-            Dim sPath As String = GetFullPathOfNode(TvwExplorer.SelectedNode)
-            'Process.Start("explorer.exe", sPath)
-            'Shell("explorer " & sPath, AppWinStyle.NormalFocus)
-            'Directory.SetCurrentDirectory(sPath)
-            'Process.Start("explorer.exe")
-            Process.Start(sPath)
-        Else
-            Try
-                If Not chromeExe Is Nothing Then
-                    Process.Start("chrome.exe", GetUrlFromNode(TvwExplorer.SelectedNode))
-                End If
-            Catch ex As Exception
-                MsgBox(ex.Message, MsgBoxStyle.Critical, "Fehler beim Öffnen")
-            End Try
-        End If
+        Dim sPath As String = GetFullPathOfNode(TvwExplorer.SelectedNode)
+        'Process.Start("explorer.exe", sPath)
+        'Shell("explorer " & sPath, AppWinStyle.NormalFocus)
+        'Directory.SetCurrentDirectory(sPath)
+        'Process.Start("explorer.exe")
+        Process.Start(sPath)
     End Sub
 
     Private Sub MenuInternCopy_Click(sender As Object, e As EventArgs) Handles MenuInternCopy.Click
@@ -1737,19 +1598,19 @@ mRetry:
         End Using
     End Sub
 
-    Private Sub MenuEnvDev_Click(sender As Object, e As EventArgs) Handles MenuEnvDev.Click
+    Private Sub MenuEnvDev_Click(sender As Object, e As EventArgs)
         ChangeEnvironment("Dev")
     End Sub
 
-    Private Sub MenuEnvLocal_Click(sender As Object, e As EventArgs) Handles MenuEnvLocal.Click
+    Private Sub MenuEnvLocal_Click(sender As Object, e As EventArgs)
         ChangeEnvironment("Local")
     End Sub
 
-    Private Sub MenuEnvTest_Click(sender As Object, e As EventArgs) Handles MenuEnvTest.Click
+    Private Sub MenuEnvTest_Click(sender As Object, e As EventArgs)
         ChangeEnvironment("Test")
     End Sub
 
-    Private Sub MenuEnvProd_Click(sender As Object, e As EventArgs) Handles MenuEnvProd.Click
+    Private Sub MenuEnvProd_Click(sender As Object, e As EventArgs)
         ChangeEnvironment("Prod")
     End Sub
 
@@ -1771,31 +1632,6 @@ mRetry:
         'End If
     End Sub
 
-    Private Sub MenuReminderFile_Click(sender As Object, e As EventArgs) Handles MenuReminderFile.Click
-        With DlgReminder
-            If Not String.IsNullOrEmpty(LvwFiles.SelectedItems(0).SubItems(ColumnHeaderReminder.Index).Text.Trim()) Then
-                Dim reminderDate As DateTime = DateTime.Parse(LvwFiles.SelectedItems(0).SubItems(ColumnHeaderReminder.Index).Text)
-                .TextBoxDate.Text = reminderDate.Date.ToShortDateString()
-                .TextBoxTime.Text = reminderDate.TimeOfDay.ToString()
-            End If
-            Dim dlgResult As DialogResult = .ShowDialog(Me)
-            If dlgResult = DialogResult.OK Then
-                Dim treeItem = DirectCast(TvwExplorer.SelectedNode.Tag, OrgManTreeItem)
-                Dim reminderDate As Date
-                If DateTime.TryParse(.TextBoxDate.Text, reminderDate) Then
-                    Dim timeDate As Date
-                    If DateTime.TryParse(.TextBoxTime.Text, timeDate) Then
-                        reminderDate = reminderDate.Add(timeDate.TimeOfDay)
-                    End If
-                    dbc.SetReminderDate(treeItem.Id, LvwFiles.SelectedItems(0).SubItems(ColumnHeaderName.Index).Text, reminderDate)
-                    LvwFiles.SelectedItems(0).SubItems(ColumnHeaderReminder.Index).Text = IIf(reminderDate = Nothing, " ", reminderDate.ToString())
-                    RefreshReminders()
-                End If
-                .Close()
-            End If
-        End With
-    End Sub
-
     Private Sub LvwFiles_KeyDown(sender As Object, e As KeyEventArgs) Handles LvwFiles.KeyDown
         If e.Control And e.KeyCode = Keys.A Then
             Dim itm As ListViewItem
@@ -1803,28 +1639,6 @@ mRetry:
                 itm.Selected = True
             Next
         End If
-    End Sub
-
-    Private Sub MenuDoneReminderFile_Click(sender As Object, e As EventArgs) Handles MenuDoneReminderFile.Click
-        If MsgBox("Wiedervorlage auf Status Erledigt setzen?", MsgBoxStyle.Question + MsgBoxStyle.YesNo, "Nachfrage") = MsgBoxResult.No Then
-            Exit Sub
-        End If
-        Dim treeItem = DirectCast(TvwExplorer.SelectedNode.Tag, OrgManTreeItem)
-        Dim filename = LvwFiles.SelectedItems(0).SubItems(ColumnHeaderName.Index).Text
-        dbc.FinishReminder(treeItem.Id, filename)
-        LvwFiles.SelectedItems(0).SubItems(ColumnHeaderReminder.Index).Text = " "
-        RefreshReminders()
-    End Sub
-
-    Private Sub MenuDeleteReminderFile_Click(sender As Object, e As EventArgs) Handles MenuDeleteReminderFile.Click
-        If MsgBox("Wiedervorlage unwiderruflich löschen?", MsgBoxStyle.Question + MsgBoxStyle.YesNo, "Nachfrage") = MsgBoxResult.No Then
-            Exit Sub
-        End If
-        Dim treeItem = DirectCast(TvwExplorer.SelectedNode.Tag, OrgManTreeItem)
-        Dim filename = LvwFiles.SelectedItems(0).SubItems(ColumnHeaderName.Index).Text
-        dbc.DeleteReminderDate(treeItem.Id, filename)
-        LvwFiles.SelectedItems(0).SubItems(ColumnHeaderReminder.Index).Text = " "
-        RefreshReminders()
     End Sub
 
     Private Sub MenuSortMoveUpFile_Click(sender As Object, e As EventArgs) Handles MenuSortMoveUpFile.Click
@@ -1919,35 +1733,6 @@ mRetry:
         GetTreeNodeOfReminder = homeNode
     End Function
 
-    Private Sub MenuReminderOpen_Click(sender As Object, e As EventArgs) Handles MenuReminderOpen.Click
-        Dim reminderItem = DirectCast(LvwReminders.SelectedItems(0).Tag, OrgManReminder)
-        Dim homeNode = GetTreeNodeOfReminder(reminderItem.TreeItemId)
-        Dim fullPath As String = GetFullPathOfNode(homeNode)
-        System.Diagnostics.Process.Start(fullPath + LvwReminders.SelectedItems(0).Text)
-    End Sub
-
-    Private Sub LvwReminders_DoubleClick(sender As Object, e As EventArgs) Handles LvwReminders.DoubleClick
-        If MenuReminderOpen.Enabled Then
-            MenuReminderOpen_Click(sender, e)
-        End If
-    End Sub
-
-    Private Sub ContextMenuReminder_Opening(sender As Object, e As System.ComponentModel.CancelEventArgs) Handles ContextMenuReminder.Opening
-        MenuReminderOpen.Enabled = (Not TvwExplorer.SelectedNode Is Nothing And LvwReminders.SelectedItems.Count > 0)
-        MenuReminderEdit.Enabled = (Not TvwExplorer.SelectedNode Is Nothing And LvwReminders.SelectedItems.Count > 0)
-        MenuReminderDone.Enabled = (Not TvwExplorer.SelectedNode Is Nothing And LvwReminders.SelectedItems.Count > 0)
-        MenuReminderDelete.Enabled = (Not TvwExplorer.SelectedNode Is Nothing And LvwReminders.SelectedItems.Count > 0)
-
-        MenuReminderOpenInTree.Enabled = (Not TvwExplorer.SelectedNode Is Nothing And LvwReminders.SelectedItems.Count > 0)
-        MenuReminderProperties.Enabled = (Not TvwExplorer.SelectedNode Is Nothing And LvwReminders.SelectedItems.Count > 0)
-
-        MenuReminderRefresh.Enabled = (Not TvwExplorer.SelectedNode Is Nothing)
-    End Sub
-
-    Private Sub MenuExplorerReminderNewDepartment_Click(sender As Object, e As EventArgs) Handles MenuExplorerReminderNewDepartment.Click
-        MenuNewDepartment_Click(sender, e)
-    End Sub
-
     Friend SecurityIsLoading As Boolean
 
     Private Async Sub TimerLoadSecurity_TickAsync(sender As Object, e As EventArgs) Handles TimerLoadSecurity.Tick
@@ -1971,141 +1756,15 @@ mRetry:
         End If
     End Sub
 
-    Private Sub LvwReminders_KeyPress(sender As Object, e As KeyPressEventArgs) Handles LvwReminders.KeyPress
-        If e.KeyChar = Convert.ToChar(Keys.Enter) Then
-            If (MenuReminderOpen.Enabled) Then
-                e.Handled = True
-                MenuReminderOpen_Click(sender, e)
-            End If
-        End If
-    End Sub
-
-    Private Sub MenuReminderOpenInTree_Click(sender As Object, e As EventArgs) Handles MenuReminderOpenInTree.Click
-        Dim reminderItem = DirectCast(LvwReminders.SelectedItems(0).Tag, OrgManReminder)
-        Dim homeNode = GetTreeNodeOfReminder(reminderItem.TreeItemId)
-        TreeNodeClick(homeNode)
-        LvwFiles.Focus()
-        Dim listItem = GetListViewItemByText(reminderItem.Filename)
-        listItem.Selected = True
-        listItem.Focused = True
-    End Sub
-
-    Private Sub MenuReminderRefresh_Click(sender As Object, e As EventArgs) Handles MenuReminderRefresh.Click
-        LoadReminders()
-    End Sub
-
-    Private Sub LvwReminders_KeyUp(sender As Object, e As KeyEventArgs) Handles LvwReminders.KeyUp
-        If e.KeyCode = Keys.F5 Then
-            If MenuReminderRefresh.Enabled Then
-                MenuReminderRefresh_Click(sender, New EventArgs())
-            End If
-        End If
-    End Sub
-
-    Private Sub MenuReminderProperties_Click(sender As Object, e As EventArgs) Handles MenuReminderProperties.Click
-        Dim reminderItem = DirectCast(LvwReminders.SelectedItems(0).Tag, OrgManReminder)
-        Dim homeNode = GetTreeNodeOfReminder(reminderItem.TreeItemId)
-        Dim fullPath As String = GetFullPathOfNode(homeNode)
-        Dim fi As New IO.FileInfo(fullPath + LvwReminders.SelectedItems(0).Text)
-        Dim info As New SHELLEXECUTEINFO()
-        info.cbSize = Marshal.SizeOf(info)
-        info.lpVerb = "properties"
-        info.lpFile = fi.Name
-        info.lpDirectory = fi.DirectoryName
-        info.nShow = SW_SHOW
-        info.fMask = SEE_MASK_INVOKEIDLIST
-        ShellExecuteEx(info)
-    End Sub
-
-    Private Sub MenuReminderEdit_Click(sender As Object, e As EventArgs) Handles MenuReminderEdit.Click
-        With DlgReminder
-            Dim reminderDate As DateTime = DateTime.Parse(LvwReminders.SelectedItems(0).SubItems(ColumnHeaderReminderReminderDate.Index).Text)
-            .TextBoxDate.Text = reminderDate.Date.ToShortDateString()
-            .TextBoxTime.Text = reminderDate.TimeOfDay.ToString()
-            Dim dlgResult As DialogResult = .ShowDialog(Me)
-            If dlgResult = DialogResult.OK Then
-                reminderDate = Nothing
-                'Dim treeItem = DirectCast(TvwExplorer.SelectedNode.Tag, OrgManTreeItem)
-                Dim reminderItem = DirectCast(LvwReminders.SelectedItems(0).Tag, OrgManReminder)
-                If DateTime.TryParse(.TextBoxDate.Text, reminderDate) Then
-                    Dim timeDate As Date
-                    If DateTime.TryParse(.TextBoxTime.Text, timeDate) Then
-                        reminderDate = reminderDate.Add(timeDate.TimeOfDay)
-                    End If
-                    dbc.SetReminderDate(reminderItem.TreeItemId, LvwReminders.SelectedItems(0).SubItems(ColumnHeaderReminderFilename.Index).Text, reminderDate)
-                    LvwReminders.SelectedItems(0).SubItems(ColumnHeaderReminderReminderDate.Index).Text = IIf(reminderDate = Nothing, " ", reminderDate.ToString())
-                    If reminderDate = Nothing Or reminderDate > DateTime.Now Then
-                        LvwReminders.Items.Remove(LvwReminders.SelectedItems(0))
-                    End If
-                    RefreshReminders()
-                    StatusLabelInfo.Text = LvwReminders.Items.Count & " Wiedervolage(n)"
-                End If
-                .Close()
-            End If
-        End With
-    End Sub
-
-    Private Sub MenuReminderDone_Click(sender As Object, e As EventArgs) Handles MenuReminderDone.Click
-        If MsgBox("Wiedervorlage auf Status Erledigt setzen?", MsgBoxStyle.Question + MsgBoxStyle.YesNo, "Nachfrage") = MsgBoxResult.No Then
-            Exit Sub
-        End If
-        Dim reminderItem = DirectCast(LvwReminders.SelectedItems(0).Tag, OrgManReminder)
-        dbc.FinishReminder(reminderItem.TreeItemId, reminderItem.Filename)
-        LvwReminders.Items.Remove(LvwReminders.SelectedItems(0))
-        RefreshReminders()
-        StatusLabelInfo.Text = LvwReminders.Items.Count & " Wiedervolage(n)"
-    End Sub
-
-    Private Sub MenuReminderDelete_Click(sender As Object, e As EventArgs) Handles MenuReminderDelete.Click
-        If MsgBox("Wiedervorlage unwiderruflich löschen?", MsgBoxStyle.Question + MsgBoxStyle.YesNo, "Nachfrage") = MsgBoxResult.No Then
-            Exit Sub
-        End If
-        Dim reminderItem = DirectCast(LvwReminders.SelectedItems(0).Tag, OrgManReminder)
-        dbc.DeleteReminderDate(reminderItem.TreeItemId, reminderItem.Filename)
-        LvwReminders.Items.Remove(LvwReminders.SelectedItems(0))
-        RefreshReminders()
-        StatusLabelInfo.Text = LvwReminders.Items.Count & " Wiedervolage(n)"
-    End Sub
-
     Private Sub MenuShowFilePreviewer_Click(sender As Object, e As EventArgs) Handles MenuShowFilePreviewer.Click
         MenuShowFilePreviewer.Checked = Not MenuShowFilePreviewer.Checked
-        dbc.SaveDbUserSetting("ShowFilePreviewer", MenuShowFilePreviewer.Checked.ToString())
+        SaveSetting(Application.ProductName, "Window", "ShowFilePreviewer", MenuShowFilePreviewer.Checked.ToString())
         If MenuShowFilePreviewer.Checked Then
             ShowFilePreviewer()
             LvwFiles_SelectedIndexChanged(sender, e)
         Else
             HideFilePreviewer()
         End If
-        MenuReminderShowFilePreviewer.Checked = MenuShowFilePreviewer.Checked
-    End Sub
-
-    Private Sub MenuReminderShowFilePreviewer_Click(sender As Object, e As EventArgs) Handles MenuReminderShowFilePreviewer.Click
-        MenuReminderShowFilePreviewer.Checked = Not MenuReminderShowFilePreviewer.Checked
-        dbc.SaveDbUserSetting("ShowFilePreviewer", MenuReminderShowFilePreviewer.Checked.ToString())
-        If MenuReminderShowFilePreviewer.Checked Then
-            ShowFilePreviewer()
-            LvwReminders_SelectedIndexChanged(sender, e)
-        Else
-            HideFilePreviewer()
-        End If
-        MenuShowFilePreviewer.Checked = MenuReminderShowFilePreviewer.Checked
-    End Sub
-
-    Private Sub LvwReminders_SelectedIndexChanged(sender As Object, e As EventArgs) Handles LvwReminders.SelectedIndexChanged
-        If Not Me.FilesSplitContainer.Panel2Collapsed Then
-            If (Not TvwExplorer.SelectedNode Is Nothing And LvwReminders.SelectedItems.Count > 0) Then
-                Dim reminderItem = DirectCast(LvwReminders.SelectedItems(0).Tag, OrgManReminder)
-                Dim homeNode = GetTreeNodeOfReminder(reminderItem.TreeItemId)
-                Dim fullPath As String = GetFullPathOfNode(homeNode)
-                FilePreviewHandlerHost.Open(fullPath + LvwReminders.SelectedItems(0).Text)
-            Else
-                FilePreviewHandlerHost.Open(String.Empty)
-            End If
-        End If
-    End Sub
-
-    Private Sub ContextMenuExplorerReminder_Opening(sender As Object, e As System.ComponentModel.CancelEventArgs) Handles ContextMenuExplorerReminder.Opening
-        MenuExplorerReminderNewDepartment.Enabled = IsAdmin And TvwExplorer.SelectedNode Is Nothing
     End Sub
 
     Private Sub ContextMenuExplorer_Opening(sender As Object, e As System.ComponentModel.CancelEventArgs) Handles ContextMenuExplorer.Opening
@@ -2113,17 +1772,6 @@ mRetry:
         MenuCut.Enabled = Not TvwExplorer.SelectedNode Is Nothing
     End Sub
 
-    Private Sub RefreshReminders()
-        Dim count = dbc.GetReminders().Count
-        Dim reminderNode = GetTreeNodeByKey("reminder")
-        If count > 0 Then
-            reminderNode.NodeFont = New Font(TvwExplorer.Font, FontStyle.Bold)
-            reminderNode.Text = "Wiedervorlagen (" & count & ")"
-        Else
-            reminderNode.NodeFont = New Font(TvwExplorer.Font, FontStyle.Regular)
-            reminderNode.Text = "Wiedervorlagen"
-        End If
-    End Sub
     Private Function AddNewTreeItemFile(treeItemId As Integer, fileName As String) As OrgManTreeItemFile
         Dim newFile As OrgManTreeItemFile = dbc.AddNewTreeItemFile(treeItemId, fileName)
         AddNewTreeItemFile = newFile

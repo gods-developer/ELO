@@ -11,7 +11,7 @@ Imports System
 Imports System.Data.Entity
 Imports System.Data.Entity.Infrastructure
 
-Namespace OrgMan
+Namespace EloExplorer
 
     Partial Public Class OrgManEntities
         Inherits DbContext

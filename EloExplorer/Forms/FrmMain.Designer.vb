@@ -58,24 +58,6 @@ Partial Class FrmMain
         Me.MainSplitContainer = New System.Windows.Forms.SplitContainer()
         Me.TvwExplorer = New System.Windows.Forms.TreeView()
         Me.FilesSplitContainer = New System.Windows.Forms.SplitContainer()
-        Me.LvwReminders = New System.Windows.Forms.ListView()
-        Me.ColumnHeaderReminderFilename = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
-        Me.ColumnHeaderReminderDepartment = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
-        Me.ColumnHeaderReminderPath = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
-        Me.ColumnHeaderReminderReminderDate = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
-        Me.ColumnHeaderReminderFiledate = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
-        Me.ColumnHeaderReminderFiletype = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
-        Me.ColumnHeaderReminderFilesize = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
-        Me.ContextMenuReminder = New System.Windows.Forms.ContextMenuStrip(Me.components)
-        Me.MenuReminderOpen = New System.Windows.Forms.ToolStripMenuItem()
-        Me.MenuReminderEdit = New System.Windows.Forms.ToolStripMenuItem()
-        Me.MenuReminderDone = New System.Windows.Forms.ToolStripMenuItem()
-        Me.MenuReminderDelete = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ToolStripSeparator8 = New System.Windows.Forms.ToolStripSeparator()
-        Me.MenuReminderOpenInTree = New System.Windows.Forms.ToolStripMenuItem()
-        Me.MenuReminderRefresh = New System.Windows.Forms.ToolStripMenuItem()
-        Me.MenuReminderProperties = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ImageListFiles = New System.Windows.Forms.ImageList(Me.components)
         Me.LvwFiles = New System.Windows.Forms.ListView()
         Me.ColumnHeaderName = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.ColumnHeaderDate = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
@@ -99,25 +81,15 @@ Partial Class FrmMain
         Me.MenuSortFile = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuSortMoveUpFile = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuSortMoveDownFile = New System.Windows.Forms.ToolStripMenuItem()
+        Me.MenuShowFilePreviewer = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSeparator7 = New System.Windows.Forms.ToolStripSeparator()
         Me.MenuRefreshFiles = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuPropertiesFile = New System.Windows.Forms.ToolStripMenuItem()
-        Me.MsBrowser = New System.Windows.Forms.WebBrowser()
+        Me.ImageListFiles = New System.Windows.Forms.ImageList(Me.components)
         Me.MainStatusStrip = New System.Windows.Forms.StatusStrip()
-        Me.DropDownEnvironment = New System.Windows.Forms.ToolStripDropDownButton()
-        Me.MenuEnvLocal = New System.Windows.Forms.ToolStripMenuItem()
-        Me.MenuEnvDev = New System.Windows.Forms.ToolStripMenuItem()
-        Me.MenuEnvTest = New System.Windows.Forms.ToolStripMenuItem()
-        Me.MenuEnvProd = New System.Windows.Forms.ToolStripMenuItem()
         Me.StatusLabelInfo = New System.Windows.Forms.ToolStripStatusLabel()
         Me.FilesRefreshTimer = New System.Windows.Forms.Timer(Me.components)
-        Me.ContextMenuExplorerReminder = New System.Windows.Forms.ContextMenuStrip(Me.components)
-        Me.MenuExplorerReminderNewDepartment = New System.Windows.Forms.ToolStripMenuItem()
         Me.TimerLoadSecurity = New System.Windows.Forms.Timer(Me.components)
-        Me.MenuShowFilePreviewer = New System.Windows.Forms.ToolStripMenuItem()
-        Me.MenuReminderShowFilePreviewer = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ToolStripSeparator9 = New System.Windows.Forms.ToolStripSeparator()
-        Me.FilePreviewHandlerHost = New Win.Common.Tools.PreviewHandlerHost()
         Me.ContextMenuExplorer.SuspendLayout()
         CType(Me.MainSplitContainer, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.MainSplitContainer.Panel1.SuspendLayout()
@@ -125,12 +97,9 @@ Partial Class FrmMain
         Me.MainSplitContainer.SuspendLayout()
         CType(Me.FilesSplitContainer, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.FilesSplitContainer.Panel1.SuspendLayout()
-        Me.FilesSplitContainer.Panel2.SuspendLayout()
         Me.FilesSplitContainer.SuspendLayout()
-        Me.ContextMenuReminder.SuspendLayout()
         Me.ContextMenuFiles.SuspendLayout()
         Me.MainStatusStrip.SuspendLayout()
-        Me.ContextMenuExplorerReminder.SuspendLayout()
         Me.SuspendLayout()
         '
         'ContextMenuExplorer
@@ -376,135 +345,15 @@ Partial Class FrmMain
         '
         'FilesSplitContainer.Panel1
         '
-        Me.FilesSplitContainer.Panel1.Controls.Add(Me.LvwReminders)
         Me.FilesSplitContainer.Panel1.Controls.Add(Me.LvwFiles)
-        Me.FilesSplitContainer.Panel1.Controls.Add(Me.MsBrowser)
         Me.FilesSplitContainer.Panel1.Font = New System.Drawing.Font("Calibri", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         '
         'FilesSplitContainer.Panel2
         '
-        Me.FilesSplitContainer.Panel2.Controls.Add(Me.FilePreviewHandlerHost)
         Me.FilesSplitContainer.Panel2.Font = New System.Drawing.Font("Calibri", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.FilesSplitContainer.Size = New System.Drawing.Size(762, 818)
         Me.FilesSplitContainer.SplitterDistance = 498
         Me.FilesSplitContainer.TabIndex = 3
-        '
-        'LvwReminders
-        '
-        Me.LvwReminders.AllowDrop = True
-        Me.LvwReminders.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.ColumnHeaderReminderFilename, Me.ColumnHeaderReminderDepartment, Me.ColumnHeaderReminderPath, Me.ColumnHeaderReminderReminderDate, Me.ColumnHeaderReminderFiledate, Me.ColumnHeaderReminderFiletype, Me.ColumnHeaderReminderFilesize})
-        Me.LvwReminders.ContextMenuStrip = Me.ContextMenuReminder
-        Me.LvwReminders.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.LvwReminders.Font = New System.Drawing.Font("Calibri", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.LvwReminders.FullRowSelect = True
-        Me.LvwReminders.HideSelection = False
-        Me.LvwReminders.LargeImageList = Me.ImageListFiles
-        Me.LvwReminders.Location = New System.Drawing.Point(0, 0)
-        Me.LvwReminders.Name = "LvwReminders"
-        Me.LvwReminders.ShowItemToolTips = True
-        Me.LvwReminders.Size = New System.Drawing.Size(498, 818)
-        Me.LvwReminders.SmallImageList = Me.ImageListFiles
-        Me.LvwReminders.TabIndex = 2
-        Me.LvwReminders.UseCompatibleStateImageBehavior = False
-        Me.LvwReminders.View = System.Windows.Forms.View.Details
-        '
-        'ColumnHeaderReminderFilename
-        '
-        Me.ColumnHeaderReminderFilename.Text = "Name"
-        Me.ColumnHeaderReminderFilename.Width = 170
-        '
-        'ColumnHeaderReminderDepartment
-        '
-        Me.ColumnHeaderReminderDepartment.Text = "Abteilung"
-        Me.ColumnHeaderReminderDepartment.Width = 100
-        '
-        'ColumnHeaderReminderPath
-        '
-        Me.ColumnHeaderReminderPath.Text = "Pfad"
-        '
-        'ColumnHeaderReminderReminderDate
-        '
-        Me.ColumnHeaderReminderReminderDate.Text = "Wiedervorlage"
-        Me.ColumnHeaderReminderReminderDate.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
-        Me.ColumnHeaderReminderReminderDate.Width = 120
-        '
-        'ColumnHeaderReminderFiledate
-        '
-        Me.ColumnHeaderReminderFiledate.Text = "Datum"
-        Me.ColumnHeaderReminderFiledate.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
-        Me.ColumnHeaderReminderFiledate.Width = 120
-        '
-        'ColumnHeaderReminderFiletype
-        '
-        Me.ColumnHeaderReminderFiletype.Text = "Typ"
-        Me.ColumnHeaderReminderFiletype.Width = 100
-        '
-        'ColumnHeaderReminderFilesize
-        '
-        Me.ColumnHeaderReminderFilesize.Text = "Größe"
-        Me.ColumnHeaderReminderFilesize.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
-        Me.ColumnHeaderReminderFilesize.Width = 100
-        '
-        'ContextMenuReminder
-        '
-        Me.ContextMenuReminder.Font = New System.Drawing.Font("Calibri", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.ContextMenuReminder.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.MenuReminderOpen, Me.MenuReminderEdit, Me.MenuReminderDone, Me.MenuReminderDelete, Me.ToolStripSeparator8, Me.MenuReminderOpenInTree, Me.MenuReminderShowFilePreviewer, Me.ToolStripSeparator9, Me.MenuReminderRefresh, Me.MenuReminderProperties})
-        Me.ContextMenuReminder.Name = "ContextMenuReminder"
-        Me.ContextMenuReminder.Size = New System.Drawing.Size(202, 192)
-        '
-        'MenuReminderOpen
-        '
-        Me.MenuReminderOpen.Font = New System.Drawing.Font("Calibri", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.MenuReminderOpen.Name = "MenuReminderOpen"
-        Me.MenuReminderOpen.Size = New System.Drawing.Size(201, 22)
-        Me.MenuReminderOpen.Text = "Öffnen"
-        '
-        'MenuReminderEdit
-        '
-        Me.MenuReminderEdit.Name = "MenuReminderEdit"
-        Me.MenuReminderEdit.Size = New System.Drawing.Size(201, 22)
-        Me.MenuReminderEdit.Text = "Wiedervorlage ändern"
-        '
-        'MenuReminderDone
-        '
-        Me.MenuReminderDone.Name = "MenuReminderDone"
-        Me.MenuReminderDone.Size = New System.Drawing.Size(201, 22)
-        Me.MenuReminderDone.Text = "Als Erledigt speichern"
-        '
-        'MenuReminderDelete
-        '
-        Me.MenuReminderDelete.Name = "MenuReminderDelete"
-        Me.MenuReminderDelete.Size = New System.Drawing.Size(201, 22)
-        Me.MenuReminderDelete.Text = "Wiedervorlage löschen"
-        '
-        'ToolStripSeparator8
-        '
-        Me.ToolStripSeparator8.Name = "ToolStripSeparator8"
-        Me.ToolStripSeparator8.Size = New System.Drawing.Size(198, 6)
-        '
-        'MenuReminderOpenInTree
-        '
-        Me.MenuReminderOpenInTree.Name = "MenuReminderOpenInTree"
-        Me.MenuReminderOpenInTree.Size = New System.Drawing.Size(201, 22)
-        Me.MenuReminderOpenInTree.Text = "In Ordner wechseln"
-        '
-        'MenuReminderRefresh
-        '
-        Me.MenuReminderRefresh.Name = "MenuReminderRefresh"
-        Me.MenuReminderRefresh.Size = New System.Drawing.Size(201, 22)
-        Me.MenuReminderRefresh.Text = "Aktualisieren"
-        '
-        'MenuReminderProperties
-        '
-        Me.MenuReminderProperties.Name = "MenuReminderProperties"
-        Me.MenuReminderProperties.Size = New System.Drawing.Size(201, 22)
-        Me.MenuReminderProperties.Text = "Eigenschaften"
-        '
-        'ImageListFiles
-        '
-        Me.ImageListFiles.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit
-        Me.ImageListFiles.ImageSize = New System.Drawing.Size(32, 32)
-        Me.ImageListFiles.TransparentColor = System.Drawing.Color.Transparent
         '
         'LvwFiles
         '
@@ -656,6 +505,12 @@ Partial Class FrmMain
         Me.MenuSortMoveDownFile.Size = New System.Drawing.Size(136, 22)
         Me.MenuSortMoveDownFile.Text = "Nach unten"
         '
+        'MenuShowFilePreviewer
+        '
+        Me.MenuShowFilePreviewer.Name = "MenuShowFilePreviewer"
+        Me.MenuShowFilePreviewer.Size = New System.Drawing.Size(201, 22)
+        Me.MenuShowFilePreviewer.Text = "Vorschaufenster"
+        '
         'ToolStripSeparator7
         '
         Me.ToolStripSeparator7.Name = "ToolStripSeparator7"
@@ -673,116 +528,37 @@ Partial Class FrmMain
         Me.MenuPropertiesFile.Size = New System.Drawing.Size(201, 22)
         Me.MenuPropertiesFile.Text = "Eigenschaften"
         '
-        'MsBrowser
+        'ImageListFiles
         '
-        Me.MsBrowser.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.MsBrowser.Location = New System.Drawing.Point(0, 0)
-        Me.MsBrowser.MinimumSize = New System.Drawing.Size(20, 20)
-        Me.MsBrowser.Name = "MsBrowser"
-        Me.MsBrowser.Size = New System.Drawing.Size(498, 818)
-        Me.MsBrowser.TabIndex = 1
-        Me.MsBrowser.Visible = False
+        Me.ImageListFiles.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit
+        Me.ImageListFiles.ImageSize = New System.Drawing.Size(32, 32)
+        Me.ImageListFiles.TransparentColor = System.Drawing.Color.Transparent
         '
         'MainStatusStrip
         '
         Me.MainStatusStrip.Font = New System.Drawing.Font("Calibri", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.MainStatusStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.DropDownEnvironment, Me.StatusLabelInfo})
-        Me.MainStatusStrip.Location = New System.Drawing.Point(0, 819)
+        Me.MainStatusStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.StatusLabelInfo})
+        Me.MainStatusStrip.Location = New System.Drawing.Point(0, 820)
         Me.MainStatusStrip.Name = "MainStatusStrip"
         Me.MainStatusStrip.ShowItemToolTips = True
-        Me.MainStatusStrip.Size = New System.Drawing.Size(1149, 25)
+        Me.MainStatusStrip.Size = New System.Drawing.Size(1149, 24)
         Me.MainStatusStrip.TabIndex = 2
         Me.MainStatusStrip.Text = "Bereit"
-        '
-        'DropDownEnvironment
-        '
-        Me.DropDownEnvironment.BackColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(0, Byte), Integer), CType(CType(192, Byte), Integer))
-        Me.DropDownEnvironment.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me.DropDownEnvironment.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.MenuEnvLocal, Me.MenuEnvDev, Me.MenuEnvTest, Me.MenuEnvProd})
-        Me.DropDownEnvironment.Font = New System.Drawing.Font("Calibri", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.DropDownEnvironment.ForeColor = System.Drawing.Color.White
-        Me.DropDownEnvironment.Image = CType(resources.GetObject("DropDownEnvironment.Image"), System.Drawing.Image)
-        Me.DropDownEnvironment.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me.DropDownEnvironment.Name = "DropDownEnvironment"
-        Me.DropDownEnvironment.Size = New System.Drawing.Size(96, 23)
-        Me.DropDownEnvironment.Text = "Umgebung"
-        '
-        'MenuEnvLocal
-        '
-        Me.MenuEnvLocal.Name = "MenuEnvLocal"
-        Me.MenuEnvLocal.Size = New System.Drawing.Size(113, 24)
-        Me.MenuEnvLocal.Text = "Local"
-        '
-        'MenuEnvDev
-        '
-        Me.MenuEnvDev.Name = "MenuEnvDev"
-        Me.MenuEnvDev.Size = New System.Drawing.Size(113, 24)
-        Me.MenuEnvDev.Text = "Dev"
-        '
-        'MenuEnvTest
-        '
-        Me.MenuEnvTest.Name = "MenuEnvTest"
-        Me.MenuEnvTest.Size = New System.Drawing.Size(113, 24)
-        Me.MenuEnvTest.Text = "Test"
-        '
-        'MenuEnvProd
-        '
-        Me.MenuEnvProd.Name = "MenuEnvProd"
-        Me.MenuEnvProd.Size = New System.Drawing.Size(113, 24)
-        Me.MenuEnvProd.Text = "Prod"
         '
         'StatusLabelInfo
         '
         Me.StatusLabelInfo.Name = "StatusLabelInfo"
-        Me.StatusLabelInfo.Size = New System.Drawing.Size(21, 20)
+        Me.StatusLabelInfo.Size = New System.Drawing.Size(21, 19)
         Me.StatusLabelInfo.Text = "..."
         '
         'FilesRefreshTimer
         '
-        Me.FilesRefreshTimer.Enabled = True
         Me.FilesRefreshTimer.Interval = 2000
-        '
-        'ContextMenuExplorerReminder
-        '
-        Me.ContextMenuExplorerReminder.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.MenuExplorerReminderNewDepartment})
-        Me.ContextMenuExplorerReminder.Name = "ContextMenuExplorerReminder"
-        Me.ContextMenuExplorerReminder.Size = New System.Drawing.Size(167, 26)
-        '
-        'MenuExplorerReminderNewDepartment
-        '
-        Me.MenuExplorerReminderNewDepartment.Name = "MenuExplorerReminderNewDepartment"
-        Me.MenuExplorerReminderNewDepartment.Size = New System.Drawing.Size(166, 22)
-        Me.MenuExplorerReminderNewDepartment.Text = "Neue Abteilung..."
         '
         'TimerLoadSecurity
         '
         Me.TimerLoadSecurity.Enabled = True
         Me.TimerLoadSecurity.Interval = 5000
-        '
-        'MenuShowFilePreviewer
-        '
-        Me.MenuShowFilePreviewer.Name = "MenuShowFilePreviewer"
-        Me.MenuShowFilePreviewer.Size = New System.Drawing.Size(201, 22)
-        Me.MenuShowFilePreviewer.Text = "Vorschaufenster"
-        '
-        'MenuReminderShowFilePreviewer
-        '
-        Me.MenuReminderShowFilePreviewer.Name = "MenuReminderShowFilePreviewer"
-        Me.MenuReminderShowFilePreviewer.Size = New System.Drawing.Size(201, 22)
-        Me.MenuReminderShowFilePreviewer.Text = "Vorschaufenster"
-        '
-        'ToolStripSeparator9
-        '
-        Me.ToolStripSeparator9.Name = "ToolStripSeparator9"
-        Me.ToolStripSeparator9.Size = New System.Drawing.Size(198, 6)
-        '
-        'FilePreviewHandlerHost
-        '
-        Me.FilePreviewHandlerHost.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.FilePreviewHandlerHost.Location = New System.Drawing.Point(0, 0)
-        Me.FilePreviewHandlerHost.Name = "FilePreviewHandlerHost"
-        Me.FilePreviewHandlerHost.Size = New System.Drawing.Size(260, 818)
-        Me.FilePreviewHandlerHost.TabIndex = 0
         '
         'FrmMain
         '
@@ -793,21 +569,18 @@ Partial Class FrmMain
         Me.Controls.Add(Me.MainSplitContainer)
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.Name = "FrmMain"
-        Me.Text = "OrgMan"
+        Me.Text = "ELO Explorer"
         Me.ContextMenuExplorer.ResumeLayout(False)
         Me.MainSplitContainer.Panel1.ResumeLayout(False)
         Me.MainSplitContainer.Panel2.ResumeLayout(False)
         CType(Me.MainSplitContainer, System.ComponentModel.ISupportInitialize).EndInit()
         Me.MainSplitContainer.ResumeLayout(False)
         Me.FilesSplitContainer.Panel1.ResumeLayout(False)
-        Me.FilesSplitContainer.Panel2.ResumeLayout(False)
         CType(Me.FilesSplitContainer, System.ComponentModel.ISupportInitialize).EndInit()
         Me.FilesSplitContainer.ResumeLayout(False)
-        Me.ContextMenuReminder.ResumeLayout(False)
         Me.ContextMenuFiles.ResumeLayout(False)
         Me.MainStatusStrip.ResumeLayout(False)
         Me.MainStatusStrip.PerformLayout()
-        Me.ContextMenuExplorerReminder.ResumeLayout(False)
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -865,45 +638,18 @@ Partial Class FrmMain
     Friend WithEvents MenuPasteScan As ToolStripMenuItem
     Friend WithEvents MenuPasteFileSelect As ToolStripMenuItem
     Friend WithEvents StatusLabelInfo As ToolStripStatusLabel
-    Friend WithEvents DropDownEnvironment As ToolStripDropDownButton
-    Friend WithEvents MenuEnvLocal As ToolStripMenuItem
-    Friend WithEvents MenuEnvDev As ToolStripMenuItem
-    Friend WithEvents MenuEnvTest As ToolStripMenuItem
-    Friend WithEvents MenuEnvProd As ToolStripMenuItem
-    Friend WithEvents MsBrowser As WebBrowser
-    Friend WithEvents ContextMenuReminder As ContextMenuStrip
-    Friend WithEvents MenuReminderRefresh As ToolStripMenuItem
     Friend WithEvents MenuReminderFile As ToolStripMenuItem
     Friend WithEvents MenuDoneReminderFile As ToolStripMenuItem
     Friend WithEvents ToolStripSeparator5 As ToolStripSeparator
     Friend WithEvents ColumnHeaderReminder As ColumnHeader
-    Friend WithEvents LvwReminders As ListView
-    Friend WithEvents ColumnHeaderReminderFilename As ColumnHeader
-    Friend WithEvents ColumnHeaderReminderFiledate As ColumnHeader
-    Friend WithEvents ColumnHeaderReminderFiletype As ColumnHeader
-    Friend WithEvents ColumnHeaderReminderFilesize As ColumnHeader
-    Friend WithEvents ColumnHeaderReminderReminderDate As ColumnHeader
-    Friend WithEvents ColumnHeaderReminderDepartment As ColumnHeader
-    Friend WithEvents ColumnHeaderReminderPath As ColumnHeader
-    Friend WithEvents MenuReminderOpen As ToolStripMenuItem
-    Friend WithEvents MenuReminderEdit As ToolStripMenuItem
-    Friend WithEvents MenuReminderDone As ToolStripMenuItem
-    Friend WithEvents MenuReminderDelete As ToolStripMenuItem
-    Friend WithEvents MenuReminderOpenInTree As ToolStripMenuItem
-    Friend WithEvents MenuReminderProperties As ToolStripMenuItem
     Friend WithEvents MenuDeleteReminderFile As ToolStripMenuItem
     Friend WithEvents ToolStripSeparator6 As ToolStripSeparator
     Friend WithEvents MenuSortFile As ToolStripMenuItem
     Friend WithEvents ToolStripSeparator7 As ToolStripSeparator
     Friend WithEvents MenuSortMoveUpFile As ToolStripMenuItem
     Friend WithEvents MenuSortMoveDownFile As ToolStripMenuItem
-    Friend WithEvents ToolStripSeparator8 As ToolStripSeparator
-    Friend WithEvents ContextMenuExplorerReminder As ContextMenuStrip
-    Friend WithEvents MenuExplorerReminderNewDepartment As ToolStripMenuItem
     Friend WithEvents TimerLoadSecurity As Timer
     Friend WithEvents FilesSplitContainer As SplitContainer
     Friend WithEvents MenuShowFilePreviewer As ToolStripMenuItem
-    Friend WithEvents MenuReminderShowFilePreviewer As ToolStripMenuItem
-    Friend WithEvents ToolStripSeparator9 As ToolStripSeparator
     Friend WithEvents FilePreviewHandlerHost As Win.Common.Tools.PreviewHandlerHost
 End Class

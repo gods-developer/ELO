@@ -9,12 +9,12 @@ Imports System.Runtime.InteropServices
 
 ' Review the values of the assembly attributes
 
-<Assembly: AssemblyTitle("Organisation Manager")>
-<Assembly: AssemblyDescription("Das gesamte Unternehmen strukturiert verwaltet.")>
+<Assembly: AssemblyTitle("ELO Explorer")>
+<Assembly: AssemblyDescription("ELO Daten navigieren")>
 <Assembly: AssemblyCompany("DigiSped")>
-<Assembly: AssemblyProduct("OrgMan")>
+<Assembly: AssemblyProduct("EloExplorer")>
 <Assembly: AssemblyCopyright("Copyright © DigiSped 2019")>
-<Assembly: AssemblyTrademark("OrgMan")>
+<Assembly: AssemblyTrademark("EloExplorer")>
 
 <Assembly: ComVisible(False)>
 

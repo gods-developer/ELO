@@ -59,14 +59,14 @@ Public Class OrgManDbConnectionInterceptor
         GetDatabaseName = ""
         If (String.IsNullOrEmpty(database)) Then Exit Function
 
-        GetDatabaseName = "SEE_" & OrgManGlobals.AppEnvironment
+        GetDatabaseName = "SEE_" & EloExplorerGlobals.AppEnvironment
 
     End Function
     Private Function GetDatasourceName(datasource As String) As String
         GetDatasourceName = ""
         If (String.IsNullOrEmpty(datasource)) Then Exit Function
 
-        If OrgManGlobals.AppEnvironment.ToLower() = "local" Then
+        If EloExplorerGlobals.AppEnvironment.ToLower() = "local" Then
             GetDatasourceName = "localhost"
         Else
             GetDatasourceName = "seeland-db.gseeland.de"

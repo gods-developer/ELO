@@ -1,4 +1,5 @@
-﻿Imports OrgMan.OrgMan
+﻿Imports EloExplorer.EloExplorer
+Imports OrgMan.OrgMan
 
 Public Class OrgManTreeItemFile
     Public Id As Integer

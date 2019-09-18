@@ -5,7 +5,7 @@ Public Class OrgManDbConfiguration
 
     Protected Friend Sub New()
         If My.Settings.UseApplicationRole Then
-            AddInterceptor(New OrgManDbConnectionInterceptor(OrgManGlobals.ApplicationRole, OrgManGlobals.ApplicationPassword))
+            AddInterceptor(New OrgManDbConnectionInterceptor(EloExplorerGlobals.ApplicationRole, EloExplorerGlobals.ApplicationPassword))
         Else
             AddInterceptor(New OrgManDbConnectionInterceptor())
         End If

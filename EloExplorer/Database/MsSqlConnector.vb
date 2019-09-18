@@ -1,12 +1,14 @@
 ﻿Imports System.Data.Entity.Core.Objects
 Imports System.Data.Entity.Infrastructure
 Imports Microsoft.Office.Interop.Access.Dao
-Imports OrgMan
+Imports EloExplorer
 Imports OrgMan.OrgMan
 Imports Win.Common.Tools
+Imports EloExplorer.EloExplorer
+
 Public Class MsSqlConnector
     Implements IDatabaseConnector
-    Dim dbs As OrgManEntities
+    Dim dbs As EloExplorer.OrgManEntities
     Private _mySid As String, _myGroupSids As List(Of String), adminState As Integer
 
     Public Sub New()
@@ -14,7 +16,7 @@ Public Class MsSqlConnector
         '            dbPath = My.Application.Info.DirectoryPath & "\OrgMan.accdb"
         '        Else
 #If DEBUG Then
-        dbs = New OrgManEntities()
+        dbs = New EloExplorer.OrgManEntities()
 #Else
                     dbs = New OrgManEntities()
 #End If

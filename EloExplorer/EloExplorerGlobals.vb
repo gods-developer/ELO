@@ -1,4 +1,4 @@
-﻿Friend Module OrgManGlobals
+﻿Friend Module EloExplorerGlobals
     Public AppEnvironment As String
     Public UseApplicationRole As String
     Public ReadOnly Property ApplicationRole

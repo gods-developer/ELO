@@ -10,7 +10,7 @@
 Imports System
 Imports System.Collections.Generic
 
-Namespace OrgMan
+Namespace EloExplorer
 
     Partial Public Class TreeItemUserRight
         Public Property Id As Integer

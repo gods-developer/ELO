@@ -7,8 +7,8 @@ Public Class DlgScanImport
     Public Sub LoadFiles(sPath As String)
         Me.Text += sPath
         LvwFiles.Items.Clear()
-        Dim files As List(Of OrgManFileInfo) = GetFiles(sPath)
-        Dim cp As Integer, file As OrgManFileInfo
+        Dim files As List(Of EloExplorerFileInfo) = GetFiles(sPath)
+        Dim cp As Integer, file As EloExplorerFileInfo
         For cp = 0 To files.Count - 1
             file = files.Item(cp)
             AddFileItem(file, cp)
@@ -25,7 +25,7 @@ Public Class DlgScanImport
         Me.Close()
     End Sub
 
-    Private Function AddFileItem(file As OrgManFileInfo, index As Integer) As ListViewItem
+    Private Function AddFileItem(file As EloExplorerFileInfo, index As Integer) As ListViewItem
         Dim sIcon As String = AddIconToImageList(file.FilePath, file.Filename, ImageListFiles, "file", file.FileType)
         Dim item As ListViewItem = LvwFiles.Items.Add("F" & index, file.Filename, sIcon)
         Dim dateSubItem As ListViewItem.ListViewSubItem = item.SubItems.Add(file.FileDateTime.ToString())

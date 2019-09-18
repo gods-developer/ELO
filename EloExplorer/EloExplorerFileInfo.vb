@@ -1,4 +1,4 @@
-﻿Public Class OrgManFileInfo
+﻿Public Class EloExplorerFileInfo
     Public FilePath As String
     Public Filename As String
     Public FileLen As Long
