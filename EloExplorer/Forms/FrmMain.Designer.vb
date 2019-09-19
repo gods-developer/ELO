@@ -25,35 +25,15 @@ Partial Class FrmMain
         Me.components = New System.ComponentModel.Container()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(FrmMain))
         Me.ContextMenuExplorer = New System.Windows.Forms.ContextMenuStrip(Me.components)
-        Me.MenuNewFolder = New System.Windows.Forms.ToolStripMenuItem()
-        Me.MenuNewDepartment = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ToolStripSeparator1 = New System.Windows.Forms.ToolStripSeparator()
         Me.MenuCut = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuCopy = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuPaste = New System.Windows.Forms.ToolStripMenuItem()
-        Me.MenuIntern = New System.Windows.Forms.ToolStripMenuItem()
-        Me.MenuInternCut = New System.Windows.Forms.ToolStripMenuItem()
-        Me.MenuInternCopy = New System.Windows.Forms.ToolStripMenuItem()
-        Me.MenuInternPaste = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuRename = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuDelete = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ToolStripSeparator2 = New System.Windows.Forms.ToolStripSeparator()
-        Me.MenuFolderSort = New System.Windows.Forms.ToolStripMenuItem()
-        Me.MenuComboFolderSortBy = New System.Windows.Forms.ToolStripComboBox()
-        Me.MenuComboFolderSortWay = New System.Windows.Forms.ToolStripComboBox()
-        Me.ToolStripSeparator3 = New System.Windows.Forms.ToolStripSeparator()
-        Me.MenuMoveUp = New System.Windows.Forms.ToolStripMenuItem()
-        Me.MenuMoveDown = New System.Windows.Forms.ToolStripMenuItem()
-        Me.MenuFilesSort = New System.Windows.Forms.ToolStripMenuItem()
-        Me.MenuComboFileSortBy = New System.Windows.Forms.ToolStripComboBox()
-        Me.MenuComboFileSortWay = New System.Windows.Forms.ToolStripComboBox()
-        Me.MenuSecurity = New System.Windows.Forms.ToolStripMenuItem()
-        Me.MenuUserSettings = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSeparator6 = New System.Windows.Forms.ToolStripSeparator()
         Me.MenuRefresh = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuOpenInExplorer = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuWinProperties = New System.Windows.Forms.ToolStripMenuItem()
-        Me.MenuProperties = New System.Windows.Forms.ToolStripMenuItem()
         Me.ImageListExplorer = New System.Windows.Forms.ImageList(Me.components)
         Me.MainSplitContainer = New System.Windows.Forms.SplitContainer()
         Me.TvwExplorer = New System.Windows.Forms.TreeView()
@@ -63,24 +43,13 @@ Partial Class FrmMain
         Me.ColumnHeaderDate = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.ColumnHeaderType = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.ColumnHeaderSize = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
-        Me.ColumnHeaderReminder = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.ContextMenuFiles = New System.Windows.Forms.ContextMenuStrip(Me.components)
         Me.MenuOpenFile = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuCutFile = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuCopyFile = New System.Windows.Forms.ToolStripMenuItem()
-        Me.MenuPasteFile = New System.Windows.Forms.ToolStripMenuItem()
-        Me.MenuPasteFileSelect = New System.Windows.Forms.ToolStripMenuItem()
-        Me.MenuPasteScan = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuDeleteFile = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuRenameFile = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSeparator4 = New System.Windows.Forms.ToolStripSeparator()
-        Me.MenuReminderFile = New System.Windows.Forms.ToolStripMenuItem()
-        Me.MenuDoneReminderFile = New System.Windows.Forms.ToolStripMenuItem()
-        Me.MenuDeleteReminderFile = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ToolStripSeparator5 = New System.Windows.Forms.ToolStripSeparator()
-        Me.MenuSortFile = New System.Windows.Forms.ToolStripMenuItem()
-        Me.MenuSortMoveUpFile = New System.Windows.Forms.ToolStripMenuItem()
-        Me.MenuSortMoveDownFile = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuShowFilePreviewer = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSeparator7 = New System.Windows.Forms.ToolStripSeparator()
         Me.MenuRefreshFiles = New System.Windows.Forms.ToolStripMenuItem()
@@ -89,7 +58,11 @@ Partial Class FrmMain
         Me.MainStatusStrip = New System.Windows.Forms.StatusStrip()
         Me.StatusLabelInfo = New System.Windows.Forms.ToolStripStatusLabel()
         Me.FilesRefreshTimer = New System.Windows.Forms.Timer(Me.components)
-        Me.TimerLoadSecurity = New System.Windows.Forms.Timer(Me.components)
+        Me.MenuOnlyIndex = New System.Windows.Forms.ToolStripMenuItem()
+        Me.MenuEloData = New System.Windows.Forms.ToolStripMenuItem()
+        Me.FilePreviewHandlerHost = New Win.Common.Tools.PreviewHandlerHost()
+        Me.MenuFileEloIndex = New System.Windows.Forms.ToolStripMenuItem()
+        Me.MenuEloIndex = New System.Windows.Forms.ToolStripMenuItem()
         Me.ContextMenuExplorer.SuspendLayout()
         CType(Me.MainSplitContainer, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.MainSplitContainer.Panel1.SuspendLayout()
@@ -97,6 +70,7 @@ Partial Class FrmMain
         Me.MainSplitContainer.SuspendLayout()
         CType(Me.FilesSplitContainer, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.FilesSplitContainer.Panel1.SuspendLayout()
+        Me.FilesSplitContainer.Panel2.SuspendLayout()
         Me.FilesSplitContainer.SuspendLayout()
         Me.ContextMenuFiles.SuspendLayout()
         Me.MainStatusStrip.SuspendLayout()
@@ -105,191 +79,62 @@ Partial Class FrmMain
         'ContextMenuExplorer
         '
         Me.ContextMenuExplorer.Font = New System.Drawing.Font("Calibri", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.ContextMenuExplorer.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.MenuNewFolder, Me.MenuNewDepartment, Me.ToolStripSeparator1, Me.MenuCut, Me.MenuCopy, Me.MenuPaste, Me.MenuIntern, Me.MenuRename, Me.MenuDelete, Me.ToolStripSeparator2, Me.MenuFolderSort, Me.MenuFilesSort, Me.MenuSecurity, Me.MenuUserSettings, Me.ToolStripSeparator6, Me.MenuRefresh, Me.MenuOpenInExplorer, Me.MenuWinProperties, Me.MenuProperties})
+        Me.ContextMenuExplorer.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.MenuCut, Me.MenuCopy, Me.MenuPaste, Me.MenuRename, Me.MenuDelete, Me.ToolStripSeparator6, Me.MenuRefresh, Me.MenuOpenInExplorer, Me.MenuEloIndex, Me.MenuWinProperties})
         Me.ContextMenuExplorer.Name = "mnuContextExplorer"
-        Me.ContextMenuExplorer.Size = New System.Drawing.Size(206, 374)
-        '
-        'MenuNewFolder
-        '
-        Me.MenuNewFolder.Name = "MenuNewFolder"
-        Me.MenuNewFolder.Size = New System.Drawing.Size(205, 22)
-        Me.MenuNewFolder.Text = "Neuer Ordner..."
-        '
-        'MenuNewDepartment
-        '
-        Me.MenuNewDepartment.Name = "MenuNewDepartment"
-        Me.MenuNewDepartment.Size = New System.Drawing.Size(205, 22)
-        Me.MenuNewDepartment.Text = "Neue Abteilung..."
-        '
-        'ToolStripSeparator1
-        '
-        Me.ToolStripSeparator1.Name = "ToolStripSeparator1"
-        Me.ToolStripSeparator1.Size = New System.Drawing.Size(202, 6)
+        Me.ContextMenuExplorer.Size = New System.Drawing.Size(181, 230)
         '
         'MenuCut
         '
         Me.MenuCut.Name = "MenuCut"
-        Me.MenuCut.Size = New System.Drawing.Size(205, 22)
+        Me.MenuCut.Size = New System.Drawing.Size(180, 22)
         Me.MenuCut.Text = "Ausschneiden"
         '
         'MenuCopy
         '
         Me.MenuCopy.Name = "MenuCopy"
-        Me.MenuCopy.Size = New System.Drawing.Size(205, 22)
+        Me.MenuCopy.Size = New System.Drawing.Size(180, 22)
         Me.MenuCopy.Text = "Kopieren"
         '
         'MenuPaste
         '
         Me.MenuPaste.Name = "MenuPaste"
-        Me.MenuPaste.Size = New System.Drawing.Size(205, 22)
+        Me.MenuPaste.Size = New System.Drawing.Size(180, 22)
         Me.MenuPaste.Text = "Einfügen"
-        '
-        'MenuIntern
-        '
-        Me.MenuIntern.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.MenuInternCut, Me.MenuInternCopy, Me.MenuInternPaste})
-        Me.MenuIntern.Name = "MenuIntern"
-        Me.MenuIntern.Size = New System.Drawing.Size(205, 22)
-        Me.MenuIntern.Text = "Intern"
-        '
-        'MenuInternCut
-        '
-        Me.MenuInternCut.Name = "MenuInternCut"
-        Me.MenuInternCut.Size = New System.Drawing.Size(150, 22)
-        Me.MenuInternCut.Text = "Ausschneiden"
-        '
-        'MenuInternCopy
-        '
-        Me.MenuInternCopy.Name = "MenuInternCopy"
-        Me.MenuInternCopy.Size = New System.Drawing.Size(150, 22)
-        Me.MenuInternCopy.Text = "Kopieren"
-        '
-        'MenuInternPaste
-        '
-        Me.MenuInternPaste.Enabled = False
-        Me.MenuInternPaste.Name = "MenuInternPaste"
-        Me.MenuInternPaste.Size = New System.Drawing.Size(150, 22)
-        Me.MenuInternPaste.Text = "Einfügen"
         '
         'MenuRename
         '
         Me.MenuRename.Name = "MenuRename"
-        Me.MenuRename.Size = New System.Drawing.Size(205, 22)
+        Me.MenuRename.Size = New System.Drawing.Size(180, 22)
         Me.MenuRename.Text = "Umbenennen"
         '
         'MenuDelete
         '
         Me.MenuDelete.Name = "MenuDelete"
-        Me.MenuDelete.Size = New System.Drawing.Size(205, 22)
+        Me.MenuDelete.Size = New System.Drawing.Size(180, 22)
         Me.MenuDelete.Text = "Löschen"
-        '
-        'ToolStripSeparator2
-        '
-        Me.ToolStripSeparator2.Name = "ToolStripSeparator2"
-        Me.ToolStripSeparator2.Size = New System.Drawing.Size(202, 6)
-        '
-        'MenuFolderSort
-        '
-        Me.MenuFolderSort.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.MenuComboFolderSortBy, Me.MenuComboFolderSortWay, Me.ToolStripSeparator3, Me.MenuMoveUp, Me.MenuMoveDown})
-        Me.MenuFolderSort.Name = "MenuFolderSort"
-        Me.MenuFolderSort.Size = New System.Drawing.Size(205, 22)
-        Me.MenuFolderSort.Text = "Sortierung (Ordner)"
-        '
-        'MenuComboFolderSortBy
-        '
-        Me.MenuComboFolderSortBy.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.MenuComboFolderSortBy.DropDownWidth = 150
-        Me.MenuComboFolderSortBy.Font = New System.Drawing.Font("Calibri", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.MenuComboFolderSortBy.Items.AddRange(New Object() {"Benutzerdefiniert", "Name", "Datum/Uhrzeit", "Größe"})
-        Me.MenuComboFolderSortBy.Name = "MenuComboFolderSortBy"
-        Me.MenuComboFolderSortBy.Size = New System.Drawing.Size(150, 23)
-        '
-        'MenuComboFolderSortWay
-        '
-        Me.MenuComboFolderSortWay.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.MenuComboFolderSortWay.DropDownWidth = 150
-        Me.MenuComboFolderSortWay.Font = New System.Drawing.Font("Calibri", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.MenuComboFolderSortWay.Items.AddRange(New Object() {"Aufsteigend", "Absteigend"})
-        Me.MenuComboFolderSortWay.Name = "MenuComboFolderSortWay"
-        Me.MenuComboFolderSortWay.Size = New System.Drawing.Size(150, 23)
-        '
-        'ToolStripSeparator3
-        '
-        Me.ToolStripSeparator3.Name = "ToolStripSeparator3"
-        Me.ToolStripSeparator3.Size = New System.Drawing.Size(207, 6)
-        '
-        'MenuMoveUp
-        '
-        Me.MenuMoveUp.Name = "MenuMoveUp"
-        Me.MenuMoveUp.Size = New System.Drawing.Size(210, 22)
-        Me.MenuMoveUp.Text = "Nach oben"
-        '
-        'MenuMoveDown
-        '
-        Me.MenuMoveDown.Name = "MenuMoveDown"
-        Me.MenuMoveDown.Size = New System.Drawing.Size(210, 22)
-        Me.MenuMoveDown.Text = "Nach unten"
-        '
-        'MenuFilesSort
-        '
-        Me.MenuFilesSort.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.MenuComboFileSortBy, Me.MenuComboFileSortWay})
-        Me.MenuFilesSort.Name = "MenuFilesSort"
-        Me.MenuFilesSort.Size = New System.Drawing.Size(205, 22)
-        Me.MenuFilesSort.Text = "Sortierung (Dateien)"
-        '
-        'MenuComboFileSortBy
-        '
-        Me.MenuComboFileSortBy.Font = New System.Drawing.Font("Calibri", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.MenuComboFileSortBy.Items.AddRange(New Object() {"Name", "Datum", "Typ", "Größe", "Benutzerdefiniert"})
-        Me.MenuComboFileSortBy.Name = "MenuComboFileSortBy"
-        Me.MenuComboFileSortBy.Size = New System.Drawing.Size(150, 23)
-        '
-        'MenuComboFileSortWay
-        '
-        Me.MenuComboFileSortWay.Font = New System.Drawing.Font("Calibri", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.MenuComboFileSortWay.Items.AddRange(New Object() {"Aufsteigend", "Absteigend"})
-        Me.MenuComboFileSortWay.Name = "MenuComboFileSortWay"
-        Me.MenuComboFileSortWay.Size = New System.Drawing.Size(150, 23)
-        '
-        'MenuSecurity
-        '
-        Me.MenuSecurity.Name = "MenuSecurity"
-        Me.MenuSecurity.Size = New System.Drawing.Size(205, 22)
-        Me.MenuSecurity.Text = "Sicherheit"
-        '
-        'MenuUserSettings
-        '
-        Me.MenuUserSettings.Name = "MenuUserSettings"
-        Me.MenuUserSettings.Size = New System.Drawing.Size(205, 22)
-        Me.MenuUserSettings.Text = "Einstellungen"
         '
         'ToolStripSeparator6
         '
         Me.ToolStripSeparator6.Name = "ToolStripSeparator6"
-        Me.ToolStripSeparator6.Size = New System.Drawing.Size(202, 6)
+        Me.ToolStripSeparator6.Size = New System.Drawing.Size(177, 6)
         '
         'MenuRefresh
         '
         Me.MenuRefresh.Name = "MenuRefresh"
-        Me.MenuRefresh.Size = New System.Drawing.Size(205, 22)
+        Me.MenuRefresh.Size = New System.Drawing.Size(180, 22)
         Me.MenuRefresh.Text = "Aktualisieren"
         '
         'MenuOpenInExplorer
         '
         Me.MenuOpenInExplorer.Name = "MenuOpenInExplorer"
-        Me.MenuOpenInExplorer.Size = New System.Drawing.Size(205, 22)
+        Me.MenuOpenInExplorer.Size = New System.Drawing.Size(180, 22)
         Me.MenuOpenInExplorer.Text = "Öffnen in Explorer"
         '
         'MenuWinProperties
         '
         Me.MenuWinProperties.Name = "MenuWinProperties"
-        Me.MenuWinProperties.Size = New System.Drawing.Size(205, 22)
-        Me.MenuWinProperties.Text = "Windows Eigenschaften"
-        '
-        'MenuProperties
-        '
-        Me.MenuProperties.Name = "MenuProperties"
-        Me.MenuProperties.Size = New System.Drawing.Size(205, 22)
-        Me.MenuProperties.Text = "Eigenschaften"
+        Me.MenuWinProperties.Size = New System.Drawing.Size(180, 22)
+        Me.MenuWinProperties.Text = "Eigenschaften"
         '
         'ImageListExplorer
         '
@@ -350,6 +195,7 @@ Partial Class FrmMain
         '
         'FilesSplitContainer.Panel2
         '
+        Me.FilesSplitContainer.Panel2.Controls.Add(Me.FilePreviewHandlerHost)
         Me.FilesSplitContainer.Panel2.Font = New System.Drawing.Font("Calibri", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.FilesSplitContainer.Size = New System.Drawing.Size(762, 818)
         Me.FilesSplitContainer.SplitterDistance = 498
@@ -358,7 +204,7 @@ Partial Class FrmMain
         'LvwFiles
         '
         Me.LvwFiles.AllowDrop = True
-        Me.LvwFiles.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.ColumnHeaderName, Me.ColumnHeaderDate, Me.ColumnHeaderType, Me.ColumnHeaderSize, Me.ColumnHeaderReminder})
+        Me.LvwFiles.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.ColumnHeaderName, Me.ColumnHeaderDate, Me.ColumnHeaderType, Me.ColumnHeaderSize})
         Me.LvwFiles.ContextMenuStrip = Me.ContextMenuFiles
         Me.LvwFiles.Dock = System.Windows.Forms.DockStyle.Fill
         Me.LvwFiles.Font = New System.Drawing.Font("Calibri", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -396,136 +242,70 @@ Partial Class FrmMain
         Me.ColumnHeaderSize.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
         Me.ColumnHeaderSize.Width = 100
         '
-        'ColumnHeaderReminder
-        '
-        Me.ColumnHeaderReminder.Text = "Wiedervorlage"
-        Me.ColumnHeaderReminder.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
-        Me.ColumnHeaderReminder.Width = 120
-        '
         'ContextMenuFiles
         '
         Me.ContextMenuFiles.Font = New System.Drawing.Font("Calibri", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.ContextMenuFiles.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.MenuOpenFile, Me.MenuCutFile, Me.MenuCopyFile, Me.MenuPasteFile, Me.MenuPasteFileSelect, Me.MenuPasteScan, Me.MenuDeleteFile, Me.MenuRenameFile, Me.ToolStripSeparator4, Me.MenuReminderFile, Me.MenuDoneReminderFile, Me.MenuDeleteReminderFile, Me.ToolStripSeparator5, Me.MenuSortFile, Me.MenuShowFilePreviewer, Me.ToolStripSeparator7, Me.MenuRefreshFiles, Me.MenuPropertiesFile})
+        Me.ContextMenuFiles.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.MenuOpenFile, Me.MenuCutFile, Me.MenuCopyFile, Me.MenuDeleteFile, Me.MenuRenameFile, Me.ToolStripSeparator4, Me.MenuShowFilePreviewer, Me.ToolStripSeparator7, Me.MenuOnlyIndex, Me.MenuRefreshFiles, Me.MenuEloData, Me.MenuFileEloIndex, Me.MenuPropertiesFile})
         Me.ContextMenuFiles.Name = "ContextMenuFiles"
-        Me.ContextMenuFiles.Size = New System.Drawing.Size(202, 352)
+        Me.ContextMenuFiles.Size = New System.Drawing.Size(164, 258)
         '
         'MenuOpenFile
         '
         Me.MenuOpenFile.Font = New System.Drawing.Font("Calibri", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.MenuOpenFile.Name = "MenuOpenFile"
-        Me.MenuOpenFile.Size = New System.Drawing.Size(201, 22)
+        Me.MenuOpenFile.Size = New System.Drawing.Size(163, 22)
         Me.MenuOpenFile.Text = "Öffnen"
         '
         'MenuCutFile
         '
         Me.MenuCutFile.Name = "MenuCutFile"
-        Me.MenuCutFile.Size = New System.Drawing.Size(201, 22)
+        Me.MenuCutFile.Size = New System.Drawing.Size(163, 22)
         Me.MenuCutFile.Text = "Ausschneiden"
         '
         'MenuCopyFile
         '
         Me.MenuCopyFile.Name = "MenuCopyFile"
-        Me.MenuCopyFile.Size = New System.Drawing.Size(201, 22)
+        Me.MenuCopyFile.Size = New System.Drawing.Size(163, 22)
         Me.MenuCopyFile.Text = "Kopieren"
-        '
-        'MenuPasteFile
-        '
-        Me.MenuPasteFile.Name = "MenuPasteFile"
-        Me.MenuPasteFile.Size = New System.Drawing.Size(201, 22)
-        Me.MenuPasteFile.Text = "Einfügen"
-        '
-        'MenuPasteFileSelect
-        '
-        Me.MenuPasteFileSelect.Name = "MenuPasteFileSelect"
-        Me.MenuPasteFileSelect.Size = New System.Drawing.Size(201, 22)
-        Me.MenuPasteFileSelect.Text = "Einfügen von..."
-        '
-        'MenuPasteScan
-        '
-        Me.MenuPasteScan.Name = "MenuPasteScan"
-        Me.MenuPasteScan.Size = New System.Drawing.Size(201, 22)
-        Me.MenuPasteScan.Text = "Scan-Import..."
         '
         'MenuDeleteFile
         '
         Me.MenuDeleteFile.Name = "MenuDeleteFile"
-        Me.MenuDeleteFile.Size = New System.Drawing.Size(201, 22)
+        Me.MenuDeleteFile.Size = New System.Drawing.Size(163, 22)
         Me.MenuDeleteFile.Text = "Löschen"
         '
         'MenuRenameFile
         '
         Me.MenuRenameFile.Name = "MenuRenameFile"
-        Me.MenuRenameFile.Size = New System.Drawing.Size(201, 22)
+        Me.MenuRenameFile.Size = New System.Drawing.Size(163, 22)
         Me.MenuRenameFile.Text = "Umbenennen"
         '
         'ToolStripSeparator4
         '
         Me.ToolStripSeparator4.Name = "ToolStripSeparator4"
-        Me.ToolStripSeparator4.Size = New System.Drawing.Size(198, 6)
-        '
-        'MenuReminderFile
-        '
-        Me.MenuReminderFile.Name = "MenuReminderFile"
-        Me.MenuReminderFile.Size = New System.Drawing.Size(201, 22)
-        Me.MenuReminderFile.Text = "Auf Wiedervorlage..."
-        '
-        'MenuDoneReminderFile
-        '
-        Me.MenuDoneReminderFile.Name = "MenuDoneReminderFile"
-        Me.MenuDoneReminderFile.Size = New System.Drawing.Size(201, 22)
-        Me.MenuDoneReminderFile.Text = "Als Erledigt speichern"
-        '
-        'MenuDeleteReminderFile
-        '
-        Me.MenuDeleteReminderFile.Name = "MenuDeleteReminderFile"
-        Me.MenuDeleteReminderFile.Size = New System.Drawing.Size(201, 22)
-        Me.MenuDeleteReminderFile.Text = "Wiedervorlage löschen"
-        '
-        'ToolStripSeparator5
-        '
-        Me.ToolStripSeparator5.Name = "ToolStripSeparator5"
-        Me.ToolStripSeparator5.Size = New System.Drawing.Size(198, 6)
-        '
-        'MenuSortFile
-        '
-        Me.MenuSortFile.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.MenuSortMoveUpFile, Me.MenuSortMoveDownFile})
-        Me.MenuSortFile.Name = "MenuSortFile"
-        Me.MenuSortFile.Size = New System.Drawing.Size(201, 22)
-        Me.MenuSortFile.Text = "Sortierung"
-        '
-        'MenuSortMoveUpFile
-        '
-        Me.MenuSortMoveUpFile.Name = "MenuSortMoveUpFile"
-        Me.MenuSortMoveUpFile.Size = New System.Drawing.Size(136, 22)
-        Me.MenuSortMoveUpFile.Text = "Nach oben"
-        '
-        'MenuSortMoveDownFile
-        '
-        Me.MenuSortMoveDownFile.Name = "MenuSortMoveDownFile"
-        Me.MenuSortMoveDownFile.Size = New System.Drawing.Size(136, 22)
-        Me.MenuSortMoveDownFile.Text = "Nach unten"
+        Me.ToolStripSeparator4.Size = New System.Drawing.Size(160, 6)
         '
         'MenuShowFilePreviewer
         '
         Me.MenuShowFilePreviewer.Name = "MenuShowFilePreviewer"
-        Me.MenuShowFilePreviewer.Size = New System.Drawing.Size(201, 22)
+        Me.MenuShowFilePreviewer.Size = New System.Drawing.Size(163, 22)
         Me.MenuShowFilePreviewer.Text = "Vorschaufenster"
         '
         'ToolStripSeparator7
         '
         Me.ToolStripSeparator7.Name = "ToolStripSeparator7"
-        Me.ToolStripSeparator7.Size = New System.Drawing.Size(198, 6)
+        Me.ToolStripSeparator7.Size = New System.Drawing.Size(160, 6)
         '
         'MenuRefreshFiles
         '
         Me.MenuRefreshFiles.Name = "MenuRefreshFiles"
-        Me.MenuRefreshFiles.Size = New System.Drawing.Size(201, 22)
+        Me.MenuRefreshFiles.Size = New System.Drawing.Size(163, 22)
         Me.MenuRefreshFiles.Text = "Aktualisieren"
         '
         'MenuPropertiesFile
         '
         Me.MenuPropertiesFile.Name = "MenuPropertiesFile"
-        Me.MenuPropertiesFile.Size = New System.Drawing.Size(201, 22)
+        Me.MenuPropertiesFile.Size = New System.Drawing.Size(163, 22)
         Me.MenuPropertiesFile.Text = "Eigenschaften"
         '
         'ImageListFiles
@@ -555,10 +335,37 @@ Partial Class FrmMain
         '
         Me.FilesRefreshTimer.Interval = 2000
         '
-        'TimerLoadSecurity
+        'MenuOnlyIndex
         '
-        Me.TimerLoadSecurity.Enabled = True
-        Me.TimerLoadSecurity.Interval = 5000
+        Me.MenuOnlyIndex.Name = "MenuOnlyIndex"
+        Me.MenuOnlyIndex.Size = New System.Drawing.Size(163, 22)
+        Me.MenuOnlyIndex.Text = "Nur mit Index"
+        '
+        'MenuEloData
+        '
+        Me.MenuEloData.Name = "MenuEloData"
+        Me.MenuEloData.Size = New System.Drawing.Size(163, 22)
+        Me.MenuEloData.Text = "ELO Daten"
+        '
+        'FilePreviewHandlerHost
+        '
+        Me.FilePreviewHandlerHost.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.FilePreviewHandlerHost.Location = New System.Drawing.Point(0, 0)
+        Me.FilePreviewHandlerHost.Name = "FilePreviewHandlerHost"
+        Me.FilePreviewHandlerHost.Size = New System.Drawing.Size(260, 818)
+        Me.FilePreviewHandlerHost.TabIndex = 0
+        '
+        'MenuFileEloIndex
+        '
+        Me.MenuFileEloIndex.Name = "MenuFileEloIndex"
+        Me.MenuFileEloIndex.Size = New System.Drawing.Size(163, 22)
+        Me.MenuFileEloIndex.Text = "ELO Index"
+        '
+        'MenuEloIndex
+        '
+        Me.MenuEloIndex.Name = "MenuEloIndex"
+        Me.MenuEloIndex.Size = New System.Drawing.Size(180, 22)
+        Me.MenuEloIndex.Text = "ELO Index"
         '
         'FrmMain
         '
@@ -576,6 +383,7 @@ Partial Class FrmMain
         CType(Me.MainSplitContainer, System.ComponentModel.ISupportInitialize).EndInit()
         Me.MainSplitContainer.ResumeLayout(False)
         Me.FilesSplitContainer.Panel1.ResumeLayout(False)
+        Me.FilesSplitContainer.Panel2.ResumeLayout(False)
         CType(Me.FilesSplitContainer, System.ComponentModel.ISupportInitialize).EndInit()
         Me.FilesSplitContainer.ResumeLayout(False)
         Me.ContextMenuFiles.ResumeLayout(False)
@@ -587,16 +395,11 @@ Partial Class FrmMain
     End Sub
     Friend WithEvents ContextMenuExplorer As ContextMenuStrip
     Friend WithEvents ImageListExplorer As ImageList
-    Friend WithEvents MenuNewFolder As ToolStripMenuItem
-    Friend WithEvents ToolStripSeparator1 As ToolStripSeparator
     Friend WithEvents MenuCopy As ToolStripMenuItem
     Friend WithEvents MenuCut As ToolStripMenuItem
     Friend WithEvents MenuPaste As ToolStripMenuItem
     Friend WithEvents MenuRename As ToolStripMenuItem
     Friend WithEvents MenuDelete As ToolStripMenuItem
-    Friend WithEvents ToolStripSeparator2 As ToolStripSeparator
-    Friend WithEvents MenuProperties As ToolStripMenuItem
-    Friend WithEvents MenuNewDepartment As ToolStripMenuItem
     Friend WithEvents MenuRefresh As ToolStripMenuItem
     Friend WithEvents MainSplitContainer As SplitContainer
     Friend WithEvents TvwExplorer As TreeView
@@ -606,18 +409,11 @@ Partial Class FrmMain
     Friend WithEvents ColumnHeaderDate As ColumnHeader
     Friend WithEvents ColumnHeaderType As ColumnHeader
     Friend WithEvents ColumnHeaderSize As ColumnHeader
-    Friend WithEvents MenuFolderSort As ToolStripMenuItem
-    Friend WithEvents MenuComboFolderSortBy As ToolStripComboBox
-    Friend WithEvents MenuComboFolderSortWay As ToolStripComboBox
-    Friend WithEvents ToolStripSeparator3 As ToolStripSeparator
-    Friend WithEvents MenuMoveUp As ToolStripMenuItem
-    Friend WithEvents MenuMoveDown As ToolStripMenuItem
     Public WithEvents ImageListFiles As ImageList
     Friend WithEvents ContextMenuFiles As ContextMenuStrip
     Friend WithEvents MenuOpenFile As ToolStripMenuItem
     Friend WithEvents MenuCutFile As ToolStripMenuItem
     Friend WithEvents MenuCopyFile As ToolStripMenuItem
-    Friend WithEvents MenuPasteFile As ToolStripMenuItem
     Friend WithEvents MenuDeleteFile As ToolStripMenuItem
     Friend WithEvents MenuRenameFile As ToolStripMenuItem
     Friend WithEvents ToolStripSeparator4 As ToolStripSeparator
@@ -625,31 +421,15 @@ Partial Class FrmMain
     Friend WithEvents MenuRefreshFiles As ToolStripMenuItem
     Friend WithEvents FilesRefreshTimer As Timer
     Friend WithEvents MenuOpenInExplorer As ToolStripMenuItem
-    Friend WithEvents MenuIntern As ToolStripMenuItem
-    Friend WithEvents MenuInternCopy As ToolStripMenuItem
-    Friend WithEvents MenuInternCut As ToolStripMenuItem
-    Friend WithEvents MenuInternPaste As ToolStripMenuItem
     Friend WithEvents MenuWinProperties As ToolStripMenuItem
-    Friend WithEvents MenuFilesSort As ToolStripMenuItem
-    Friend WithEvents MenuComboFileSortBy As ToolStripComboBox
-    Friend WithEvents MenuComboFileSortWay As ToolStripComboBox
-    Friend WithEvents MenuSecurity As ToolStripMenuItem
-    Friend WithEvents MenuUserSettings As ToolStripMenuItem
-    Friend WithEvents MenuPasteScan As ToolStripMenuItem
-    Friend WithEvents MenuPasteFileSelect As ToolStripMenuItem
     Friend WithEvents StatusLabelInfo As ToolStripStatusLabel
-    Friend WithEvents MenuReminderFile As ToolStripMenuItem
-    Friend WithEvents MenuDoneReminderFile As ToolStripMenuItem
-    Friend WithEvents ToolStripSeparator5 As ToolStripSeparator
-    Friend WithEvents ColumnHeaderReminder As ColumnHeader
-    Friend WithEvents MenuDeleteReminderFile As ToolStripMenuItem
     Friend WithEvents ToolStripSeparator6 As ToolStripSeparator
-    Friend WithEvents MenuSortFile As ToolStripMenuItem
     Friend WithEvents ToolStripSeparator7 As ToolStripSeparator
-    Friend WithEvents MenuSortMoveUpFile As ToolStripMenuItem
-    Friend WithEvents MenuSortMoveDownFile As ToolStripMenuItem
-    Friend WithEvents TimerLoadSecurity As Timer
     Friend WithEvents FilesSplitContainer As SplitContainer
     Friend WithEvents MenuShowFilePreviewer As ToolStripMenuItem
     Friend WithEvents FilePreviewHandlerHost As Win.Common.Tools.PreviewHandlerHost
+    Friend WithEvents MenuOnlyIndex As ToolStripMenuItem
+    Friend WithEvents MenuEloData As ToolStripMenuItem
+    Friend WithEvents MenuFileEloIndex As ToolStripMenuItem
+    Friend WithEvents MenuEloIndex As ToolStripMenuItem
 End Class

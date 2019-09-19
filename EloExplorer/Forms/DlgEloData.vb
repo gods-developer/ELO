@@ -1,40 +1,17 @@
 ﻿Imports System.Windows.Forms
 Imports Win.Common.Tools
 
-Public Class DlgScanImport
-
-    Private sPath As String
-    Public Sub LoadFiles(sPath As String)
-        Me.Text += sPath
-        LvwFiles.Items.Clear()
-        Dim files As List(Of EloExplorerFileInfo) = GetFiles(sPath)
-        Dim cp As Integer, file As EloExplorerFileInfo
-        For cp = 0 To files.Count - 1
-            file = files.Item(cp)
-            AddFileItem(file, cp)
-        Next
-    End Sub
+Public Class DlgEloData
 
     Private Sub OK_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles OK_Button.Click
         Me.DialogResult = System.Windows.Forms.DialogResult.OK
         Me.Hide()
     End Sub
 
-    Private Sub Cancel_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Cancel_Button.Click
+    Private Sub Cancel_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
         Me.DialogResult = System.Windows.Forms.DialogResult.Cancel
         Me.Close()
     End Sub
-
-    Private Function AddFileItem(file As EloExplorerFileInfo, index As Integer) As ListViewItem
-        Dim sIcon As String = AddIconToImageList(file.FilePath, file.Filename, ImageListFiles, "file", file.FileType)
-        Dim item As ListViewItem = LvwFiles.Items.Add("F" & index, file.Filename, sIcon)
-        Dim dateSubItem As ListViewItem.ListViewSubItem = item.SubItems.Add(file.FileDateTime.ToString())
-        dateSubItem.Tag = dateSubItem.Text
-        item.SubItems.Add(file.FileType)
-        Dim lenSubItem As ListViewItem.ListViewSubItem = item.SubItems.Add(file.FileLen.ToString("#,##0"))
-        lenSubItem.Tag = lenSubItem.Text
-        AddFileItem = item
-    End Function
 
     Private Sub LvwFiles_KeyDown(sender As Object, e As KeyEventArgs) Handles LvwFiles.KeyDown
         If e.Control And e.KeyCode = Keys.A Then

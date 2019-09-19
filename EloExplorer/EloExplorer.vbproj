@@ -219,6 +219,12 @@
     <Compile Include="Database\TreeItemFile.vb">
       <DependentUpon>OrgManModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Forms\DlgEditor.Designer.vb">
+      <DependentUpon>DlgEditor.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\DlgEditor.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\DlgRootPath.Designer.vb">
       <DependentUpon>DlgRootPath.vb</DependentUpon>
     </Compile>
@@ -231,10 +237,10 @@
     <Compile Include="Forms\DlgFileImport.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\DlgScanImport.Designer.vb">
-      <DependentUpon>DlgScanImport.vb</DependentUpon>
+    <Compile Include="Forms\DlgEloData.Designer.vb">
+      <DependentUpon>DlgEloData.vb</DependentUpon>
     </Compile>
-    <Compile Include="Forms\DlgScanImport.vb">
+    <Compile Include="Forms\DlgEloData.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\DlgSettings.Designer.vb">
@@ -261,6 +267,7 @@
     <Compile Include="Database\OrgManDbConfiguration.vb" />
     <Compile Include="Database\OrgManDbConnectionInterceptor.vb" />
     <Compile Include="EloExplorerGlobals.vb" />
+    <Compile Include="Types\EloTreeItem.vb" />
     <Compile Include="Types\OrgManAccessRight.vb" />
     <Compile Include="Types\OrgManEnums.vb" />
     <Compile Include="EloExplorerFileInfo.vb" />
@@ -310,12 +317,6 @@
     <Compile Include="Database\Setting.vb">
       <DependentUpon>OrgManModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Forms\SplashScreen.Designer.vb">
-      <DependentUpon>SplashScreen.vb</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\SplashScreen.vb">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Database\TreeItem.vb">
       <DependentUpon>OrgManModel.tt</DependentUpon>
     </Compile>
@@ -327,14 +328,17 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Forms\DlgEditor.resx">
+      <DependentUpon>DlgEditor.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\DlgRootPath.resx">
       <DependentUpon>DlgRootPath.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\DlgFileImport.resx">
       <DependentUpon>DlgFileImport.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\DlgScanImport.resx">
-      <DependentUpon>DlgScanImport.vb</DependentUpon>
+    <EmbeddedResource Include="Forms\DlgEloData.resx">
+      <DependentUpon>DlgEloData.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\DlgSettings.resx">
       <DependentUpon>DlgSettings.vb</DependentUpon>
@@ -354,9 +358,6 @@
       <LastGenOutput>Resources.Designer.vb</LastGenOutput>
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\SplashScreen.resx">
-      <DependentUpon>SplashScreen.vb</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

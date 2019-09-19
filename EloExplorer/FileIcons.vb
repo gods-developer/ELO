@@ -1,4 +1,5 @@
 ﻿Imports System.IO
+Imports Win.Common.Tools
 
 Module FileIcons
     Private exeCounter As Double
@@ -180,25 +181,44 @@ ErrorHandler:
         End If
     End Sub
 
-    Public Function GetFiles(folder As String) As List(Of EloExplorerFileInfo)
+    Public Function GetFiles(folder As String, onlyIndex As Boolean) As List(Of EloExplorerFileInfo)
         Dim foundFiles As New List(Of EloExplorerFileInfo)
         Dim foundFile As String
         foundFile = Dir(folder, vbNormal + vbHidden + vbSystem) ' Ersten Eintrag abrufen.
         Do While foundFile <> ""    ' Schleife beginnen.
-            Dim file As EloExplorerFileInfo = GetFileInfo(folder, foundFile)
-            foundFiles.Add(file)
-            foundFile = Dir()   ' Nächsten Eintrag abrufen.
+            If Not foundFile.ToUpper().EndsWith(".ESW") Then
+                Dim realName = GetFileEswValue(folder & foundFile, "SHORTDESC")
+                If String.IsNullOrEmpty(realName) Then
+                    If Not onlyIndex Then
+                        realName = "?? " + foundFile
+                    End If
+                Else
+                    realName = realName & GetFileEswValue(folder & foundFile, "DOCEXT").ToLower()
+                End If
+                If Not String.IsNullOrEmpty(realName) Then
+                    Dim file As EloExplorerFileInfo = GetFileInfo(folder, foundFile, realName)
+                    foundFiles.Add(file)
+                End If
+            End If
+                foundFile = Dir()   ' Nächsten Eintrag abrufen.
             Application.DoEvents()
         Loop
         GetFiles = foundFiles
     End Function
 
-    Public Function GetFileInfo(folder As String, filename As String) As EloExplorerFileInfo
+    Public Function GetFileEswValue(item As String, key As String) As String
+        Dim fname = item.Substring(0, item.LastIndexOf("."))
+        GetFileEswValue = IniFileHelper.IniReadValue(fname & ".ESW", "GENERAL", key)
+    End Function
+
+    Public Function GetFileInfo(folder As String, filename As String, realName As String) As EloExplorerFileInfo
+        Dim fi = New FileInfo(folder & filename)
         Dim file As New EloExplorerFileInfo With {
             .FilePath = folder,
-            .Filename = filename,
-            .FileLen = FileLen(folder & filename),
-            .FileDateTime = FileDateTime(folder & filename),
+            .Filename = realName,
+            .Physicalname = filename,
+            .FileLen = fi.Length,'FileLen(folder & filename),
+            .FileDateTime = fi.LastWriteTime,'FileDateTime(folder & filename),
             .FileType = GetFileTypeName(filename)
         }
         GetFileInfo = file

@@ -45,7 +45,15 @@ Public Class FrmMain
     Private Shared Function ShellExecuteEx(ByRef lpExecInfo As SHELLEXECUTEINFO) As Boolean
     End Function
 
+    Private initDir As String
+
     Private Sub FrmMain_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        If String.IsNullOrEmpty(Command()) Or Dir(Command(), FileAttribute.Directory) = "" Then
+            MsgBox("Der ELO Explorer muss mit einem gültigen Pfad als Parameter gestartet werden!", MsgBoxStyle.Exclamation, "Fehler beim Starten")
+            End
+        Else
+            initDir = Command()
+        End If
         'Dim args = New ApplicationHelper().GetStartUpParameters()
         'For Each a In args
         '    'MsgBox(a)
@@ -53,11 +61,6 @@ Public Class FrmMain
         '        OrgManGlobals.AppEnvironment = a.Substring(a.IndexOf("=") + 1)
         '    End If
         'Next
-        Dim s As New SplashScreen()
-        s.LabelInfo.Text = "OrgMan " + Application.ProductVersion + " [" + EloExplorerGlobals.AppEnvironment + "] wird geladen. Einen Moment noch..."
-        s.Show(Me)
-        s.Refresh()
-        Thread.Sleep(100)
         'dbc = New MsSqlConnector
         'Try
         '    If Not dbc.HasAccess() Then
@@ -82,12 +85,10 @@ Public Class FrmMain
         End If
         'InitChromeControl()
         'FindChromeExe()
-        Me.MenuSecurity.Enabled = IsAdmin
-        Me.MenuNewDepartment.Enabled = IsAdmin
         'FilesRefreshTimer.Enabled = My.Settings.ListAutoRefresh
         'Me.TemplateFolderName = dbc.GetDbSetting("TemplateFolderName", "Vorlagen")
         'Me.DefaultRootPath = dbc.GetDbSetting("DefaultRootPath", "C:\OrgMan")
-        Me.Text += " " + Application.ProductVersion + " [" + EloExplorerGlobals.AppEnvironment + "]" + If(IsAdmin, " (" + dbc.Path + ")", "")
+        Me.Text += " " + Application.ProductVersion + " [" + initDir + "]" + If(IsAdmin, " (" + dbc.Path + ")", "")
         Me.WindowState = GetSetting(Application.ProductName, "Window", "LastWindowState", FormWindowState.Normal)
         Me.Top = GetSetting(Application.ProductName, "Window", "LastWindowTop", Me.Top)
         Me.Left = GetSetting(Application.ProductName, "Window", "LastWindowLeft", Me.Left)
@@ -100,12 +101,12 @@ Public Class FrmMain
         Else
             HideFilePreviewer()
         End If
+        MenuOnlyIndex.Checked = Boolean.Parse(GetSetting(Application.ProductName, "Window", "DisplayOnlyIndex", "False"))
         Me.LvwFiles.Columns(0).Width = GetSetting(Application.ProductName, "Window", "LastColumn0With", Me.LvwFiles.Columns(0).Width)
         Me.LvwFiles.Columns(1).Width = GetSetting(Application.ProductName, "Window", "LastColumn1With", Me.LvwFiles.Columns(1).Width)
         Me.LvwFiles.Columns(2).Width = GetSetting(Application.ProductName, "Window", "LastColumn2With", Me.LvwFiles.Columns(2).Width)
         Me.LvwFiles.Columns(3).Width = GetSetting(Application.ProductName, "Window", "LastColumn3With", Me.LvwFiles.Columns(3).Width)
         LoadTree()
-        s.Close()
     End Sub
 
     Private Sub HideFilePreviewer()
@@ -118,17 +119,44 @@ Public Class FrmMain
         Me.FilesSplitContainer.Panel2.Show()
     End Sub
 
+    Private Function GetEswValue(item As String, key As String) As String
+        'Dim fname = item.Substring(0, item.LastIndexOf("."))
+        GetEswValue = IniFileHelper.IniReadValue(item & ".ESW", "GENERAL", key, "???")
+    End Function
+
     Private Sub LoadTree()
         ClearFilePreview()
         LvwFiles.Items.Clear()
         TvwExplorer.Nodes.Clear()
+        Dim guid = GetEswValue(initDir, "GUID")
+        Dim rootNode = TvwExplorer.Nodes.Add(guid, GetEswValue(initDir, "SHORTDESC"), "DocumentRepository.ico", "DocumentRepository.ico")
+        rootNode.Tag = New EloTreeItem(guid, initDir, GetEswValue(initDir, "ABLDATE"))
+        LoadSubDirs(initDir, rootNode)
+
         'Dim rootNodes As List(Of OrgManTreeItem) = dbc.GetRootTreeItems()
         'rootNodes = SortNodesByConfig(rootNodes, Convert.ToInt32(dbc.GetDbSetting("RootChildrenSortBy", "0")), Convert.ToInt32(dbc.GetDbSetting("RootChildrenSortWay", "0")))
         'For Each rootNode In rootNodes
         '    AddTreeNode(Nothing, rootNode, rootNode.NodeText, True)
         'Next
-        TvwExplorer.SelectedNode = Nothing
+        TvwExplorer.SelectedNode = rootNode
+        rootNode.Expand()
+        TreeNodeClick(rootNode)
     End Sub
+
+    Private Sub LoadSubDirs(baseDir As String, parentNode As TreeNode)
+        Dim SourceDir As DirectoryInfo = New DirectoryInfo(baseDir)
+        If SourceDir.Exists Then
+            Dim SubDir As DirectoryInfo
+            For Each SubDir In SourceDir.GetDirectories()
+                'Console.WriteLine(SubDir.Name)
+                Dim guid = GetEswValue(SubDir.FullName, "GUID")
+                Dim newNode = parentNode.Nodes.Add(guid, GetEswValue(SubDir.FullName, "SHORTDESC"), "Folder.ico", "Folder.ico")
+                newNode.Tag = New EloTreeItem(guid, SubDir.Name, GetEswValue(SubDir.FullName, "ABLDATE"))
+                newNode.Nodes.Add("..")
+            Next
+        End If
+    End Sub
+
 
     Private Function AddTreeNode(parentNode As TreeNode, newItem As OrgManTreeItem, caption As String, noSelect As Boolean) As TreeNode
         Dim node As TreeNode, imageName As String
@@ -178,12 +206,17 @@ Public Class FrmMain
         GetIdFromTag = treeItem.Id
     End Function
 
+    Private Function GetPhysicalNameFromTag(tag As Object) As String
+        Dim treeItem = DirectCast(tag, EloTreeItem)
+        GetPhysicalNameFromTag = treeItem.PhysicalName
+    End Function
+
     Private Function GetFileIdFromTag(tag As Object) As Integer
         Dim fileItem = DirectCast(tag, OrgManTreeItemFile)
         GetFileIdFromTag = fileItem?.Id
     End Function
 
-    Private Sub MenuNewFolder_Click(sender As Object, e As EventArgs) Handles MenuNewFolder.Click
+    Private Sub MenuNewFolder_Click(sender As Object, e As EventArgs)
         If TvwExplorer.SelectedNode Is Nothing Then
             Exit Sub
         End If
@@ -283,7 +316,7 @@ mRetry:
         Dim sourcePath As String = GetFullPathOfNode(copyNode)
         Dim importPath As String = GetFullPathOfNode(newNode)
         Dim treeItem = DirectCast(newNode.Tag, OrgManTreeItem)
-        Dim files As List(Of EloExplorerFileInfo) = GetFiles(sourcePath)
+        Dim files As List(Of EloExplorerFileInfo) = GetFiles(sourcePath, MenuOnlyIndex.Checked)
         Dim cp As Integer, file As EloExplorerFileInfo
         For cp = 0 To files.Count - 1
             file = files.Item(cp)
@@ -318,7 +351,7 @@ mRetry:
         AddNewTreeItem = newNode
     End Function
 
-    Private Sub MenuNewDepartment_Click(sender As Object, e As EventArgs) Handles MenuNewDepartment.Click
+    Private Sub MenuNewDepartment_Click(sender As Object, e As EventArgs)
         Dim newText As String, newRootPath As String, rootNode As OrgManTreeItem, newNode As OrgManTreeItem
         newText = ""
 mRetry:
@@ -495,7 +528,7 @@ mRetry:
 
     Private Sub DeleteFiles(node As TreeNode)
         Dim fullPath As String = GetFullPathOfNode(node)
-        Dim files As List(Of EloExplorerFileInfo) = GetFiles(fullPath)
+        Dim files As List(Of EloExplorerFileInfo) = GetFiles(fullPath, MenuOnlyIndex.Checked)
         Dim cp As Integer, file As EloExplorerFileInfo
         Dim treeItemId As Integer = GetIdFromTag(node.Tag)
         For cp = 0 To files.Count - 1
@@ -537,7 +570,7 @@ mRetry:
         End If
     End Sub
 
-    Private Sub MenuProperties_Click(sender As Object, e As EventArgs) Handles MenuProperties.Click
+    Private Sub MenuProperties_Click(sender As Object, e As EventArgs)
         If TvwExplorer.SelectedNode Is Nothing Then
             Exit Sub
         End If
@@ -611,25 +644,17 @@ mRetry:
     End Sub
 
     Private Sub SetTreeContextMenu(enabled As Boolean)
-        MenuNewFolder.Enabled = enabled
-        MenuProperties.Enabled = enabled
         MenuWinProperties.Enabled = enabled
-        MenuFolderSort.Enabled = enabled
-        MenuFilesSort.Enabled = enabled
-        MenuMoveUp.Enabled = enabled
-        MenuMoveDown.Enabled = enabled
         MenuOpenInExplorer.Enabled = enabled
         MenuDelete.Enabled = enabled
         MenuRename.Enabled = enabled
-        MenuIntern.Enabled = enabled
         MenuCopy.Enabled = enabled
         MenuCut.Enabled = enabled
         MenuPaste.Enabled = enabled
-        MenuSecurity.Enabled = enabled
     End Sub
 
     Private Sub TvwExplorer_NodeMouseClick(sender As Object, e As TreeNodeMouseClickEventArgs) Handles TvwExplorer.NodeMouseClick
-        If e.Node?.Name = TvwExplorer.SelectedNode?.Name And MenuComboFolderSortBy.SelectedIndex <> -1 Then Exit Sub
+        If e.Node?.Name = TvwExplorer.SelectedNode?.Name Then Exit Sub
         TreeNodeClick(e.Node)
     End Sub
     Private Sub TreeNodeClick(clickNode As TreeNode)
@@ -638,35 +663,8 @@ mRetry:
             Exit Sub
         End If
         TvwExplorer.ContextMenuStrip = ContextMenuExplorer
-        Dim node As OrgManTreeItem = DirectCast(TvwExplorer.SelectedNode.Tag, OrgManTreeItem)
+        Dim node As EloTreeItem = DirectCast(TvwExplorer.SelectedNode.Tag, EloTreeItem)
         SetTreeContextMenu(True)
-        MenuComboFolderSortBy.SelectedIndex = Convert.ToInt32(node.ChildrenSortBy)
-        MenuComboFolderSortWay.SelectedIndex = Convert.ToInt32(node.ChildrenSortWay)
-        MenuComboFileSortBy.SelectedIndex = Convert.ToInt32(node.FilesSortBy)
-        MenuComboFileSortWay.SelectedIndex = Convert.ToInt32(node.FilesSortWay)
-        If IsRootLevel(TvwExplorer.SelectedNode) Then
-            'is root node (department)
-            Dim rootChildrenSortBy = Convert.ToInt32(dbc.GetDbSetting("RootChildrenSortBy", "0"))
-            MenuMoveUp.Enabled = (rootChildrenSortBy = 0)
-            MenuMoveDown.Enabled = (rootChildrenSortBy = 0)
-            MenuSecurity.Enabled = IsAdmin
-            MenuFolderSort.Enabled = IsAdmin
-            MenuFilesSort.Enabled = IsAdmin
-            MenuCut.Enabled = IsAdmin
-            MenuDelete.Enabled = IsAdmin
-            MenuRename.Enabled = IsAdmin
-        Else
-            Dim parentNode As OrgManTreeItem = DirectCast(TvwExplorer.SelectedNode.Parent.Tag, OrgManTreeItem)
-            MenuMoveUp.Enabled = (parentNode.ChildrenSortBy = OrgManEnums.FoldersSortBy.UserDefined)
-            MenuMoveDown.Enabled = (parentNode.ChildrenSortBy = OrgManEnums.FoldersSortBy.UserDefined)
-            MenuSecurity.Enabled = False
-        End If
-        If TvwExplorer.SelectedNode.Text = Me.TemplateFolderName Then
-            MenuCut.Enabled = False
-            MenuDelete.Enabled = False
-            MenuRename.Enabled = False
-        End If
-        MenuNewFolder.Enabled = True
         MenuOpenInExplorer.Text = "Öffnen in Explorer"
         LoadFiles()
     End Sub
@@ -678,91 +676,51 @@ mRetry:
     End Sub
 
     Private Sub LoadFiles()
-        Dim timerEnabled = FilesRefreshTimer.Enabled
-        If timerEnabled Then
-            FilesRefreshTimer.Enabled = False
-            FilesRefreshTimer.Stop()
-        End If
-        Do While FilesRefreshTimerIsRunning
-            Thread.Sleep(200)
-        Loop
-        'chrome.Visible = False
-        LvwFiles.Visible = True
+        Me.Cursor = Cursors.AppStarting
+        StatusLabelInfo.Text = "Dateien werden aufgelistet..."
+        Me.Refresh()
         ClearFilePreview()
         LvwFiles.Items.Clear()
         Dim fullPath As String = GetFullPathOfNode(TvwExplorer.SelectedNode)
-        If fullPath Like "http*" Then
-            Exit Sub
-        End If
-        Dim files As List(Of EloExplorerFileInfo) = GetFiles(fullPath)
-        Dim treeItem = DirectCast(TvwExplorer.SelectedNode.Tag, OrgManTreeItem)
-        Dim cp As Integer, file As EloExplorerFileInfo
+        Dim files As List(Of EloExplorerFileInfo) = GetFiles(fullPath & "\", MenuOnlyIndex.Checked)
         For cp = 0 To files.Count - 1
-            file = files.Item(cp)
-            file.TreeItemFile = dbc.GetTreeItemFile(treeItem.Id, file.Filename)
-        Next
-        files = SortFilesByConfig(treeItem, files)
-        For cp = 0 To files.Count - 1
-            file = files.Item(cp)
-            AddFileItem(treeItem.Id, file, cp)
+            Dim file = files.Item(cp)
+            AddFileItem(file, cp)
         Next
         StatusLabelInfo.Text = files.Count & " Datei(en)"
-        If timerEnabled Then
-            FilesRefreshTimer.Enabled = True
-        End If
+        Me.Cursor = Cursors.Default
     End Sub
 
-    Private Function SortFilesByConfig(selectedNode As OrgManTreeItem, childNodes As List(Of EloExplorerFileInfo)) As List(Of EloExplorerFileInfo)
-        Select Case selectedNode.FilesSortBy
-            Case OrgManEnums.FilesSortBy.Type
-                SortFilesByConfig = IIf(selectedNode.FilesSortWay = OrgManEnums.SortWay.Ascending, childNodes.OrderBy(Function(x) x.FileType).ToList(), childNodes.OrderByDescending(Function(x) x.FileType).ToList())
-            Case OrgManEnums.FilesSortBy.DateTime
-                SortFilesByConfig = IIf(selectedNode.FilesSortWay = OrgManEnums.SortWay.Ascending, childNodes.OrderBy(Function(x) x.FileDateTime).ToList(), childNodes.OrderByDescending(Function(x) x.FileDateTime).ToList())
-            Case OrgManEnums.FilesSortBy.Size
-                SortFilesByConfig = IIf(selectedNode.FilesSortWay = OrgManEnums.SortWay.Ascending, childNodes.OrderBy(Function(x) x.FileLen).ToList(), childNodes.OrderByDescending(Function(x) x.FileLen).ToList())
-            Case OrgManEnums.FilesSortBy.UserDefined
-                SortFilesByConfig = IIf(selectedNode.FilesSortWay = OrgManEnums.SortWay.Ascending, childNodes.OrderBy(Function(x) x.SortOrder).ToList(), childNodes.OrderByDescending(Function(x) x.SortOrder).ToList())
-            Case Else
-                SortFilesByConfig = IIf(selectedNode.FilesSortWay = OrgManEnums.SortWay.Ascending, childNodes.OrderBy(Function(x) x.Filename).ToList(), childNodes.OrderByDescending(Function(x) x.Filename).ToList())
-        End Select
-    End Function
-
-    Private Function AddFileItem(treeItemId As Integer, file As EloExplorerFileInfo, count As Integer) As ListViewItem
+    Private Function AddFileItem(file As EloExplorerFileInfo, count As Integer) As ListViewItem
         Dim item As ListViewItem
-        Dim reminderDate As Date = dbc.GetReminderDate(treeItemId, file.Filename)
         If ListViewItemExists(file.Filename) Then
             item = GetListViewItemByText(file.Filename)
-            item.Tag = file.TreeItemFile
-            item.SubItems(ColumnHeaderName.Index).Text = file.FileDateTime.ToString()
+            item.Tag = file
+            item.SubItems(ColumnHeaderDate.Index).Text = file.FileDateTime.ToString()
             item.SubItems(ColumnHeaderSize.Index).Text = file.FileLen.ToString("#,##0")
-            item.SubItems(ColumnHeaderReminder.Index).Text = IIf(reminderDate = Nothing, " ", reminderDate.ToString())
         Else
-            Dim sIcon As String = AddIconToImageList(file.FilePath, file.Filename, ImageListFiles, "file", file.FileType)
+            Dim sIcon As String = AddIconToImageList(file.FilePath, file.Physicalname, ImageListFiles, "file", file.FileType)
             item = LvwFiles.Items.Add("F" & count, file.Filename, sIcon)
-            item.Tag = file.TreeItemFile
+            item.Tag = file
             item.SubItems.Add(file.FileDateTime.ToString())
             item.SubItems.Add(file.FileType)
             item.SubItems.Add(file.FileLen.ToString("#,##0"))
-            item.SubItems.Add(IIf(reminderDate = Nothing, " ", reminderDate.ToString()))
         End If
         AddFileItem = item
     End Function
 
     Private Function GetFullPathOfNode(node As TreeNode, Optional withoutMe As Boolean = False) As String
-        Dim currentNode As TreeNode, currentNodeId As Integer, fullPath As String, rootPath As String
+        Dim currentNode As TreeNode, fullPath As String ', currentNodeId As Integer, rootPath As String
         fullPath = ""
-        rootPath = ""
+        'rootPath = ""
         currentNode = node
-        currentNodeId = GetIdFromTag(currentNode.Tag)
+        'currentNodeId = GetIdFromTag(currentNode.Tag)
         If Not withoutMe Then
-            rootPath = dbc.GetRootPath(currentNodeId)
+            fullPath = GetPhysicalNameFromTag(currentNode.Tag)
         End If
-        fullPath = IIf(rootPath = "", currentNode.Text, rootPath) + "\" + fullPath
-        While (currentNode.Parent IsNot Nothing And rootPath = "")
+        While (currentNode.Parent IsNot Nothing)
             currentNode = currentNode.Parent
-            currentNodeId = GetIdFromTag(currentNode.Tag)
-            rootPath = dbc.GetRootPath(currentNodeId)
-            fullPath = IIf(rootPath = "", currentNode.Text, rootPath) + "\" + fullPath
+            fullPath = GetPhysicalNameFromTag(currentNode.Tag) + "\" + fullPath
         End While
         GetFullPathOfNode = fullPath
     End Function
@@ -820,8 +778,9 @@ mRetry:
         If LvwFiles.SelectedItems.Count = 0 Or TvwExplorer.SelectedNode Is Nothing Then
             Exit Sub
         End If
+        Dim fileItem = DirectCast(LvwFiles.SelectedItems(0).Tag, EloExplorerFileInfo)
         Dim fullPath As String = GetFullPathOfNode(TvwExplorer.SelectedNode)
-        System.Diagnostics.Process.Start(fullPath + LvwFiles.SelectedItems(0).Text)
+        Process.Start(fullPath & "\" & fileItem.Physicalname)
     End Sub
 
     Private Sub TvwExplorer_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TvwExplorer.KeyPress
@@ -957,10 +916,7 @@ mRetry:
             Exit Function
         End Try
         If Not noAddToList Then
-            Dim fileInfo = GetFileInfo(sPath, newFileName)
-            fileInfo.TreeItemFile = treeItemFile
-            Dim newItem As ListViewItem = AddFileItem(treeItem.Id, fileInfo, LvwFiles.Items.Count + 1)
-            newItem.Selected = True
+            'Dim fileInfo = GetFileInfo(sPath, newFileName)
         End If
     End Function
 
@@ -1101,15 +1057,14 @@ mRetry:
             If clickNode Is Nothing Then
                 TvwExplorer.SelectedNode = Nothing
                 SetTreeContextMenu(False)
-                MenuComboFolderSortBy.SelectedIndex = Convert.ToInt32(dbc.GetDbSetting("RootChildrenSortBy", "0"))
-                MenuComboFolderSortWay.SelectedIndex = Convert.ToInt32(dbc.GetDbSetting("RootChildrenSortWay", "0"))
             End If
         End If
     End Sub
 
     Private Sub MenuPropertiesFile_Click(sender As Object, e As EventArgs) Handles MenuPropertiesFile.Click
         Dim fullPath As String = GetFullPathOfNode(TvwExplorer.SelectedNode)
-        Dim fi As New IO.FileInfo(fullPath + LvwFiles.SelectedItems(0).Text)
+        Dim fileItem = DirectCast(LvwFiles.SelectedItems(0).Tag, EloExplorerFileInfo)
+        Dim fi As New IO.FileInfo(fullPath & "\" & fileItem.Physicalname)
         Dim info As New SHELLEXECUTEINFO()
         info.cbSize = Marshal.SizeOf(info)
         info.lpVerb = "properties"
@@ -1148,8 +1103,9 @@ mRetry:
         'FilesRefreshTimer.Enabled = False
         If Not Me.FilesSplitContainer.Panel2Collapsed Then
             If (Not TvwExplorer.SelectedNode Is Nothing And LvwFiles.SelectedItems.Count > 0) Then
+                Dim fileItem = DirectCast(LvwFiles.SelectedItems(0).Tag, EloExplorerFileInfo)
                 Dim fullPath As String = GetFullPathOfNode(TvwExplorer.SelectedNode)
-                FilePreviewHandlerHost.Open(fullPath + LvwFiles.SelectedItems(0).Text)
+                FilePreviewHandlerHost.Open(fullPath & "\" & fileItem.Physicalname)
             Else
                 FilePreviewHandlerHost.Open(String.Empty)
             End If
@@ -1187,7 +1143,7 @@ mRetry:
         End If
     End Sub
 
-    Private Sub MenuPasteFile_Click(sender As Object, e As EventArgs) Handles MenuPasteFile.Click
+    Private Sub MenuPasteFile_Click(sender As Object, e As EventArgs)
         Dim sPath As String = GetFullPathOfNode(TvwExplorer.SelectedNode)
         Dim treeItem = DirectCast(TvwExplorer.SelectedNode.Tag, OrgManTreeItem)
         Dim filelist As System.Collections.Specialized.StringCollection
@@ -1221,36 +1177,6 @@ mRetry:
     End Sub
 
     Private FilesRefreshTimerIsRunning As Boolean
-
-    Private Sub FilesRefreshTimer_Tick(sender As Object, e As EventArgs) Handles FilesRefreshTimer.Tick
-        On Error Resume Next
-        If TvwExplorer.SelectedNode Is Nothing Then
-            Exit Sub
-        End If
-        FilesRefreshTimerIsRunning = True
-        Dim sPath As String = GetFullPathOfNode(TvwExplorer.SelectedNode)
-        Dim treeItem = DirectCast(TvwExplorer.SelectedNode.Tag, OrgManTreeItem)
-        Dim i As Integer
-        For i = LvwFiles.Items.Count - 1 To 0 Step -1
-            If Not IO.File.Exists(sPath & LvwFiles.Items(i).Text) Then
-                LvwFiles.Items(i).Remove()
-            End If
-        Next
-        For Each file In Directory.GetFiles(sPath)
-            If Not file Is Nothing Then
-                Dim shortFile As String = Path.GetFileName(file)
-                If Not ListViewItemExists(shortFile) Then
-                    Dim treeItemFile = AddNewTreeItemFile(treeItem.Id, shortFile)
-                    If Not treeItemFile Is Nothing Then
-                        Dim fileInfo = GetFileInfo(sPath, shortFile)
-                        fileInfo.TreeItemFile = treeItemFile
-                        Dim newItem As ListViewItem = AddFileItem(treeItem.Id, fileInfo, LvwFiles.Items.Count + 1)
-                    End If
-                End If
-            End If
-        Next
-        FilesRefreshTimerIsRunning = False
-    End Sub
 
     Private Function ListViewItemExists(itemText As String) As Boolean
         ListViewItemExists = False
@@ -1286,25 +1212,23 @@ mRetry:
         Process.Start(sPath)
     End Sub
 
-    Private Sub MenuInternCopy_Click(sender As Object, e As EventArgs) Handles MenuInternCopy.Click
+    Private Sub MenuInternCopy_Click(sender As Object, e As EventArgs)
         If TvwExplorer.SelectedNode Is Nothing Then
             Exit Sub
         End If
         copyNodeKey = TvwExplorer.SelectedNode.Name
         copyMode = 0
-        MenuInternPaste.Enabled = True
     End Sub
 
-    Private Sub MenuInternCut_Click(sender As Object, e As EventArgs) Handles MenuInternCut.Click
+    Private Sub MenuInternCut_Click(sender As Object, e As EventArgs)
         If TvwExplorer.SelectedNode Is Nothing Then
             Exit Sub
         End If
         copyNodeKey = TvwExplorer.SelectedNode.Name
         copyMode = 1
-        MenuInternPaste.Enabled = True
     End Sub
 
-    Private Sub MenuInternPaste_Click(sender As Object, e As EventArgs) Handles MenuInternPaste.Click
+    Private Sub MenuInternPaste_Click(sender As Object, e As EventArgs)
         If TvwExplorer.SelectedNode Is Nothing Or copyNodeKey = "" Then
             Exit Sub
         End If
@@ -1319,7 +1243,6 @@ mRetry:
         End If
         Dim copyItem As OrgManTreeItem = DirectCast(copyNode.Tag, OrgManTreeItem)
         CopyNodes(copyItem, TvwExplorer.SelectedNode, copyMode, msgResult = MsgBoxResult.Yes)
-        MenuInternPaste.Enabled = (copyMode <> 1)
     End Sub
 
     Private Sub MenuWinProperties_Click(sender As Object, e As EventArgs) Handles MenuWinProperties.Click
@@ -1329,13 +1252,16 @@ mRetry:
         Dim fullPath As String = GetFullPathOfNode(TvwExplorer.SelectedNode)
         Dim fi As New IO.FileInfo(fullPath)
         Dim info As New SHELLEXECUTEINFO()
+        info.hwnd = Me.Handle
         info.cbSize = Marshal.SizeOf(info)
         info.lpVerb = "properties"
-        info.lpFile = fi.Name
-        info.lpDirectory = fi.DirectoryName
+        info.lpParameters = ""
+        'info.lpFile = fi.Name
+        info.lpFile = fi.FullName & "\"
+        info.lpDirectory = Nothing 'fi.FullName ' fi.DirectoryName
         info.nShow = SW_SHOW
         info.fMask = SEE_MASK_INVOKEIDLIST
-        ShellExecuteEx(info)
+        Dim success = ShellExecuteEx(info)
     End Sub
 
     Private Sub LvwFiles_ColumnClick(sender As Object, e As ColumnClickEventArgs) Handles LvwFiles.ColumnClick
@@ -1391,51 +1317,7 @@ mRetry:
         End If
     End Sub
 
-    Private Sub MenuComboFolderSortWay_SelectedIndexChanged(sender As Object, e As EventArgs) Handles MenuComboFolderSortWay.SelectedIndexChanged
-        If TvwExplorer.SelectedNode Is Nothing Then
-            If MenuComboFolderSortWay.SelectedIndex <> Convert.ToInt32(dbc.GetDbSetting("RootChildrenSortWay", "0")) Then
-                dbc.SaveDbSetting("RootChildrenSortWay", MenuComboFolderSortWay.SelectedIndex.ToString())
-                LoadTree()
-            End If
-        Else
-            Dim node As OrgManTreeItem = DirectCast(TvwExplorer.SelectedNode.Tag, OrgManTreeItem)
-            If node.ChildrenSortWay <> MenuComboFolderSortWay.SelectedIndex Then
-                node.ChildrenSortWay = MenuComboFolderSortWay.SelectedIndex
-                dbc.SaveTreeItem(node)
-                If TvwExplorer.SelectedNode.Nodes.Count > 0 Then
-                    TvwExplorer.SelectedNode.Nodes.Clear()
-                    LoadChildren(TvwExplorer.SelectedNode)
-                    TvwExplorer.SelectedNode.Expand()
-                End If
-            End If
-        End If
-    End Sub
-
-    Private Sub MenuComboFileSortBy_SelectedIndexChanged(sender As Object, e As EventArgs) Handles MenuComboFileSortBy.SelectedIndexChanged
-        If TvwExplorer.SelectedNode Is Nothing Then
-            Exit Sub
-        End If
-        Dim node As OrgManTreeItem = DirectCast(TvwExplorer.SelectedNode.Tag, OrgManTreeItem)
-        If node.FilesSortBy <> MenuComboFileSortBy.SelectedIndex Then
-            node.FilesSortBy = MenuComboFileSortBy.SelectedIndex
-            dbc.SaveTreeItem(node)
-            LoadFiles()
-        End If
-    End Sub
-
-    Private Sub MenuComboFileSortWay_SelectedIndexChanged(sender As Object, e As EventArgs) Handles MenuComboFileSortWay.SelectedIndexChanged
-        If TvwExplorer.SelectedNode Is Nothing Then
-            Exit Sub
-        End If
-        Dim node As OrgManTreeItem = DirectCast(TvwExplorer.SelectedNode.Tag, OrgManTreeItem)
-        If node.FilesSortWay <> MenuComboFileSortWay.SelectedIndex Then
-            node.FilesSortWay = MenuComboFileSortWay.SelectedIndex
-            dbc.SaveTreeItem(node)
-            LoadFiles()
-        End If
-    End Sub
-
-    Private Sub MenuMoveUp_Click(sender As Object, e As EventArgs) Handles MenuMoveUp.Click
+    Private Sub MenuMoveUp_Click(sender As Object, e As EventArgs)
         With TvwExplorer
             Dim hNode As TreeNode = .SelectedNode
             If Not (hNode Is Nothing) Then
@@ -1468,7 +1350,7 @@ mRetry:
         End With
     End Sub
 
-    Private Sub MenuMoveDown_Click(sender As Object, e As EventArgs) Handles MenuMoveDown.Click
+    Private Sub MenuMoveDown_Click(sender As Object, e As EventArgs)
         With TvwExplorer
             Dim hNode As TreeNode = .SelectedNode
             If Not (hNode Is Nothing) Then
@@ -1504,9 +1386,16 @@ mRetry:
 
     Private Sub TvwExplorer_BeforeExpand(sender As Object, e As TreeViewCancelEventArgs) Handles TvwExplorer.BeforeExpand
         'TvwExplorer.SelectedNode = e.Node
+        If e.Node.Nodes.Count = 1 Then
+            If e.Node.Nodes(0).Text = ".." Then
+                e.Node.Nodes.Clear()
+                Dim baseDir = GetFullPathOfNode(e.Node)
+                LoadSubDirs(baseDir, e.Node)
+            End If
+        End If
     End Sub
 
-    Private Sub MenuSecurity_Click(sender As Object, e As EventArgs) Handles MenuSecurity.Click
+    Private Sub MenuSecurity_Click(sender As Object, e As EventArgs)
         If TvwExplorer.SelectedNode Is Nothing Then
             Exit Sub
         End If
@@ -1523,7 +1412,7 @@ mRetry:
         End With
     End Sub
 
-    Private Sub MenuUserSettings_Click(sender As Object, e As EventArgs) Handles MenuUserSettings.Click
+    Private Sub MenuUserSettings_Click(sender As Object, e As EventArgs)
         With DlgSettings
             .TextScanFolder.Text = dbc.GetDbUserSetting("ScanImportFolder")
             Dim dlgResult As DialogResult = .ShowDialog(Me)
@@ -1534,58 +1423,7 @@ mRetry:
         End With
     End Sub
 
-    Private Sub MenuPasteScan_Click(sender As Object, e As EventArgs) Handles MenuPasteScan.Click
-        If dbc.GetDbUserSetting("ScanImportFolder") = "" Then
-            If MsgBox("Sie haben noch keinen Scan-Import-Ordner unter Einstellungen festgelegt. Wollen Sie das jetzt tun?", MsgBoxStyle.Question + MsgBoxStyle.YesNo, "Hinweis") = MsgBoxResult.No Then
-                Exit Sub
-            End If
-            MenuUserSettings_Click(sender, e)
-        End If
-        If dbc.GetDbUserSetting("ScanImportFolder") = "" Then
-            Exit Sub
-        End If
-        With DlgScanImport
-            Dim scanPath As String = dbc.GetDbUserSetting("ScanImportFolder")
-            If Not scanPath Like "*\" Then
-                scanPath += "\"
-            End If
-            .LoadFiles(scanPath)
-            Dim dlgResult As DialogResult = .ShowDialog(Me)
-            If dlgResult = DialogResult.OK Then
-                Dim sPath As String = GetFullPathOfNode(TvwExplorer.SelectedNode)
-                Dim treeItem = DirectCast(TvwExplorer.SelectedNode.Tag, OrgManTreeItem)
-                Dim itm As ListViewItem
-                For Each itm In .LvwFiles.Items
-                    If itm.Selected Then
-                        ImportFile(treeItem, sPath, scanPath & itm.Text, IIf(.CheckBoxDeleteAfterImport.Checked, DragDropEffects.Move, DragDropEffects.Copy), False)
-                    End If
-                Next
-                .Close()
-            End If
-        End With
-    End Sub
-
-    Private Sub MenuComboFolderSortBy_SelectedIndexChanged(sender As Object, e As EventArgs) Handles MenuComboFolderSortBy.SelectedIndexChanged
-        If TvwExplorer.SelectedNode Is Nothing Then
-            If MenuComboFolderSortBy.SelectedIndex <> Convert.ToInt32(dbc.GetDbSetting("RootChildrenSortBy", "0")) Then
-                dbc.SaveDbSetting("RootChildrenSortBy", MenuComboFolderSortBy.SelectedIndex.ToString())
-                LoadTree()
-            End If
-        Else
-            Dim node As OrgManTreeItem = DirectCast(TvwExplorer.SelectedNode.Tag, OrgManTreeItem)
-            If node.ChildrenSortBy <> MenuComboFolderSortBy.SelectedIndex Then
-                node.ChildrenSortBy = MenuComboFolderSortBy.SelectedIndex
-                dbc.SaveTreeItem(node)
-                If TvwExplorer.SelectedNode.Nodes.Count > 0 Then
-                    TvwExplorer.SelectedNode.Nodes.Clear()
-                    LoadChildren(TvwExplorer.SelectedNode)
-                    TvwExplorer.SelectedNode.Expand()
-                End If
-            End If
-        End If
-    End Sub
-
-    Private Sub MenuPasteFileSelect_Click(sender As Object, e As EventArgs) Handles MenuPasteFileSelect.Click
+    Private Sub MenuPasteFileSelect_Click(sender As Object, e As EventArgs)
         Using ofd As New OpenFileDialog
             ofd.Title = "Datei(en) auswählen zum Einfügen"
             ofd.Multiselect = True
@@ -1641,7 +1479,7 @@ mRetry:
         End If
     End Sub
 
-    Private Sub MenuSortMoveUpFile_Click(sender As Object, e As EventArgs) Handles MenuSortMoveUpFile.Click
+    Private Sub MenuSortMoveUpFile_Click(sender As Object, e As EventArgs)
         With LvwFiles
             If Not .SelectedItems(0).Index = 0 Then
                 Dim offset As Integer = -10
@@ -1671,7 +1509,7 @@ mRetry:
         End With
     End Sub
 
-    Private Sub MenuSortMoveDownFile_Click(sender As Object, e As EventArgs) Handles MenuSortMoveDownFile.Click
+    Private Sub MenuSortMoveDownFile_Click(sender As Object, e As EventArgs)
         With LvwFiles
             If Not .SelectedItems(0).Index + 1 = .Items.Count Then
                 Dim offset As Integer = 10
@@ -1705,24 +1543,12 @@ mRetry:
         MenuOpenFile.Enabled = (Not TvwExplorer.SelectedNode Is Nothing And LvwFiles.SelectedItems.Count > 0)
         MenuCutFile.Enabled = (Not TvwExplorer.SelectedNode Is Nothing And LvwFiles.SelectedItems.Count > 0)
         MenuCopyFile.Enabled = (Not TvwExplorer.SelectedNode Is Nothing And LvwFiles.SelectedItems.Count > 0)
-        MenuPasteFile.Enabled = Not TvwExplorer.SelectedNode Is Nothing
-        MenuPasteFileSelect.Enabled = Not TvwExplorer.SelectedNode Is Nothing
-        MenuPasteScan.Enabled = Not TvwExplorer.SelectedNode Is Nothing
         MenuDeleteFile.Enabled = (Not TvwExplorer.SelectedNode Is Nothing And LvwFiles.SelectedItems.Count > 0)
         MenuRenameFile.Enabled = (Not TvwExplorer.SelectedNode Is Nothing And LvwFiles.SelectedItems.Count > 0)
-        MenuReminderFile.Enabled = (Not TvwExplorer.SelectedNode Is Nothing And LvwFiles.SelectedItems.Count > 0)
-        Dim reminderDate As String = String.Empty
-        If LvwFiles.SelectedItems.Count > 0 Then
-            reminderDate = LvwFiles.SelectedItems(0).SubItems(ColumnHeaderReminder.Index).Text.Trim()
-        End If
-        MenuDoneReminderFile.Enabled = (Not TvwExplorer.SelectedNode Is Nothing And LvwFiles.SelectedItems.Count > 0 And Not String.IsNullOrEmpty(reminderDate))
-        MenuDeleteReminderFile.Enabled = (Not TvwExplorer.SelectedNode Is Nothing And LvwFiles.SelectedItems.Count > 0 And Not String.IsNullOrEmpty(reminderDate))
-        MenuSortFile.Enabled = (Not TvwExplorer.SelectedNode Is Nothing And LvwFiles.SelectedItems.Count > 0)
-        Dim treeNode As OrgManTreeItem = DirectCast(TvwExplorer.SelectedNode.Tag, OrgManTreeItem)
-        MenuSortMoveUpFile.Enabled = (treeNode.FilesSortBy = OrgManEnums.FilesSortBy.UserDefined)
-        MenuSortMoveDownFile.Enabled = (treeNode.FilesSortBy = OrgManEnums.FilesSortBy.UserDefined)
+        Dim treeNode As EloTreeItem = DirectCast(TvwExplorer.SelectedNode.Tag, EloTreeItem)
         MenuRefreshFiles.Enabled = Not TvwExplorer.SelectedNode Is Nothing
         MenuPropertiesFile.Enabled = (Not TvwExplorer.SelectedNode Is Nothing And LvwFiles.SelectedItems.Count > 0)
+        MenuEloData.Enabled = (Not TvwExplorer.SelectedNode Is Nothing And LvwFiles.SelectedItems.Count > 0)
     End Sub
 
     Private Function GetTreeNodeOfReminder(treeItemId As Integer) As TreeNode
@@ -1735,25 +1561,79 @@ mRetry:
 
     Friend SecurityIsLoading As Boolean
 
-    Private Async Sub TimerLoadSecurity_TickAsync(sender As Object, e As EventArgs) Handles TimerLoadSecurity.Tick
-        TimerLoadSecurity.Enabled = False
-        If Not SecurityIsLoading And AdGroups Is Nothing Then
-            SecurityIsLoading = True
-            Me.Cursor = Cursors.AppStarting
-            Dim t = New Task(Sub() LoadSecurityData())
-            t.Start()
-            Await t
-            SecurityIsLoading = False
-            Me.Cursor = Cursors.Default
-        End If
+    Private Sub MenuOnlyIndex_Click(sender As Object, e As EventArgs) Handles MenuOnlyIndex.Click
+        MenuOnlyIndex.Checked = Not MenuOnlyIndex.Checked
+        SaveSetting(Application.ProductName, "Window", "DisplayOnlyIndex", MenuOnlyIndex.Checked.ToString())
+        LoadFiles()
     End Sub
 
-    Private Sub LoadSecurityData()
-        Dim adcon As New WinAdConnector()
-        If adcon.DomainIsAvailable() Then
-            AdGroups = adcon.GetGroups()
-            AdUsers = adcon.GetDomainUsers(True)
+    Private Sub MenuEloData_Click(sender As Object, e As EventArgs) Handles MenuEloData.Click
+        Me.Cursor = Cursors.AppStarting
+        Dim fileItem = DirectCast(LvwFiles.SelectedItems(0).Tag, EloExplorerFileInfo)
+        Dim fullPath As String = GetFullPathOfNode(TvwExplorer.SelectedNode)
+        Dim fname = fullPath & "\" & fileItem.Physicalname
+        fname = fname.Substring(0, fname.LastIndexOf(".")) & ".ESW"
+        Dim sections = IniFileHelper.IniReadSections(fname)
+        Dim dlg = New DlgEloData()
+        dlg.Text = "ELO Daten - " & LvwFiles.SelectedItems(0).Text
+        Dim fitem = dlg.LvwFiles.Items.Add("Phys. Dateiname")
+        fitem.SubItems.Add(fileItem.Physicalname)
+        AddGeneralKeyToListView(dlg.LvwFiles, fname, "SHORTDESC")
+        AddGeneralKeyToListView(dlg.LvwFiles, fname, "DOCEXT")
+        AddGeneralKeyToListView(dlg.LvwFiles, fname, "DOCTYPE")
+        AddGeneralKeyToListView(dlg.LvwFiles, fname, "DOCDATE")
+        AddGeneralKeyToListView(dlg.LvwFiles, fname, "ABLDATE")
+        AddGeneralKeyToListView(dlg.LvwFiles, fname, "Version")
+        AddGeneralKeyToListView(dlg.LvwFiles, fname, "USER")
+        AddGeneralKeyToListView(dlg.LvwFiles, fname, "ACL")
+        AddGeneralKeyToListView(dlg.LvwFiles, fname, "SREG")
+        AddGeneralKeyToListView(dlg.LvwFiles, fname, "GUID")
+        For Each section In sections
+            If section.StartsWith("KEY") Then
+                Dim item = dlg.LvwFiles.Items.Add(IniFileHelper.IniReadValue(fname, section, "KEYNAME"))
+                item.SubItems.Add(IniFileHelper.IniReadValue(fname, section, "KEYTEXT").Replace(Chr(182), ""))
+                item.SubItems.Add(IniFileHelper.IniReadValue(fname, section, "KEYKEY"))
+                item.SubItems.Add(IniFileHelper.IniReadValue(fname, section, "Acl"))
+            End If
+        Next
+        dlg.LvwFiles.AutoResizeColumns(IIf(sections.Count() = 0, ColumnHeaderAutoResizeStyle.HeaderSize, ColumnHeaderAutoResizeStyle.ColumnContent))
+        Me.Cursor = Cursors.Default
+        dlg.ShowDialog(Me)
+    End Sub
+
+    Private Sub AddGeneralKeyToListView(lvw As ListView, ini As String, key As String)
+        Dim fitem = lvw.Items.Add(key)
+        fitem.SubItems.Add(IniFileHelper.IniReadValue(ini, "GENERAL", key))
+    End Sub
+
+    Private Sub MenuFileEloIndex_Click(sender As Object, e As EventArgs) Handles MenuFileEloIndex.Click
+        If LvwFiles.SelectedItems.Count = 0 Or TvwExplorer.SelectedNode Is Nothing Then
+            Exit Sub
         End If
+        Dim fileItem = DirectCast(LvwFiles.SelectedItems(0).Tag, EloExplorerFileInfo)
+        Dim fullPath As String = GetFullPathOfNode(TvwExplorer.SelectedNode)
+        Dim fname = fullPath & "\" & fileItem.Physicalname
+        fname = fname.Substring(0, fname.LastIndexOf(".")) & ".ESW"
+        Dim dlg = New DlgEditor()
+        dlg.Text = New FileInfo(fname).Name
+        If IO.File.Exists(fname) Then
+            dlg.RichTextBoxEditor.Text = IO.File.ReadAllText(fname)
+        End If
+        dlg.ShowDialog(Me)
+    End Sub
+
+    Private Sub MenuEloIndex_Click(sender As Object, e As EventArgs) Handles MenuEloIndex.Click
+        If TvwExplorer.SelectedNode Is Nothing Then
+            Exit Sub
+        End If
+        Dim fullPath As String = GetFullPathOfNode(TvwExplorer.SelectedNode)
+        Dim fname = fullPath & ".ESW"
+        Dim dlg = New DlgEditor()
+        dlg.Text = New FileInfo(fname).Name
+        If IO.File.Exists(fname) Then
+            dlg.RichTextBoxEditor.Text = IO.File.ReadAllText(fname)
+        End If
+        dlg.ShowDialog(Me)
     End Sub
 
     Private Sub MenuShowFilePreviewer_Click(sender As Object, e As EventArgs) Handles MenuShowFilePreviewer.Click
