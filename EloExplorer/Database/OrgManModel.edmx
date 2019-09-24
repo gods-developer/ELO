@@ -34,6 +34,20 @@
           <Property Name="LastUpdateUser" Type="nvarchar" MaxLength="50" />
           <Property Name="RowVersion" Type="int" Nullable="false" />
         </EntityType>
+        <EntityType Name="FileIndexes">
+          <Key>
+            <PropertyRef Name="FileId" />
+            <PropertyRef Name="IndexId" />
+          </Key>
+          <Property Name="FileId" Type="int" Nullable="false" />
+          <Property Name="IndexId" Type="int" Nullable="false" />
+          <Property Name="IndexValue" Type="nvarchar" MaxLength="4000" />
+          <Property Name="Creation" Type="datetime" Nullable="false" />
+          <Property Name="CreationUser" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="LastUpdate" Type="datetime" />
+          <Property Name="LastUpdateUser" Type="nvarchar" MaxLength="50" />
+          <Property Name="RowVersion" Type="int" Nullable="false" />
+        </EntityType>
         <EntityType Name="Reminders">
           <Key>
             <PropertyRef Name="Id" />
@@ -70,6 +84,18 @@
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="SettingName" Type="nvarchar" MaxLength="255" Nullable="false" />
           <Property Name="SettingValue" Type="nvarchar" MaxLength="255" />
+          <Property Name="Creation" Type="datetime" Nullable="false" />
+          <Property Name="CreationUser" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="LastUpdate" Type="datetime" />
+          <Property Name="LastUpdateUser" Type="nvarchar" MaxLength="50" />
+          <Property Name="RowVersion" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="StIndex">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IndexName" Type="nvarchar" MaxLength="255" Nullable="false" />
           <Property Name="Creation" Type="datetime" Nullable="false" />
           <Property Name="CreationUser" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="LastUpdate" Type="datetime" />
@@ -147,6 +173,34 @@
             </Principal>
             <Dependent Role="AppUserSettings">
               <PropertyRef Name="AppUserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_FileIndex_File">
+          <End Role="TreeItemFiles" Type="Self.TreeItemFiles" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="FileIndexes" Type="Self.FileIndexes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TreeItemFiles">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="FileIndexes">
+              <PropertyRef Name="FileId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_FileIndex_Index">
+          <End Role="StIndex" Type="Self.StIndex" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="FileIndexes" Type="Self.FileIndexes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="StIndex">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="FileIndexes">
+              <PropertyRef Name="IndexId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -237,9 +291,11 @@
         <EntityContainer Name="OrgManModelStoreContainer">
           <EntitySet Name="AppUser" EntityType="Self.AppUser" Schema="OrgMan" store:Type="Tables" />
           <EntitySet Name="AppUserSettings" EntityType="Self.AppUserSettings" Schema="OrgMan" store:Type="Tables" />
+          <EntitySet Name="FileIndexes" EntityType="Self.FileIndexes" Schema="OrgMan" store:Type="Tables" />
           <EntitySet Name="Reminders" EntityType="Self.Reminders" Schema="OrgMan" store:Type="Tables" />
           <EntitySet Name="RootPaths" EntityType="Self.RootPaths" Schema="OrgMan" store:Type="Tables" />
           <EntitySet Name="Settings" EntityType="Self.Settings" Schema="OrgMan" store:Type="Tables" />
+          <EntitySet Name="StIndex" EntityType="Self.StIndex" Schema="OrgMan" store:Type="Tables" />
           <EntitySet Name="TreeItemFiles" EntityType="Self.TreeItemFiles" Schema="OrgMan" store:Type="Tables" />
           <EntitySet Name="TreeItemGroupRights" EntityType="Self.TreeItemGroupRights" Schema="OrgMan" store:Type="Tables" />
           <EntitySet Name="TreeItems" EntityType="Self.TreeItems" Schema="OrgMan" store:Type="Tables" />
@@ -247,6 +303,14 @@
           <AssociationSet Name="FK_AppUserSettings_AppUser" Association="Self.FK_AppUserSettings_AppUser">
             <End Role="AppUser" EntitySet="AppUser" />
             <End Role="AppUserSettings" EntitySet="AppUserSettings" />
+          </AssociationSet>
+          <AssociationSet Name="FK_FileIndex_File" Association="Self.FK_FileIndex_File">
+            <End Role="TreeItemFiles" EntitySet="TreeItemFiles" />
+            <End Role="FileIndexes" EntitySet="FileIndexes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_FileIndex_Index" Association="Self.FK_FileIndex_Index">
+            <End Role="StIndex" EntitySet="StIndex" />
+            <End Role="FileIndexes" EntitySet="FileIndexes" />
           </AssociationSet>
           <AssociationSet Name="FK_Reminders_AppUser" Association="Self.FK_Reminders_AppUser">
             <End Role="AppUser" EntitySet="AppUser" />
@@ -314,6 +378,16 @@
           <AssociationSet Name="FK_TreeItemFile_TreeItem" Association="OrgManModel.FK_TreeItemFile_TreeItem">
             <End Role="TreeItem" EntitySet="TreeItems" />
             <End Role="TreeItemFile" EntitySet="TreeItemFiles" />
+          </AssociationSet>
+          <EntitySet Name="FileIndexes" EntityType="OrgManModel.FileIndex" />
+          <EntitySet Name="StIndexes" EntityType="OrgManModel.StIndex" />
+          <AssociationSet Name="FK_FileIndex_File" Association="OrgManModel.FK_FileIndex_File">
+            <End Role="TreeItemFile" EntitySet="TreeItemFiles" />
+            <End Role="FileIndex" EntitySet="FileIndexes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_FileIndex_Index" Association="OrgManModel.FK_FileIndex_Index">
+            <End Role="StIndex" EntitySet="StIndexes" />
+            <End Role="FileIndex" EntitySet="FileIndexes" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="Setting">
@@ -396,7 +470,7 @@
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="NodeText" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="ParentNodeId" Type="Int32" />
-          <Property Name="SortOrder" Type="Int32" Nullable="false" />
+          <Property Name="SortOrder" Type="Int32" />
           <Property Name="ChildrenSortBy" Type="Byte" Nullable="false" />
           <Property Name="ChildrenSortWay" Type="Byte" Nullable="false" />
           <Property Name="Creation" Type="DateTime" Nullable="false" Precision="3" />
@@ -544,6 +618,7 @@
           <Property Name="LastUpdateUser" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="RowVersion" Type="Int32" Nullable="false" />
           <NavigationProperty Name="TreeItem" Relationship="OrgManModel.FK_TreeItemFile_TreeItem" FromRole="TreeItemFile" ToRole="TreeItem" />
+          <NavigationProperty Name="FileIndexes" Relationship="OrgManModel.FK_FileIndex_File" FromRole="TreeItemFile" ToRole="FileIndex" />
         </EntityType>
         <Association Name="FK_TreeItemFile_TreeItem">
           <End Type="OrgManModel.TreeItem" Role="TreeItem" Multiplicity="1">
@@ -556,6 +631,63 @@
             </Principal>
             <Dependent Role="TreeItemFile">
               <PropertyRef Name="TreeItemId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="FileIndex">
+          <Key>
+            <PropertyRef Name="FileId" />
+            <PropertyRef Name="IndexId" />
+          </Key>
+          <Property Name="FileId" Type="Int32" Nullable="false" />
+          <Property Name="IndexId" Type="Int32" Nullable="false" />
+          <Property Name="IndexValue" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" />
+          <Property Name="Creation" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CreationUser" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="LastUpdate" Type="DateTime" Precision="3" />
+          <Property Name="LastUpdateUser" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="RowVersion" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="TreeItemFile" Relationship="OrgManModel.FK_FileIndex_File" FromRole="FileIndex" ToRole="TreeItemFile" />
+          <NavigationProperty Name="StIndex" Relationship="OrgManModel.FK_FileIndex_Index" FromRole="FileIndex" ToRole="StIndex" />
+        </EntityType>
+        <EntityType Name="StIndex">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IndexName" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Creation" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CreationUser" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="LastUpdate" Type="DateTime" Precision="3" />
+          <Property Name="LastUpdateUser" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="RowVersion" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="FileIndexes" Relationship="OrgManModel.FK_FileIndex_Index" FromRole="StIndex" ToRole="FileIndex" />
+        </EntityType>
+        <Association Name="FK_FileIndex_File">
+          <End Type="OrgManModel.TreeItemFile" Role="TreeItemFile" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="OrgManModel.FileIndex" Role="FileIndex" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TreeItemFile">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="FileIndex">
+              <PropertyRef Name="FileId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_FileIndex_Index">
+          <End Type="OrgManModel.StIndex" Role="StIndex" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="OrgManModel.FileIndex" Role="FileIndex" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="StIndex">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="FileIndex">
+              <PropertyRef Name="IndexId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -701,6 +833,33 @@
                 <ScalarProperty Name="SortOrder" ColumnName="SortOrder" />
                 <ScalarProperty Name="Filename" ColumnName="Filename" />
                 <ScalarProperty Name="TreeItemId" ColumnName="TreeItemId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FileIndexes">
+            <EntityTypeMapping TypeName="OrgManModel.FileIndex">
+              <MappingFragment StoreEntitySet="FileIndexes">
+                <ScalarProperty Name="RowVersion" ColumnName="RowVersion" />
+                <ScalarProperty Name="LastUpdateUser" ColumnName="LastUpdateUser" />
+                <ScalarProperty Name="LastUpdate" ColumnName="LastUpdate" />
+                <ScalarProperty Name="CreationUser" ColumnName="CreationUser" />
+                <ScalarProperty Name="Creation" ColumnName="Creation" />
+                <ScalarProperty Name="IndexValue" ColumnName="IndexValue" />
+                <ScalarProperty Name="IndexId" ColumnName="IndexId" />
+                <ScalarProperty Name="FileId" ColumnName="FileId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="StIndexes">
+            <EntityTypeMapping TypeName="OrgManModel.StIndex">
+              <MappingFragment StoreEntitySet="StIndex">
+                <ScalarProperty Name="RowVersion" ColumnName="RowVersion" />
+                <ScalarProperty Name="LastUpdateUser" ColumnName="LastUpdateUser" />
+                <ScalarProperty Name="LastUpdate" ColumnName="LastUpdate" />
+                <ScalarProperty Name="CreationUser" ColumnName="CreationUser" />
+                <ScalarProperty Name="Creation" ColumnName="Creation" />
+                <ScalarProperty Name="IndexName" ColumnName="IndexName" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

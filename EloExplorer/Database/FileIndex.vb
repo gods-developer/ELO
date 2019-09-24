@@ -12,19 +12,18 @@ Imports System.Collections.Generic
 
 Namespace EloExplorer
 
-    Partial Public Class TreeItemFile
-        Public Property Id As Integer
-        Public Property TreeItemId As Integer
-        Public Property Filename As String
-        Public Property SortOrder As Integer
+    Partial Public Class FileIndex
+        Public Property FileId As Integer
+        Public Property IndexId As Integer
+        Public Property IndexValue As String
         Public Property Creation As Date
         Public Property CreationUser As String
         Public Property LastUpdate As Nullable(Of Date)
         Public Property LastUpdateUser As String
         Public Property RowVersion As Integer
     
-        Public Overridable Property TreeItem As TreeItem
-        Public Overridable Property FileIndexes As ICollection(Of FileIndex) = New HashSet(Of FileIndex)
+        Public Overridable Property TreeItemFile As TreeItemFile
+        Public Overridable Property StIndex As StIndex
     
     End Class
 

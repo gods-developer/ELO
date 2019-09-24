@@ -33,6 +33,7 @@ Partial Class FrmMain
         Me.ToolStripSeparator6 = New System.Windows.Forms.ToolStripSeparator()
         Me.MenuRefresh = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuOpenInExplorer = New System.Windows.Forms.ToolStripMenuItem()
+        Me.MenuEloIndex = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuWinProperties = New System.Windows.Forms.ToolStripMenuItem()
         Me.ImageListExplorer = New System.Windows.Forms.ImageList(Me.components)
         Me.MainSplitContainer = New System.Windows.Forms.SplitContainer()
@@ -52,17 +53,19 @@ Partial Class FrmMain
         Me.ToolStripSeparator4 = New System.Windows.Forms.ToolStripSeparator()
         Me.MenuShowFilePreviewer = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSeparator7 = New System.Windows.Forms.ToolStripSeparator()
+        Me.MenuOnlyIndex = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuRefreshFiles = New System.Windows.Forms.ToolStripMenuItem()
+        Me.MenuEloData = New System.Windows.Forms.ToolStripMenuItem()
+        Me.MenuFileEloIndex = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuPropertiesFile = New System.Windows.Forms.ToolStripMenuItem()
         Me.ImageListFiles = New System.Windows.Forms.ImageList(Me.components)
         Me.MainStatusStrip = New System.Windows.Forms.StatusStrip()
         Me.StatusLabelInfo = New System.Windows.Forms.ToolStripStatusLabel()
         Me.FilesRefreshTimer = New System.Windows.Forms.Timer(Me.components)
-        Me.MenuOnlyIndex = New System.Windows.Forms.ToolStripMenuItem()
-        Me.MenuEloData = New System.Windows.Forms.ToolStripMenuItem()
         Me.FilePreviewHandlerHost = New Win.Common.Tools.PreviewHandlerHost()
-        Me.MenuFileEloIndex = New System.Windows.Forms.ToolStripMenuItem()
-        Me.MenuEloIndex = New System.Windows.Forms.ToolStripMenuItem()
+        Me.MenuExpandAll = New System.Windows.Forms.ToolStripMenuItem()
+        Me.MenuMigrate = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripSeparator1 = New System.Windows.Forms.ToolStripSeparator()
         Me.ContextMenuExplorer.SuspendLayout()
         CType(Me.MainSplitContainer, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.MainSplitContainer.Panel1.SuspendLayout()
@@ -79,61 +82,67 @@ Partial Class FrmMain
         'ContextMenuExplorer
         '
         Me.ContextMenuExplorer.Font = New System.Drawing.Font("Calibri", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.ContextMenuExplorer.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.MenuCut, Me.MenuCopy, Me.MenuPaste, Me.MenuRename, Me.MenuDelete, Me.ToolStripSeparator6, Me.MenuRefresh, Me.MenuOpenInExplorer, Me.MenuEloIndex, Me.MenuWinProperties})
+        Me.ContextMenuExplorer.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.MenuCut, Me.MenuCopy, Me.MenuPaste, Me.MenuRename, Me.MenuDelete, Me.ToolStripSeparator6, Me.MenuMigrate, Me.ToolStripSeparator1, Me.MenuExpandAll, Me.MenuRefresh, Me.MenuOpenInExplorer, Me.MenuEloIndex, Me.MenuWinProperties})
         Me.ContextMenuExplorer.Name = "mnuContextExplorer"
-        Me.ContextMenuExplorer.Size = New System.Drawing.Size(181, 230)
+        Me.ContextMenuExplorer.Size = New System.Drawing.Size(192, 280)
         '
         'MenuCut
         '
         Me.MenuCut.Name = "MenuCut"
-        Me.MenuCut.Size = New System.Drawing.Size(180, 22)
+        Me.MenuCut.Size = New System.Drawing.Size(191, 22)
         Me.MenuCut.Text = "Ausschneiden"
         '
         'MenuCopy
         '
         Me.MenuCopy.Name = "MenuCopy"
-        Me.MenuCopy.Size = New System.Drawing.Size(180, 22)
+        Me.MenuCopy.Size = New System.Drawing.Size(191, 22)
         Me.MenuCopy.Text = "Kopieren"
         '
         'MenuPaste
         '
         Me.MenuPaste.Name = "MenuPaste"
-        Me.MenuPaste.Size = New System.Drawing.Size(180, 22)
+        Me.MenuPaste.Size = New System.Drawing.Size(191, 22)
         Me.MenuPaste.Text = "Einfügen"
         '
         'MenuRename
         '
         Me.MenuRename.Name = "MenuRename"
-        Me.MenuRename.Size = New System.Drawing.Size(180, 22)
+        Me.MenuRename.Size = New System.Drawing.Size(191, 22)
         Me.MenuRename.Text = "Umbenennen"
         '
         'MenuDelete
         '
         Me.MenuDelete.Name = "MenuDelete"
-        Me.MenuDelete.Size = New System.Drawing.Size(180, 22)
+        Me.MenuDelete.Size = New System.Drawing.Size(191, 22)
         Me.MenuDelete.Text = "Löschen"
         '
         'ToolStripSeparator6
         '
         Me.ToolStripSeparator6.Name = "ToolStripSeparator6"
-        Me.ToolStripSeparator6.Size = New System.Drawing.Size(177, 6)
+        Me.ToolStripSeparator6.Size = New System.Drawing.Size(188, 6)
         '
         'MenuRefresh
         '
         Me.MenuRefresh.Name = "MenuRefresh"
-        Me.MenuRefresh.Size = New System.Drawing.Size(180, 22)
+        Me.MenuRefresh.Size = New System.Drawing.Size(191, 22)
         Me.MenuRefresh.Text = "Aktualisieren"
         '
         'MenuOpenInExplorer
         '
         Me.MenuOpenInExplorer.Name = "MenuOpenInExplorer"
-        Me.MenuOpenInExplorer.Size = New System.Drawing.Size(180, 22)
+        Me.MenuOpenInExplorer.Size = New System.Drawing.Size(191, 22)
         Me.MenuOpenInExplorer.Text = "Öffnen in Explorer"
+        '
+        'MenuEloIndex
+        '
+        Me.MenuEloIndex.Name = "MenuEloIndex"
+        Me.MenuEloIndex.Size = New System.Drawing.Size(191, 22)
+        Me.MenuEloIndex.Text = "ELO Index"
         '
         'MenuWinProperties
         '
         Me.MenuWinProperties.Name = "MenuWinProperties"
-        Me.MenuWinProperties.Size = New System.Drawing.Size(180, 22)
+        Me.MenuWinProperties.Size = New System.Drawing.Size(191, 22)
         Me.MenuWinProperties.Text = "Eigenschaften"
         '
         'ImageListExplorer
@@ -296,11 +305,29 @@ Partial Class FrmMain
         Me.ToolStripSeparator7.Name = "ToolStripSeparator7"
         Me.ToolStripSeparator7.Size = New System.Drawing.Size(160, 6)
         '
+        'MenuOnlyIndex
+        '
+        Me.MenuOnlyIndex.Name = "MenuOnlyIndex"
+        Me.MenuOnlyIndex.Size = New System.Drawing.Size(163, 22)
+        Me.MenuOnlyIndex.Text = "Nur mit Index"
+        '
         'MenuRefreshFiles
         '
         Me.MenuRefreshFiles.Name = "MenuRefreshFiles"
         Me.MenuRefreshFiles.Size = New System.Drawing.Size(163, 22)
         Me.MenuRefreshFiles.Text = "Aktualisieren"
+        '
+        'MenuEloData
+        '
+        Me.MenuEloData.Name = "MenuEloData"
+        Me.MenuEloData.Size = New System.Drawing.Size(163, 22)
+        Me.MenuEloData.Text = "ELO Daten"
+        '
+        'MenuFileEloIndex
+        '
+        Me.MenuFileEloIndex.Name = "MenuFileEloIndex"
+        Me.MenuFileEloIndex.Size = New System.Drawing.Size(163, 22)
+        Me.MenuFileEloIndex.Text = "ELO Index"
         '
         'MenuPropertiesFile
         '
@@ -335,18 +362,6 @@ Partial Class FrmMain
         '
         Me.FilesRefreshTimer.Interval = 2000
         '
-        'MenuOnlyIndex
-        '
-        Me.MenuOnlyIndex.Name = "MenuOnlyIndex"
-        Me.MenuOnlyIndex.Size = New System.Drawing.Size(163, 22)
-        Me.MenuOnlyIndex.Text = "Nur mit Index"
-        '
-        'MenuEloData
-        '
-        Me.MenuEloData.Name = "MenuEloData"
-        Me.MenuEloData.Size = New System.Drawing.Size(163, 22)
-        Me.MenuEloData.Text = "ELO Daten"
-        '
         'FilePreviewHandlerHost
         '
         Me.FilePreviewHandlerHost.Dock = System.Windows.Forms.DockStyle.Fill
@@ -355,17 +370,22 @@ Partial Class FrmMain
         Me.FilePreviewHandlerHost.Size = New System.Drawing.Size(260, 818)
         Me.FilePreviewHandlerHost.TabIndex = 0
         '
-        'MenuFileEloIndex
+        'MenuExpandAll
         '
-        Me.MenuFileEloIndex.Name = "MenuFileEloIndex"
-        Me.MenuFileEloIndex.Size = New System.Drawing.Size(163, 22)
-        Me.MenuFileEloIndex.Text = "ELO Index"
+        Me.MenuExpandAll.Name = "MenuExpandAll"
+        Me.MenuExpandAll.Size = New System.Drawing.Size(191, 22)
+        Me.MenuExpandAll.Text = "Alles öffnen"
         '
-        'MenuEloIndex
+        'MenuMigrate
         '
-        Me.MenuEloIndex.Name = "MenuEloIndex"
-        Me.MenuEloIndex.Size = New System.Drawing.Size(180, 22)
-        Me.MenuEloIndex.Text = "ELO Index"
+        Me.MenuMigrate.Name = "MenuMigrate"
+        Me.MenuMigrate.Size = New System.Drawing.Size(191, 22)
+        Me.MenuMigrate.Text = "Zu OrgMan migrieren"
+        '
+        'ToolStripSeparator1
+        '
+        Me.ToolStripSeparator1.Name = "ToolStripSeparator1"
+        Me.ToolStripSeparator1.Size = New System.Drawing.Size(188, 6)
         '
         'FrmMain
         '
@@ -432,4 +452,7 @@ Partial Class FrmMain
     Friend WithEvents MenuEloData As ToolStripMenuItem
     Friend WithEvents MenuFileEloIndex As ToolStripMenuItem
     Friend WithEvents MenuEloIndex As ToolStripMenuItem
+    Friend WithEvents MenuExpandAll As ToolStripMenuItem
+    Friend WithEvents MenuMigrate As ToolStripMenuItem
+    Friend WithEvents ToolStripSeparator1 As ToolStripSeparator
 End Class

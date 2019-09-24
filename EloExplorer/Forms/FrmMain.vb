@@ -9,7 +9,7 @@ Imports CefSharp
 Imports CefSharp.WinForms
 Public Class FrmMain
     Dim copyNodeKey As String, copyMode As Byte
-    Public dbc As IDatabaseConnector
+    Public dbc As MsSqlConnector
     Public IsAdmin As Boolean
     Public TemplateFolderName As String, DefaultRootPath As String
     'Public chrome As ChromiumWebBrowser, chromeExe As String
@@ -47,6 +47,35 @@ Public Class FrmMain
 
     Private initDir As String
 
+    Private Sub CheckDbConnection()
+        If Not dbc Is Nothing Then
+            Exit Sub
+        End If
+        dbc = New MsSqlConnector
+        Try
+            If Not dbc.HasAccess() Then
+                MsgBox("Sie haben keine Berechtigung, den Organisationsmanager zu benutzen!" & vbCrLf & "Bitte wenden Sie sich an den Administrator.", MsgBoxStyle.Exclamation, "Hinweis")
+                End
+            End If
+        Catch ex As Exception
+            MsgBox("Es ist ein Fehler aufgetreten beim Verbinden mit der Datenbank!" & vbCrLf & ex.Message, MsgBoxStyle.Critical, "Fehler beim Starten")
+            If EloExplorerGlobals.AppEnvironment <> My.Settings.EnvironmentName Then
+                MsgBox("Es wird versucht, die Standard-Umgebung [" & My.Settings.EnvironmentName & "] zu starten...", MsgBoxStyle.Information, "Hinweis")
+                RegistryHandler.SetStringValue(Application.ProductName, "Environment", My.Settings.EnvironmentName)
+                Application.Restart()
+            End If
+            End
+        End Try
+        IsAdmin = dbc.IsAdmin()
+        Me.DefaultRootPath = dbc.GetDbSetting("DefaultRootPath", "C:\OrgMan")
+        Me.TemplateFolderName = dbc.GetDbSetting("TemplateFolderName", "Vorlagen")
+    End Sub
+
+    Private Sub SetEnvironment(env As String)
+        EloExplorerGlobals.AppEnvironment = env 'todo
+        'DropDownEnvironment.Text = OrgManGlobals.AppEnvironment
+    End Sub
+
     Private Sub FrmMain_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         If String.IsNullOrEmpty(Command()) Or Dir(Command(), FileAttribute.Directory) = "" Then
             MsgBox("Der ELO Explorer muss mit einem gültigen Pfad als Parameter gestartet werden!", MsgBoxStyle.Exclamation, "Fehler beim Starten")
@@ -61,33 +90,10 @@ Public Class FrmMain
         '        OrgManGlobals.AppEnvironment = a.Substring(a.IndexOf("=") + 1)
         '    End If
         'Next
-        'dbc = New MsSqlConnector
-        'Try
-        '    If Not dbc.HasAccess() Then
-        '        MsgBox("Sie haben keine Berechtigung, den Organisationsmanager zu benutzen!" & vbCrLf & "Bitte wenden Sie sich an den Administrator.", MsgBoxStyle.Exclamation, "Hinweis")
-        '        End
-        '    End If
-        'Catch ex As Exception
-        '    MsgBox("Es ist ein Fehler aufgetreten beim Verbinden mit der Datenbank!" & vbCrLf & ex.Message, MsgBoxStyle.Critical, "Fehler beim Starten")
-        '    If EloExplorerGlobals.AppEnvironment <> My.Settings.EnvironmentName Then
-        '        MsgBox("Es wird versucht, die Standard-Umgebung [" & My.Settings.EnvironmentName & "] zu starten...", MsgBoxStyle.Information, "Hinweis")
-        '        RegistryHandler.SetStringValue(Application.ProductName, "Environment", My.Settings.EnvironmentName)
-        '        Application.Restart()
-        '    End If
-        '    End
-        'End Try
-        'IsAdmin = dbc.IsAdmin()
-        If My.Settings.EnvironmentName = "Prod" And EloExplorerGlobals.AppEnvironment <> "Prod" And Not IsAdmin Then
-            ChangeEnvironment("Prod")
-            'SetEnvironment(RegistryHandler.GetStringValue(Application.ProductName, "Environment", Properties.Settings.Default.Environment));
-            'MainForm_Shown(sender, e);
-            Exit Sub
-        End If
+        SetEnvironment(My.Settings.Default.EnvironmentName)
         'InitChromeControl()
         'FindChromeExe()
         'FilesRefreshTimer.Enabled = My.Settings.ListAutoRefresh
-        'Me.TemplateFolderName = dbc.GetDbSetting("TemplateFolderName", "Vorlagen")
-        'Me.DefaultRootPath = dbc.GetDbSetting("DefaultRootPath", "C:\OrgMan")
         Me.Text += " " + Application.ProductVersion + " [" + initDir + "]" + If(IsAdmin, " (" + dbc.Path + ")", "")
         Me.WindowState = GetSetting(Application.ProductName, "Window", "LastWindowState", FormWindowState.Normal)
         Me.Top = GetSetting(Application.ProductName, "Window", "LastWindowTop", Me.Top)
@@ -376,13 +382,15 @@ mRetry:
         End If
     End Sub
 
+    Private FilesAreLoading As Boolean
+
     Private Sub FrmMain_FormClosing(sender As Object, e As FormClosingEventArgs) Handles MyBase.FormClosing
-        If SecurityIsLoading Then
+        If SecurityIsLoading Or FilesAreLoading Then
             MsgBox("Es läuft noch ein Hintergrundprozess. Bitte noch ein paar Sekunden warten...", MsgBoxStyle.Information, "Hinweis")
             e.Cancel = True
             Exit Sub
         End If
-        'dbc.Close()
+        dbc?.Close()
         SaveSetting(Application.ProductName, "Window", "LastWindowState", Me.WindowState)
         SaveSetting(Application.ProductName, "Window", "LastWindowTop", Me.Top)
         SaveSetting(Application.ProductName, "Window", "LastWindowLeft", Me.Left)
@@ -677,6 +685,7 @@ mRetry:
 
     Private Sub LoadFiles()
         Me.Cursor = Cursors.AppStarting
+        FilesAreLoading = True
         StatusLabelInfo.Text = "Dateien werden aufgelistet..."
         Me.Refresh()
         ClearFilePreview()
@@ -688,6 +697,7 @@ mRetry:
             AddFileItem(file, cp)
         Next
         StatusLabelInfo.Text = files.Count & " Datei(en)"
+        FilesAreLoading = False
         Me.Cursor = Cursors.Default
     End Sub
 
@@ -1606,6 +1616,11 @@ mRetry:
         fitem.SubItems.Add(IniFileHelper.IniReadValue(ini, "GENERAL", key))
     End Sub
 
+    Private Sub AddGeneralKeyToDatabase(fileId As Integer, ini As String, key As String)
+        Dim value = IniFileHelper.IniReadValue(ini, "GENERAL", key)
+        dbc.AddNewFileIndex(fileId, "ELO " & key, value)
+    End Sub
+
     Private Sub MenuFileEloIndex_Click(sender As Object, e As EventArgs) Handles MenuFileEloIndex.Click
         If LvwFiles.SelectedItems.Count = 0 Or TvwExplorer.SelectedNode Is Nothing Then
             Exit Sub
@@ -1635,6 +1650,99 @@ mRetry:
         End If
         dlg.ShowDialog(Me)
     End Sub
+
+    Private Sub MenuExpandAll_Click(sender As Object, e As EventArgs) Handles MenuExpandAll.Click
+        If TvwExplorer.SelectedNode Is Nothing Then
+            Exit Sub
+        End If
+        TvwExplorer.SelectedNode.ExpandAll()
+    End Sub
+
+    Private Sub MenuMigrate_Click(sender As Object, e As EventArgs) Handles MenuMigrate.Click
+        If TvwExplorer.SelectedNode Is Nothing Then
+            Exit Sub
+        End If
+        CheckDbConnection()
+        Dim newText = TvwExplorer.SelectedNode.Text
+        Dim newRootPath = Me.DefaultRootPath & "\" & newText
+        Dim dlgResult = SelectRootPath(newRootPath)
+        If dlgResult = DialogResult.Cancel Then
+            Exit Sub
+        End If
+        TvwExplorer.SelectedNode.ExpandAll()
+        Dim rootNode = dbc.AddNewTreeItem(newText, newRootPath)
+        If Not rootNode Is Nothing Then
+            dbc.AddNewTreeItem(Me.TemplateFolderName, , rootNode.Id)
+        End If
+        Migrate(TvwExplorer.SelectedNode, rootNode.Id, newRootPath)
+    End Sub
+
+    Private Sub Migrate(rootNode As TreeNode, rootId As Integer, rootPath As String)
+        Dim node As TreeNode
+        TreeNodeClick(rootNode)
+        Dim treePath As String = GetFullPathOfNode(rootNode)
+        MigrateFiles(rootId, treePath, rootPath)
+        For Each node In rootNode.Nodes
+            Dim newName = ConvertToValidName(node.Text).Trim()
+            Dim newItem = dbc.AddNewTreeItem(newName, , rootId)
+            Migrate(node, newItem.Id, rootPath & "\" & newName)
+        Next
+    End Sub
+
+    Private Function ConvertToValidName(text As String) As String
+        Dim newPath = text
+        Dim chars = Path.GetInvalidFileNameChars()
+        Dim ch As Char
+        For Each ch In chars
+            newPath = newPath.Replace(ch, "")
+        Next
+        ConvertToValidName = newPath
+    End Function
+
+    Private Sub MigrateFiles(treeItemId As Integer, treePath As String, rootPath As String)
+        Dim item As ListViewItem
+        System.IO.Directory.CreateDirectory(rootPath)
+        For Each item In LvwFiles.Items
+            Dim fileItem = DirectCast(item.Tag, EloExplorerFileInfo)
+            Dim filename = ConvertToValidName(item.Text)
+            FileIO.FileSystem.CopyFile(treePath & "\" & fileItem.Physicalname, rootPath & "\" & filename, FileIO.UIOption.OnlyErrorDialogs, FileIO.UICancelOption.ThrowException)
+            Dim newFile = dbc.AddNewTreeItemFile(treeItemId, filename)
+            MigrateFileIndexes(treePath, fileItem, newFile.Id)
+        Next
+    End Sub
+
+    Private Sub MigrateFileIndexes(fullPath As String, fileItem As EloExplorerFileInfo, fileId As Integer)
+        Dim fname = fullPath & "\" & fileItem.Physicalname
+        fname = fname.Substring(0, fname.LastIndexOf(".")) & ".ESW"
+        If Not IO.File.Exists(fname) Then
+            Exit Sub
+        End If
+        Dim sections = IniFileHelper.IniReadSections(fname)
+        dbc.AddNewFileIndex(fileId, "ELO Dateiname", fileItem.Physicalname)
+        AddGeneralKeyToDatabase(fileId, fname, "SHORTDESC")
+        AddGeneralKeyToDatabase(fileId, fname, "DOCEXT")
+        AddGeneralKeyToDatabase(fileId, fname, "DOCTYPE")
+        AddGeneralKeyToDatabase(fileId, fname, "DOCDATE")
+        AddGeneralKeyToDatabase(fileId, fname, "ABLDATE")
+        AddGeneralKeyToDatabase(fileId, fname, "Version")
+        AddGeneralKeyToDatabase(fileId, fname, "USER")
+        AddGeneralKeyToDatabase(fileId, fname, "ACL")
+        AddGeneralKeyToDatabase(fileId, fname, "SREG")
+        AddGeneralKeyToDatabase(fileId, fname, "GUID")
+        For Each section In sections
+            If section.StartsWith("KEY") Then
+                Dim keyName = IniFileHelper.IniReadValue(fname, section, "KEYNAME")
+                If String.IsNullOrEmpty(keyName) Then
+                    keyName = IniFileHelper.IniReadValue(fname, section, "KEYKEY")
+                Else
+                    keyName = "ELO " & keyName
+                End If
+                dbc.AddNewFileIndex(fileId, keyName, IniFileHelper.IniReadValue(fname, section, "KEYTEXT").Replace(Chr(182), ""))
+            End If
+        Next
+    End Sub
+
+
 
     Private Sub MenuShowFilePreviewer_Click(sender As Object, e As EventArgs) Handles MenuShowFilePreviewer.Click
         MenuShowFilePreviewer.Checked = Not MenuShowFilePreviewer.Checked

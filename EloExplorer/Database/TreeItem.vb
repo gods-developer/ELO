@@ -16,7 +16,7 @@ Namespace EloExplorer
         Public Property Id As Integer
         Public Property NodeText As String
         Public Property ParentNodeId As Nullable(Of Integer)
-        Public Property SortOrder As Integer
+        Public Property SortOrder As Nullable(Of Integer)
         Public Property ChildrenSortBy As Byte
         Public Property ChildrenSortWay As Byte
         Public Property Creation As Date

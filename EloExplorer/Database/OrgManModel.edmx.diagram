@@ -21,6 +21,10 @@
         <AssociationConnector Association="OrgManModel.FK_Reminders_TreeItem" />
         <EntityTypeShape EntityType="OrgManModel.TreeItemFile" Width="1.5" PointX="0.875" PointY="6.375" />
         <AssociationConnector Association="OrgManModel.FK_TreeItemFile_TreeItem" />
+        <EntityTypeShape EntityType="OrgManModel.FileIndex" Width="1.5" PointX="8.625" PointY="5.125" />
+        <EntityTypeShape EntityType="OrgManModel.StIndex" Width="1.5" PointX="11" PointY="5.5" />
+        <AssociationConnector Association="OrgManModel.FK_FileIndex_File" />
+        <AssociationConnector Association="OrgManModel.FK_FileIndex_Index" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

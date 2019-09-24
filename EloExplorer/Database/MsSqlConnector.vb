@@ -235,22 +235,17 @@ Public Class MsSqlConnector
 
     Private Function GetMaxTreeItemId(parentNodeId As Integer) As Integer
         DirectCast(dbs, IObjectContextAdapter).ObjectContext.Refresh(RefreshMode.StoreWins, dbs.TreeItems)
-        Dim query As IQueryable(Of Integer)
         If parentNodeId = 0 Then
-            query = (From r In dbs.TreeItems Where r.ParentNodeId Is Nothing Select r.SortOrder)
+            Dim query = (From r In dbs.TreeItems Where r.ParentNodeId Is Nothing Select r.SortOrder)
+            If query.Any() Then
+                GetMaxTreeItemId = query.Max()
+            End If
         Else
-            query = (From r In dbs.TreeItems Where r.ParentNodeId = parentNodeId Select r.SortOrder)
+            Dim query = (From r In dbs.TreeItems Where r.ParentNodeId = parentNodeId Select r.SortOrder)
+            If query.Any() Then
+                GetMaxTreeItemId = query.Max()
+            End If
         End If
-        'Dim maxId = query.Max()
-        'If Not maxId Is Nothing Then
-        If query.Count() = 0 Then
-            GetMaxTreeItemId = 0
-        Else
-            GetMaxTreeItemId = query.Max()
-        End If
-        'Else
-        'GetMaxTreeItemId = 0
-        'End If
     End Function
 
     Private Function GetMaxTreeItemFileId(treeItemId As Integer) As Integer
@@ -531,6 +526,39 @@ Public Class MsSqlConnector
             AddNewTreeItemFile = result
         Else
             AddNewTreeItemFile = Nothing
+        End If
+    End Function
+
+    Public Function AddNewFileIndex(fileId As Integer, indexName As String, indexValue As String) As Boolean
+        If String.IsNullOrEmpty(indexValue) Then
+            Exit Function
+        End If
+        Dim indexId = GetIndexId(indexName)
+        Dim item As FileIndex = dbs.FileIndexes.Create()
+        item.Creation = Now
+        item.CreationUser = Environment.UserName
+        item.RowVersion = 1
+        item.FileId = fileId
+        item.IndexId = indexId
+        item.IndexValue = indexValue
+        dbs.FileIndexes.Add(item)
+        AddNewFileIndex = (SaveChanges() > 0)
+    End Function
+
+    Private Function GetIndexId(indexName As String) As Integer
+        Dim query = From r In dbs.StIndexes Where r.IndexName = indexName
+        If query.Count() > 0 Then
+            Dim record = query.FirstOrDefault()
+            GetIndexId = record.Id
+        Else
+            Dim item As StIndex = dbs.StIndexes.Create()
+            item.Creation = Now
+            item.CreationUser = Environment.UserName
+            item.RowVersion = 1
+            item.IndexName = indexName
+            dbs.StIndexes.Add(item)
+            SaveChanges()
+            GetIndexId = item.Id
         End If
     End Function
 
