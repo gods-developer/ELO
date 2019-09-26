@@ -1399,10 +1399,12 @@ mRetry:
         If e.Node.Nodes.Count = 1 Then
             If e.Node.Nodes(0).Text = ".." Then
                 e.Node.Nodes.Clear()
+                TvwExplorer.Refresh()
                 Dim baseDir = GetFullPathOfNode(e.Node)
                 LoadSubDirs(baseDir, e.Node)
             End If
         End If
+        TvwExplorer.Refresh()
     End Sub
 
     Private Sub MenuSecurity_Click(sender As Object, e As EventArgs)
@@ -1570,6 +1572,17 @@ mRetry:
     End Function
 
     Friend SecurityIsLoading As Boolean
+    Friend Cancel As Boolean
+    Friend CancelForm As DlgCancel
+
+    Private Sub OpenCancelForm()
+        CancelForm = New DlgCancel
+        CancelForm.Show(Me)
+        CancelForm.Height = MainStatusStrip.Height
+        CancelForm.Width = 125
+        CancelForm.Top = Me.Top + Me.Height - (CancelForm.Height + 8)
+        CancelForm.Left = Me.Left + Me.Width - (CancelForm.Width + 25)
+    End Sub
 
     Private Sub MenuOnlyIndex_Click(sender As Object, e As EventArgs) Handles MenuOnlyIndex.Click
         MenuOnlyIndex.Checked = Not MenuOnlyIndex.Checked
@@ -1658,10 +1671,17 @@ mRetry:
         TvwExplorer.SelectedNode.ExpandAll()
     End Sub
 
+    Private SumBytes As Double
+    Private CountFolders As Long
+    Private CountFiles As Long
+
     Private Sub MenuMigrate_Click(sender As Object, e As EventArgs) Handles MenuMigrate.Click
         If TvwExplorer.SelectedNode Is Nothing Then
             Exit Sub
         End If
+        SumBytes = 0
+        CountFolders = 0
+        CountFiles = 0
         CheckDbConnection()
         Dim newText = TvwExplorer.SelectedNode.Text
         Dim newRootPath = Me.DefaultRootPath & "\" & newText
@@ -1669,17 +1689,39 @@ mRetry:
         If dlgResult = DialogResult.Cancel Then
             Exit Sub
         End If
-        TvwExplorer.SelectedNode.ExpandAll()
-        Dim rootNode = dbc.AddNewTreeItem(newText, newRootPath)
-        If Not rootNode Is Nothing Then
-            dbc.AddNewTreeItem(Me.TemplateFolderName, , rootNode.Id)
-        End If
-        Migrate(TvwExplorer.SelectedNode, rootNode.Id, newRootPath)
+        Dim startPoint = DateTime.Now
+        Try
+            StatusLabelInfo.Text = "Baum wird aufgebaut..."
+            Me.Refresh()
+            TvwExplorer.SelectedNode.ExpandAll()
+            Me.Cancel = False
+            CountFolders = CountFolders + 1
+            Dim rootNode = dbc.AddNewTreeItem(newText, newRootPath)
+            If Not rootNode Is Nothing Then
+                dbc.AddNewTreeItem(Me.TemplateFolderName, , rootNode.Id)
+            End If
+            OpenCancelForm()
+            Me.Refresh()
+            Migrate(TvwExplorer.SelectedNode, rootNode.Id, newRootPath)
+        Catch ex As Exception
+            MsgBox(ex.Message, MsgBoxStyle.Critical, "Fehler")
+        End Try
+        CancelForm.Close()
+        CancelForm = Nothing
+        Dim span = DateTime.Now - startPoint
+        StatusLabelInfo.Text = CountFolders & " Ordner, " & CountFiles & " Dateien, " & (Math.Round(SumBytes / 1024)) & " KB verarbeitet in " & Math.Round(span.TotalSeconds) & " Sekunden, " & Math.Round(span.TotalMinutes) & " Minuten!"
     End Sub
 
     Private Sub Migrate(rootNode As TreeNode, rootId As Integer, rootPath As String)
+        If Me.Cancel Then
+            Exit Sub
+        End If
+        Application.DoEvents()
+        CountFolders = CountFolders + 1
         Dim node As TreeNode
         TreeNodeClick(rootNode)
+        StatusLabelInfo.Text = "Ordner " + rootNode.Text + " wird verarbeitet..."
+        Me.Refresh()
         Dim treePath As String = GetFullPathOfNode(rootNode)
         MigrateFiles(rootId, treePath, rootPath)
         For Each node In rootNode.Nodes
@@ -1700,23 +1742,36 @@ mRetry:
     End Function
 
     Private Sub MigrateFiles(treeItemId As Integer, treePath As String, rootPath As String)
+        If Me.Cancel Then
+            Exit Sub
+        End If
+        Application.DoEvents()
         Dim item As ListViewItem
-        System.IO.Directory.CreateDirectory(rootPath)
+        'System.IO.Directory.CreateDirectory(rootPath)
+        'If Not Delimon.Win32.IO.Directory.Exists(rootPath) Then
+        Try
+            Delimon.Win32.IO.Directory.CreateDirectory(rootPath)
+        Catch ex As Exception
+
+        End Try
+        'End If
         For Each item In LvwFiles.Items
             Dim fileItem = DirectCast(item.Tag, EloExplorerFileInfo)
-            Dim filename = ConvertToValidName(item.Text)
-            FileIO.FileSystem.CopyFile(treePath & "\" & fileItem.Physicalname, rootPath & "\" & filename, FileIO.UIOption.OnlyErrorDialogs, FileIO.UICancelOption.ThrowException)
-            Dim newFile = dbc.AddNewTreeItemFile(treeItemId, filename)
-            MigrateFileIndexes(treePath, fileItem, newFile.Id)
+            Dim fname = treePath & "\" & fileItem.Physicalname
+            fname = fname.Substring(0, fname.LastIndexOf(".")) & ".ESW"
+            If IO.File.Exists(fname) Then
+                CountFiles = CountFiles + 1
+                SumBytes = SumBytes + fileItem.FileLen
+                Dim filename = ConvertToValidName(item.Text)
+                'FileIO.FileSystem.CopyFile(treePath & "\" & fileItem.Physicalname, rootPath & "\" & filename, FileIO.UIOption.OnlyErrorDialogs, FileIO.UICancelOption.ThrowException)
+                Delimon.Win32.IO.File.Copy(treePath & "\" & fileItem.Physicalname, rootPath & "\" & filename, True)
+                Dim newFile = dbc.AddNewTreeItemFile(treeItemId, filename)
+                MigrateFileIndexes(treePath, fileItem, newFile.Id)
+            End If
         Next
     End Sub
 
-    Private Sub MigrateFileIndexes(fullPath As String, fileItem As EloExplorerFileInfo, fileId As Integer)
-        Dim fname = fullPath & "\" & fileItem.Physicalname
-        fname = fname.Substring(0, fname.LastIndexOf(".")) & ".ESW"
-        If Not IO.File.Exists(fname) Then
-            Exit Sub
-        End If
+    Private Sub MigrateFileIndexes(fname As String, fileItem As EloExplorerFileInfo, fileId As Integer)
         Dim sections = IniFileHelper.IniReadSections(fname)
         dbc.AddNewFileIndex(fileId, "ELO Dateiname", fileItem.Physicalname)
         AddGeneralKeyToDatabase(fileId, fname, "SHORTDESC")
@@ -1742,7 +1797,17 @@ mRetry:
         Next
     End Sub
 
-
+    Private Sub FrmMain_Resize(sender As Object, e As EventArgs) Handles MyBase.Resize
+        If Not CancelForm Is Nothing Then
+            If Me.WindowState = FormWindowState.Minimized Then
+                CancelForm.Visible = False
+            Else
+                CancelForm.Top = Me.Top + Me.Height - (CancelForm.Height + 8)
+                CancelForm.Left = Me.Left + Me.Width - (CancelForm.Width + 25)
+                CancelForm.Visible = True
+            End If
+        End If
+    End Sub
 
     Private Sub MenuShowFilePreviewer_Click(sender As Object, e As EventArgs) Handles MenuShowFilePreviewer.Click
         MenuShowFilePreviewer.Checked = Not MenuShowFilePreviewer.Checked

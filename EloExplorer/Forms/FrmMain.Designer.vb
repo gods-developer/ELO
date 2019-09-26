@@ -31,6 +31,9 @@ Partial Class FrmMain
         Me.MenuRename = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuDelete = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSeparator6 = New System.Windows.Forms.ToolStripSeparator()
+        Me.MenuMigrate = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripSeparator1 = New System.Windows.Forms.ToolStripSeparator()
+        Me.MenuExpandAll = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuRefresh = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuOpenInExplorer = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuEloIndex = New System.Windows.Forms.ToolStripMenuItem()
@@ -59,13 +62,10 @@ Partial Class FrmMain
         Me.MenuFileEloIndex = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuPropertiesFile = New System.Windows.Forms.ToolStripMenuItem()
         Me.ImageListFiles = New System.Windows.Forms.ImageList(Me.components)
+        Me.FilePreviewHandlerHost = New Win.Common.Tools.PreviewHandlerHost()
         Me.MainStatusStrip = New System.Windows.Forms.StatusStrip()
         Me.StatusLabelInfo = New System.Windows.Forms.ToolStripStatusLabel()
         Me.FilesRefreshTimer = New System.Windows.Forms.Timer(Me.components)
-        Me.FilePreviewHandlerHost = New Win.Common.Tools.PreviewHandlerHost()
-        Me.MenuExpandAll = New System.Windows.Forms.ToolStripMenuItem()
-        Me.MenuMigrate = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ToolStripSeparator1 = New System.Windows.Forms.ToolStripSeparator()
         Me.ContextMenuExplorer.SuspendLayout()
         CType(Me.MainSplitContainer, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.MainSplitContainer.Panel1.SuspendLayout()
@@ -84,7 +84,7 @@ Partial Class FrmMain
         Me.ContextMenuExplorer.Font = New System.Drawing.Font("Calibri", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.ContextMenuExplorer.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.MenuCut, Me.MenuCopy, Me.MenuPaste, Me.MenuRename, Me.MenuDelete, Me.ToolStripSeparator6, Me.MenuMigrate, Me.ToolStripSeparator1, Me.MenuExpandAll, Me.MenuRefresh, Me.MenuOpenInExplorer, Me.MenuEloIndex, Me.MenuWinProperties})
         Me.ContextMenuExplorer.Name = "mnuContextExplorer"
-        Me.ContextMenuExplorer.Size = New System.Drawing.Size(192, 280)
+        Me.ContextMenuExplorer.Size = New System.Drawing.Size(192, 258)
         '
         'MenuCut
         '
@@ -120,6 +120,23 @@ Partial Class FrmMain
         '
         Me.ToolStripSeparator6.Name = "ToolStripSeparator6"
         Me.ToolStripSeparator6.Size = New System.Drawing.Size(188, 6)
+        '
+        'MenuMigrate
+        '
+        Me.MenuMigrate.Name = "MenuMigrate"
+        Me.MenuMigrate.Size = New System.Drawing.Size(191, 22)
+        Me.MenuMigrate.Text = "Zu OrgMan migrieren"
+        '
+        'ToolStripSeparator1
+        '
+        Me.ToolStripSeparator1.Name = "ToolStripSeparator1"
+        Me.ToolStripSeparator1.Size = New System.Drawing.Size(188, 6)
+        '
+        'MenuExpandAll
+        '
+        Me.MenuExpandAll.Name = "MenuExpandAll"
+        Me.MenuExpandAll.Size = New System.Drawing.Size(191, 22)
+        Me.MenuExpandAll.Text = "Alles öffnen"
         '
         'MenuRefresh
         '
@@ -341,6 +358,14 @@ Partial Class FrmMain
         Me.ImageListFiles.ImageSize = New System.Drawing.Size(32, 32)
         Me.ImageListFiles.TransparentColor = System.Drawing.Color.Transparent
         '
+        'FilePreviewHandlerHost
+        '
+        Me.FilePreviewHandlerHost.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.FilePreviewHandlerHost.Location = New System.Drawing.Point(0, 0)
+        Me.FilePreviewHandlerHost.Name = "FilePreviewHandlerHost"
+        Me.FilePreviewHandlerHost.Size = New System.Drawing.Size(260, 818)
+        Me.FilePreviewHandlerHost.TabIndex = 0
+        '
         'MainStatusStrip
         '
         Me.MainStatusStrip.Font = New System.Drawing.Font("Calibri", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -361,31 +386,6 @@ Partial Class FrmMain
         'FilesRefreshTimer
         '
         Me.FilesRefreshTimer.Interval = 2000
-        '
-        'FilePreviewHandlerHost
-        '
-        Me.FilePreviewHandlerHost.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.FilePreviewHandlerHost.Location = New System.Drawing.Point(0, 0)
-        Me.FilePreviewHandlerHost.Name = "FilePreviewHandlerHost"
-        Me.FilePreviewHandlerHost.Size = New System.Drawing.Size(260, 818)
-        Me.FilePreviewHandlerHost.TabIndex = 0
-        '
-        'MenuExpandAll
-        '
-        Me.MenuExpandAll.Name = "MenuExpandAll"
-        Me.MenuExpandAll.Size = New System.Drawing.Size(191, 22)
-        Me.MenuExpandAll.Text = "Alles öffnen"
-        '
-        'MenuMigrate
-        '
-        Me.MenuMigrate.Name = "MenuMigrate"
-        Me.MenuMigrate.Size = New System.Drawing.Size(191, 22)
-        Me.MenuMigrate.Text = "Zu OrgMan migrieren"
-        '
-        'ToolStripSeparator1
-        '
-        Me.ToolStripSeparator1.Name = "ToolStripSeparator1"
-        Me.ToolStripSeparator1.Size = New System.Drawing.Size(188, 6)
         '
         'FrmMain
         '
