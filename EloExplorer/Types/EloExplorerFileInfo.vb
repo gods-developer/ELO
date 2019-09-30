@@ -5,5 +5,5 @@
     Public FileLen As Long
     Public FileDateTime As Date
     Public FileType As String
-
+    Public Version As String
 End Class

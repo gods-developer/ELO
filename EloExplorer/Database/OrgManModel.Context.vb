@@ -32,9 +32,9 @@ Namespace EloExplorer
         Public Overridable Property TreeItemGroupRights() As DbSet(Of TreeItemGroupRight)
         Public Overridable Property TreeItemUserRights() As DbSet(Of TreeItemUserRight)
         Public Overridable Property Reminders() As DbSet(Of Reminder)
-        Public Overridable Property TreeItemFiles() As DbSet(Of TreeItemFile)
-        Public Overridable Property FileIndexes() As DbSet(Of FileIndex)
         Public Overridable Property StIndexes() As DbSet(Of StIndex)
+        Public Overridable Property ListItemIndexes() As DbSet(Of ListItemIndex)
+        Public Overridable Property ListItems() As DbSet(Of ListItem)
     
     End Class
 

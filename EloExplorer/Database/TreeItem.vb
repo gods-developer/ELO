@@ -26,12 +26,13 @@ Namespace EloExplorer
         Public Property RowVersion As Integer
         Public Property FilesSortBy As Byte
         Public Property FilesSortWay As Byte
+        Public Property NodeName As String
     
         Public Overridable Property RootPaths As ICollection(Of RootPath) = New HashSet(Of RootPath)
         Public Overridable Property TreeItemGroupRights As ICollection(Of TreeItemGroupRight) = New HashSet(Of TreeItemGroupRight)
         Public Overridable Property TreeItemUserRights As ICollection(Of TreeItemUserRight) = New HashSet(Of TreeItemUserRight)
         Public Overridable Property Reminders As ICollection(Of Reminder) = New HashSet(Of Reminder)
-        Public Overridable Property TreeItemFiles As ICollection(Of TreeItemFile) = New HashSet(Of TreeItemFile)
+        Public Overridable Property ListItems As ICollection(Of ListItem) = New HashSet(Of ListItem)
     
     End Class
 

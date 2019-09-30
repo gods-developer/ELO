@@ -10,7 +10,7 @@ Imports System.Runtime.InteropServices
 ' Review the values of the assembly attributes
 
 <Assembly: AssemblyTitle("ELO Explorer")>
-<Assembly: AssemblyDescription("ELO Daten navigieren")>
+<Assembly: AssemblyDescription("ELO Daten navigieren und migrieren")>
 <Assembly: AssemblyCompany("DigiSped")>
 <Assembly: AssemblyProduct("EloExplorer")>
 <Assembly: AssemblyCopyright("Copyright © DigiSped 2019")>
@@ -32,6 +32,6 @@ Imports System.Runtime.InteropServices
 ' by using the '*' as shown below:
 ' <Assembly: AssemblyVersion("1.0.*")>
 
-<Assembly: AssemblyVersion("1.0.0.15")>
-<Assembly: AssemblyFileVersion("1.0.0.15")>
+<Assembly: AssemblyVersion("1.0.0.18")>
+<Assembly: AssemblyFileVersion("1.0.0.18")>
 <Assembly: NeutralResourcesLanguage("de")>

@@ -1,7 +1,6 @@
 ﻿Imports EloExplorer.EloExplorer
-Imports OrgMan.OrgMan
 
-Public Class OrgManTreeItemFile
+Public Class OrgManListItem
     Public Id As Integer
     Public TreeItemId As Integer
     Public Filename As String
@@ -12,7 +11,7 @@ Public Class OrgManTreeItemFile
     Public LastUpdateUser As String
     Public RowVersion As Integer
 
-    Public Sub New(Optional item As TreeItemFile = Nothing)
+    Public Sub New(Optional item As ListItem = Nothing)
         If item Is Nothing Then Exit Sub
         Me.Id = item.Id
         Me.TreeItemId = item.TreeItemId

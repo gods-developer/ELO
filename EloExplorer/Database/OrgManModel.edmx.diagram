@@ -19,12 +19,13 @@
         <EntityTypeShape EntityType="OrgManModel.Reminder" Width="1.5" PointX="5.875" PointY="5" />
         <AssociationConnector Association="OrgManModel.FK_Reminders_AppUser" />
         <AssociationConnector Association="OrgManModel.FK_Reminders_TreeItem" />
-        <EntityTypeShape EntityType="OrgManModel.TreeItemFile" Width="1.5" PointX="0.875" PointY="6.375" />
-        <AssociationConnector Association="OrgManModel.FK_TreeItemFile_TreeItem" />
-        <EntityTypeShape EntityType="OrgManModel.FileIndex" Width="1.5" PointX="8.625" PointY="5.125" />
         <EntityTypeShape EntityType="OrgManModel.StIndex" Width="1.5" PointX="11" PointY="5.5" />
-        <AssociationConnector Association="OrgManModel.FK_FileIndex_File" />
-        <AssociationConnector Association="OrgManModel.FK_FileIndex_Index" />
+        <EntityTypeShape EntityType="OrgManModel.ListItemIndex" Width="1.5" PointX="13.25" PointY="9.125" />
+        <EntityTypeShape EntityType="OrgManModel.ListItem" Width="1.5" PointX="2.75" PointY="12.375" />
+        <AssociationConnector Association="OrgManModel.FK_ListItemIndex_Index" />
+        <AssociationConnector Association="OrgManModel.FK_ListItemIndex_Item" />
+        <AssociationConnector Association="OrgManModel.FK_ListItem_TreeItem" />
+        <AssociationConnector Association="OrgManModel.FK_Reminders_ListItem" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

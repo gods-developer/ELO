@@ -196,7 +196,11 @@ ErrorHandler:
                     realName = realName & GetFileEswValue(folder & foundFile, "DOCEXT").ToLower()
                 End If
                 If Not String.IsNullOrEmpty(realName) Then
-                    Dim file As EloExplorerFileInfo = GetFileInfo(folder, foundFile, realName)
+                    Dim version = GetFileEswValue(folder & foundFile, "SREG")
+                    If String.IsNullOrEmpty(version) Then
+                        version = "1.0"
+                    End If
+                    Dim file As EloExplorerFileInfo = GetFileInfo(folder, foundFile, realName, version)
                     foundFiles.Add(file)
                 End If
             End If
@@ -211,7 +215,7 @@ ErrorHandler:
         GetFileEswValue = IniFileHelper.IniReadValue(fname & ".ESW", "GENERAL", key)
     End Function
 
-    Public Function GetFileInfo(folder As String, filename As String, realName As String) As EloExplorerFileInfo
+    Public Function GetFileInfo(folder As String, filename As String, realName As String, version As String) As EloExplorerFileInfo
         Dim fi = New FileInfo(folder & filename)
         Dim file As New EloExplorerFileInfo With {
             .FilePath = folder,
@@ -219,7 +223,8 @@ ErrorHandler:
             .Physicalname = filename,
             .FileLen = fi.Length,'FileLen(folder & filename),
             .FileDateTime = fi.LastWriteTime,'FileDateTime(folder & filename),
-            .FileType = GetFileTypeName(filename)
+            .FileType = GetFileTypeName(filename),
+            .Version = version
         }
         GetFileInfo = file
     End Function

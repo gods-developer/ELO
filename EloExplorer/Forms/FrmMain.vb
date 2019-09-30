@@ -107,7 +107,6 @@ Public Class FrmMain
         Else
             HideFilePreviewer()
         End If
-        MenuOnlyIndex.Checked = Boolean.Parse(GetSetting(Application.ProductName, "Window", "DisplayOnlyIndex", "False"))
         Me.LvwFiles.Columns(0).Width = GetSetting(Application.ProductName, "Window", "LastColumn0With", Me.LvwFiles.Columns(0).Width)
         Me.LvwFiles.Columns(1).Width = GetSetting(Application.ProductName, "Window", "LastColumn1With", Me.LvwFiles.Columns(1).Width)
         Me.LvwFiles.Columns(2).Width = GetSetting(Application.ProductName, "Window", "LastColumn2With", Me.LvwFiles.Columns(2).Width)
@@ -218,7 +217,7 @@ Public Class FrmMain
     End Function
 
     Private Function GetFileIdFromTag(tag As Object) As Integer
-        Dim fileItem = DirectCast(tag, OrgManTreeItemFile)
+        Dim fileItem = DirectCast(tag, OrgManListItem)
         GetFileIdFromTag = fileItem?.Id
     End Function
 
@@ -322,7 +321,7 @@ mRetry:
         Dim sourcePath As String = GetFullPathOfNode(copyNode)
         Dim importPath As String = GetFullPathOfNode(newNode)
         Dim treeItem = DirectCast(newNode.Tag, OrgManTreeItem)
-        Dim files As List(Of EloExplorerFileInfo) = GetFiles(sourcePath, MenuOnlyIndex.Checked)
+        Dim files As List(Of EloExplorerFileInfo) = GetFiles(sourcePath, False)
         Dim cp As Integer, file As EloExplorerFileInfo
         For cp = 0 To files.Count - 1
             file = files.Item(cp)
@@ -536,13 +535,13 @@ mRetry:
 
     Private Sub DeleteFiles(node As TreeNode)
         Dim fullPath As String = GetFullPathOfNode(node)
-        Dim files As List(Of EloExplorerFileInfo) = GetFiles(fullPath, MenuOnlyIndex.Checked)
+        Dim files As List(Of EloExplorerFileInfo) = GetFiles(fullPath, False)
         Dim cp As Integer, file As EloExplorerFileInfo
         Dim treeItemId As Integer = GetIdFromTag(node.Tag)
         For cp = 0 To files.Count - 1
             file = files.Item(cp)
-            Dim fileId = dbc.GetTreeItemFile(treeItemId, file.Filename).Id
-            DeleteTreeItemFile(fileId)
+            Dim fileId = dbc.GetListItem(treeItemId, file.Filename).Id
+            DeleteListItem(fileId)
             KillFileIfExists(fullPath + file.Filename)
         Next
         RemoveDirIfExists(fullPath)
@@ -691,7 +690,7 @@ mRetry:
         ClearFilePreview()
         LvwFiles.Items.Clear()
         Dim fullPath As String = GetFullPathOfNode(TvwExplorer.SelectedNode)
-        Dim files As List(Of EloExplorerFileInfo) = GetFiles(fullPath & "\", MenuOnlyIndex.Checked)
+        Dim files As List(Of EloExplorerFileInfo) = GetFiles(fullPath & "\", True)
         For cp = 0 To files.Count - 1
             Dim file = files.Item(cp)
             AddFileItem(file, cp)
@@ -708,6 +707,7 @@ mRetry:
             item.Tag = file
             item.SubItems(ColumnHeaderDate.Index).Text = file.FileDateTime.ToString()
             item.SubItems(ColumnHeaderSize.Index).Text = file.FileLen.ToString("#,##0")
+            item.SubItems(ColumnHeaderVersion.Index).Text = file.Version
         Else
             Dim sIcon As String = AddIconToImageList(file.FilePath, file.Physicalname, ImageListFiles, "file", file.FileType)
             item = LvwFiles.Items.Add("F" & count, file.Filename, sIcon)
@@ -715,6 +715,7 @@ mRetry:
             item.SubItems.Add(file.FileDateTime.ToString())
             item.SubItems.Add(file.FileType)
             item.SubItems.Add(file.FileLen.ToString("#,##0"))
+            item.SubItems.Add(file.Version)
         End If
         AddFileItem = item
     End Function
@@ -898,7 +899,7 @@ mRetry:
             'Not yet supported
             Exit Function
         End If
-        Dim treeItemFile As OrgManTreeItemFile
+        Dim ListItem As OrgManListItem
         Try
             System.IO.Directory.CreateDirectory(sPath)
             If dlgResult = DialogResult.Ignore Then
@@ -914,10 +915,10 @@ mRetry:
                 FileIO.FileSystem.MoveFile(filename, sPath & newFileName, FileIO.UIOption.AllDialogs, FileIO.UICancelOption.ThrowException)
             End If
             If dlgResult = DialogResult.Ignore Then
-                treeItemFile = dbc.GetTreeItemFile(treeItem.Id, newFileName)
+                ListItem = dbc.GetListItem(treeItem.Id, newFileName)
             Else
-                treeItemFile = AddNewTreeItemFile(treeItem.Id, newFileName)
-                If treeItemFile Is Nothing Then
+                ListItem = AddNewListItem(treeItem.Id, newFileName, String.Empty)
+                If ListItem Is Nothing Then
                     Return False
                 End If
             End If
@@ -1094,15 +1095,15 @@ mRetry:
             Dim fullPath As String = GetFullPathOfNode(TvwExplorer.SelectedNode)
             Do While LvwFiles.SelectedItems.Count > 0
                 Dim fileId = GetFileIdFromTag(LvwFiles.SelectedItems(0).Tag)
-                DeleteTreeItemFile(fileId)
+                DeleteListItem(fileId)
                 KillFileIfExists(fullPath + LvwFiles.SelectedItems(0).Text)
                 LvwFiles.SelectedItems(0).Remove()
             Loop
         End If
     End Sub
 
-    Private Sub DeleteTreeItemFile(treeItemFileId As Integer)
-        dbc.DeleteTreeItemFile(treeItemFileId)
+    Private Sub DeleteListItem(ListItemId As Integer)
+        dbc.DeleteListItem(ListItemId)
     End Sub
 
     Private Sub MenuRefreshFiles_Click(sender As Object, e As EventArgs) Handles MenuRefreshFiles.Click
@@ -1119,6 +1120,54 @@ mRetry:
             Else
                 FilePreviewHandlerHost.Open(String.Empty)
             End If
+        End If
+        Dim mnuItem As MenuItem
+        Do While MenuVersions.DropDownItems.Count > 0
+            MenuVersions.DropDownItems.RemoveAt(0)
+        Loop
+        AddVersionMenuItems()
+
+    End Sub
+
+    Private Sub AddVersionMenuItems()
+        If LvwFiles.SelectedItems.Count = 0 Then
+            Exit Sub
+        End If
+        Dim fileItem = DirectCast(LvwFiles.SelectedItems(0).Tag, EloExplorerFileInfo)
+        Dim fullPath As String = GetFullPathOfNode(TvwExplorer.SelectedNode)
+        Dim fname = fullPath & "\" & fileItem.Physicalname
+        fname = fname.Substring(0, fname.LastIndexOf(".")) & ".ESW"
+        Dim sections = IniFileHelper.IniReadSections(fname)
+        For Each section In sections
+            If section.StartsWith("DOCVERS") Then
+                Dim version = IniFileHelper.IniReadValue(fname, section, "HISTVERSION")
+                If String.IsNullOrEmpty(version) Then
+                    version = "1.0"
+                End If
+                Dim docid = IniFileHelper.IniReadValue(fname, section, "DOCID")
+                If docid <> "00000000" Then
+                    Dim menu As New ToolStripMenuItem() With {.Text = version, .Tag = docid}
+                    MenuVersions.DropDownItems.Add(menu)
+                    AddHandler menu.Click, AddressOf mnuItem_Clicked
+                End If
+            End If
+        Next
+        If MenuVersions.DropDownItems.Count = 0 Then
+            Dim menu As New ToolStripMenuItem() With {.Text = "keine", .Enabled = False}
+            MenuVersions.DropDownItems.Add(menu)
+        End If
+    End Sub
+
+    Private Sub mnuItem_Clicked(sender As Object, e As EventArgs)
+        'ContextMenuStrip1.Hide() 'Sometimes the menu items can remain open.  May not be necessary for you.
+        Dim item As ToolStripMenuItem = TryCast(sender, ToolStripMenuItem)
+        If item IsNot Nothing Then
+            Dim fileItem = DirectCast(LvwFiles.SelectedItems(0).Tag, EloExplorerFileInfo)
+            Dim fullPath As String = GetFullPathOfNode(TvwExplorer.SelectedNode)
+            Dim fname = fullPath & "\" & fileItem.Physicalname
+            fname = fname.Substring(0, fname.LastIndexOf(".")) & ".ESW"
+            Dim extension = IniFileHelper.IniReadValue(fname, "GENERAL", "DOCEXT")
+            Process.Start(fullPath & "\D" & item.Tag.ToString().Substring(1) & extension)
         End If
     End Sub
 
@@ -1319,9 +1368,9 @@ mRetry:
                 MsgBox("Der Name existiert bereits in diesem Ordner!", MsgBoxStyle.Exclamation, "Hinweis")
                 GoTo mRetry
             End If
-            Dim fileItem = DirectCast(LvwFiles.SelectedItems(0).Tag, OrgManTreeItemFile)
+            Dim fileItem = DirectCast(LvwFiles.SelectedItems(0).Tag, OrgManListItem)
             fileItem.Filename = newText
-            dbc.SaveTreeItemFile(fileItem)
+            dbc.SaveListItem(fileItem)
             IO.File.Move(sPath & LvwFiles.SelectedItems(0).Text, sPath & newText)
             LvwFiles.SelectedItems(0).Text = newText
         End If
@@ -1505,13 +1554,13 @@ mRetry:
                 oldIndex = .SelectedItems(0).Index
                 toMove = .SelectedItems(0)
                 inPreview = .Items(oldIndex - 1)
-                Dim moveItem As OrgManTreeItemFile = DirectCast(toMove.Tag, OrgManTreeItemFile)
-                Dim previewItem As OrgManTreeItemFile = DirectCast(inPreview.Tag, OrgManTreeItemFile)
+                Dim moveItem As OrgManListItem = DirectCast(toMove.Tag, OrgManListItem)
+                Dim previewItem As OrgManListItem = DirectCast(inPreview.Tag, OrgManListItem)
 
                 .Items.Remove(toMove)
                 .Items.Insert(oldIndex - 1, toMove)
 
-                dbc.MoveTreeItemFile(moveItem, offset)
+                dbc.MoveListItem(moveItem, offset)
                 moveItem.SortOrder = moveItem.SortOrder + offset
                 previewItem.SortOrder = previewItem.SortOrder - offset
 
@@ -1535,13 +1584,13 @@ mRetry:
                 oldIndex = .SelectedItems(0).Index
                 toMove = .SelectedItems(0)
                 inDown = .Items(oldIndex + 1)
-                Dim moveItem As OrgManTreeItemFile = DirectCast(toMove.Tag, OrgManTreeItemFile)
-                Dim downItem As OrgManTreeItemFile = DirectCast(inDown.Tag, OrgManTreeItemFile)
+                Dim moveItem As OrgManListItem = DirectCast(toMove.Tag, OrgManListItem)
+                Dim downItem As OrgManListItem = DirectCast(inDown.Tag, OrgManListItem)
 
                 .Items.Remove(toMove)
                 .Items.Insert(oldIndex + 1, toMove)
 
-                dbc.MoveTreeItemFile(moveItem, offset)
+                dbc.MoveListItem(moveItem, offset)
                 moveItem.SortOrder = moveItem.SortOrder + offset
                 downItem.SortOrder = downItem.SortOrder - offset
 
@@ -1582,12 +1631,6 @@ mRetry:
         CancelForm.Width = 125
         CancelForm.Top = Me.Top + Me.Height - (CancelForm.Height + 8)
         CancelForm.Left = Me.Left + Me.Width - (CancelForm.Width + 25)
-    End Sub
-
-    Private Sub MenuOnlyIndex_Click(sender As Object, e As EventArgs) Handles MenuOnlyIndex.Click
-        MenuOnlyIndex.Checked = Not MenuOnlyIndex.Checked
-        SaveSetting(Application.ProductName, "Window", "DisplayOnlyIndex", MenuOnlyIndex.Checked.ToString())
-        LoadFiles()
     End Sub
 
     Private Sub MenuEloData_Click(sender As Object, e As EventArgs) Handles MenuEloData.Click
@@ -1631,7 +1674,7 @@ mRetry:
 
     Private Sub AddGeneralKeyToDatabase(fileId As Integer, ini As String, key As String)
         Dim value = IniFileHelper.IniReadValue(ini, "GENERAL", key)
-        dbc.AddNewFileIndex(fileId, "ELO " & key, value)
+        dbc.AddNewListItemIndex(fileId, "ELO " & key, value)
     End Sub
 
     Private Sub MenuFileEloIndex_Click(sender As Object, e As EventArgs) Handles MenuFileEloIndex.Click
@@ -1676,15 +1719,17 @@ mRetry:
     Private CountFiles As Long
 
     Private Sub MenuMigrate_Click(sender As Object, e As EventArgs) Handles MenuMigrate.Click
-        If TvwExplorer.SelectedNode Is Nothing Then
+        If TvwExplorer.SelectedNode Is Nothing Or Not TvwExplorer.SelectedNode.Checked Then
             Exit Sub
         End If
         SumBytes = 0
         CountFolders = 0
         CountFiles = 0
         CheckDbConnection()
+        Dim newName = GetPhysicalNameFromTag(TvwExplorer.SelectedNode.Tag)
+        newName = New DirectoryInfo(newName).Name
         Dim newText = TvwExplorer.SelectedNode.Text
-        Dim newRootPath = Me.DefaultRootPath & "\" & newText
+        Dim newRootPath = Me.DefaultRootPath & "\" & newName
         Dim dlgResult = SelectRootPath(newRootPath)
         If dlgResult = DialogResult.Cancel Then
             Exit Sub
@@ -1696,9 +1741,9 @@ mRetry:
             TvwExplorer.SelectedNode.ExpandAll()
             Me.Cancel = False
             CountFolders = CountFolders + 1
-            Dim rootNode = dbc.AddNewTreeItem(newText, newRootPath)
+            Dim rootNode = dbc.AddNewTreeItem(newName, newText, newRootPath)
             If Not rootNode Is Nothing Then
-                dbc.AddNewTreeItem(Me.TemplateFolderName, , rootNode.Id)
+                dbc.AddNewTreeItem(Me.TemplateFolderName, , , rootNode.Id)
             End If
             OpenCancelForm()
             Me.Refresh()
@@ -1725,9 +1770,13 @@ mRetry:
         Dim treePath As String = GetFullPathOfNode(rootNode)
         MigrateFiles(rootId, treePath, rootPath)
         For Each node In rootNode.Nodes
-            Dim newName = ConvertToValidName(node.Text).Trim()
-            Dim newItem = dbc.AddNewTreeItem(newName, , rootId)
-            Migrate(node, newItem.Id, rootPath & "\" & newName)
+            If node.Checked Then
+                'Dim newName = ConvertToValidName(node.Text).Trim()
+                Dim newName = GetPhysicalNameFromTag(node.Tag)
+                Dim newText = GetEswValue(treePath & "\" & newName, "SHORTDESC")
+                Dim newItem = dbc.AddNewTreeItem(newName, newText, , rootId)
+                Migrate(node, newItem.Id, rootPath & "\" & newName)
+            End If
         Next
     End Sub
 
@@ -1762,18 +1811,19 @@ mRetry:
             If IO.File.Exists(fname) Then
                 CountFiles = CountFiles + 1
                 SumBytes = SumBytes + fileItem.FileLen
-                Dim filename = ConvertToValidName(item.Text)
+                Dim filename = fileItem.Physicalname 'ConvertToValidName(item.Text)
                 'FileIO.FileSystem.CopyFile(treePath & "\" & fileItem.Physicalname, rootPath & "\" & filename, FileIO.UIOption.OnlyErrorDialogs, FileIO.UICancelOption.ThrowException)
                 Delimon.Win32.IO.File.Copy(treePath & "\" & fileItem.Physicalname, rootPath & "\" & filename, True)
-                Dim newFile = dbc.AddNewTreeItemFile(treeItemId, filename)
-                MigrateFileIndexes(treePath, fileItem, newFile.Id)
+                Dim displayname = IniFileHelper.IniReadValue(fname, "GENERAL", "SHORTDESC") '& IniFileHelper.IniReadValue(fname, "GENERAL", "DOCEXT")
+                Dim newFile = dbc.AddNewListItem(treeItemId, filename, displayname)
+                MigrateFileIndexes(fname, fileItem, newFile.Id)
             End If
         Next
     End Sub
 
     Private Sub MigrateFileIndexes(fname As String, fileItem As EloExplorerFileInfo, fileId As Integer)
         Dim sections = IniFileHelper.IniReadSections(fname)
-        dbc.AddNewFileIndex(fileId, "ELO Dateiname", fileItem.Physicalname)
+        dbc.AddNewListItemIndex(fileId, "ELO Dateiname", fileItem.Physicalname)
         AddGeneralKeyToDatabase(fileId, fname, "SHORTDESC")
         AddGeneralKeyToDatabase(fileId, fname, "DOCEXT")
         AddGeneralKeyToDatabase(fileId, fname, "DOCTYPE")
@@ -1792,7 +1842,7 @@ mRetry:
                 Else
                     keyName = "ELO " & keyName
                 End If
-                dbc.AddNewFileIndex(fileId, keyName, IniFileHelper.IniReadValue(fname, section, "KEYTEXT").Replace(Chr(182), ""))
+                dbc.AddNewListItemIndex(fileId, keyName, IniFileHelper.IniReadValue(fname, section, "KEYTEXT").Replace(Chr(182), ""))
             End If
         Next
     End Sub
@@ -1807,6 +1857,19 @@ mRetry:
                 CancelForm.Visible = True
             End If
         End If
+    End Sub
+
+    Private Sub TvwExplorer_AfterCheck(sender As Object, e As TreeViewEventArgs) Handles TvwExplorer.AfterCheck
+        e.Node.ExpandAll()
+        SetNodeChildrenChecked(e.Node, e.Node.Checked)
+    End Sub
+
+    Private Sub SetNodeChildrenChecked(node As TreeNode, checked As Boolean)
+        Dim child As TreeNode
+        For Each child In node.Nodes
+            child.Checked = checked
+            SetNodeChildrenChecked(child, checked)
+        Next
     End Sub
 
     Private Sub MenuShowFilePreviewer_Click(sender As Object, e As EventArgs) Handles MenuShowFilePreviewer.Click
@@ -1825,9 +1888,9 @@ mRetry:
         MenuCut.Enabled = Not TvwExplorer.SelectedNode Is Nothing
     End Sub
 
-    Private Function AddNewTreeItemFile(treeItemId As Integer, fileName As String) As OrgManTreeItemFile
-        Dim newFile As OrgManTreeItemFile = dbc.AddNewTreeItemFile(treeItemId, fileName)
-        AddNewTreeItemFile = newFile
+    Private Function AddNewListItem(treeItemId As Integer, fileName As String, displayname As String) As OrgManListItem
+        Dim newFile As OrgManListItem = dbc.AddNewListItem(treeItemId, fileName, displayname)
+        AddNewListItem = newFile
     End Function
 
 End Class

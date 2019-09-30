@@ -2,12 +2,10 @@
 Imports System.Data.Entity.Infrastructure
 Imports Microsoft.Office.Interop.Access.Dao
 Imports EloExplorer
-Imports OrgMan.OrgMan
 Imports Win.Common.Tools
 Imports EloExplorer.EloExplorer
 
 Public Class MsSqlConnector
-    Implements IDatabaseConnector
     Dim dbs As EloExplorer.OrgManEntities
     Private _mySid As String, _myGroupSids As List(Of String), adminState As Integer
 
@@ -54,7 +52,7 @@ Public Class MsSqlConnector
         End Get
     End Property
 
-    Public ReadOnly Property Path As String Implements IDatabaseConnector.Path
+    Public ReadOnly Property Path As String
         Get
             Dim dbConnectionString As String = dbs.Database.Connection.ConnectionString
             Path = GetConnectionStringValue(dbConnectionString, "data source") + "\" + GetConnectionStringValue(dbConnectionString, "initial catalog")
@@ -71,11 +69,11 @@ Public Class MsSqlConnector
         GetConnectionStringValue = result
     End Function
 
-    Public Sub Close() Implements IDatabaseConnector.Close
+    Public Sub Close()
         dbs?.Dispose()
     End Sub
 
-    Public Sub DeleteTreeItem(id As Integer) Implements IDatabaseConnector.DeleteTreeItem
+    Public Sub DeleteTreeItem(id As Integer)
         Dim item As TreeItem = dbs.TreeItems.Find(id) 'From r In dbs.TreeItems Where r.Id = id
         If Not item Is Nothing Then
             dbs.TreeItems.Remove(item)
@@ -83,7 +81,7 @@ Public Class MsSqlConnector
         End If
     End Sub
 
-    Public Sub SaveTreeItem(item As OrgManTreeItem) Implements IDatabaseConnector.SaveTreeItem
+    Public Sub SaveTreeItem(item As OrgManTreeItem)
         Dim record As TreeItem = dbs.TreeItems.Find(item.Id)
         If Not record Is Nothing Then
             record.NodeText = item.NodeText
@@ -98,7 +96,7 @@ Public Class MsSqlConnector
         End If
     End Sub
 
-    Public Sub SaveRootPath(item As OrgManTreeItem) Implements IDatabaseConnector.SaveRootPath
+    Public Sub SaveRootPath(item As OrgManTreeItem)
         Dim query = From r In dbs.RootPaths Where r.TreeItemId = item.Id
         Dim record As RootPath
         If query.Count() = 0 Then
@@ -118,7 +116,7 @@ Public Class MsSqlConnector
         SaveChanges()
     End Sub
 
-    Public Sub MoveTreeItem(item As OrgManTreeItem, offset As Integer) Implements IDatabaseConnector.MoveTreeItem
+    Public Sub MoveTreeItem(item As OrgManTreeItem, offset As Integer)
         Dim query1 = From r In dbs.TreeItems Where r.Id = item.Id
         Dim record1 As TreeItem = query1.FirstOrDefault()
         Dim query2 = From r In dbs.TreeItems Where r.ParentNodeId = item.ParentId And r.SortOrder = (item.SortOrder + offset)
@@ -134,7 +132,7 @@ Public Class MsSqlConnector
         SaveChanges()
     End Sub
 
-    Public Function GetRootTreeItems() As List(Of OrgManTreeItem) Implements IDatabaseConnector.GetRootTreeItems
+    Public Function GetRootTreeItems() As List(Of OrgManTreeItem)
         Dim results As New List(Of OrgManTreeItem)
         Dim query = From r In dbs.TreeItems Where r.ParentNodeId Is Nothing Order By r.SortOrder
         For Each treeItem In query
@@ -167,7 +165,7 @@ Public Class MsSqlConnector
         IsTreeItemAccess = False
     End Function
 
-    Public Function GetChildTreeItems(parentNodeId As Integer) As List(Of OrgManTreeItem) Implements IDatabaseConnector.GetChildTreeItems
+    Public Function GetChildTreeItems(parentNodeId As Integer) As List(Of OrgManTreeItem)
         Dim results As New List(Of OrgManTreeItem)
         Dim query = From r In dbs.TreeItems Where r.ParentNodeId = parentNodeId Order By r.SortOrder
         For Each treeItem In query
@@ -176,12 +174,13 @@ Public Class MsSqlConnector
         GetChildTreeItems = results
     End Function
 
-    Public Function AddNewTreeItem(newName As String, Optional newRootPath As String = "", Optional parentNodeId As Integer = 0) As OrgManTreeItem Implements IDatabaseConnector.AddNewTreeItem
+    Public Function AddNewTreeItem(newName As String, Optional newText As String = "", Optional newRootPath As String = "", Optional parentNodeId As Integer = 0) As OrgManTreeItem
         Dim treeItem As TreeItem = dbs.TreeItems.Create()
         treeItem.Creation = Now
         treeItem.CreationUser = Environment.UserName
         treeItem.RowVersion = 1
-        treeItem.NodeText = newName
+        treeItem.NodeName = newName
+        treeItem.NodeText = newText
         If parentNodeId > 0 Then
             treeItem.ParentNodeId = parentNodeId
         End If
@@ -211,7 +210,7 @@ Public Class MsSqlConnector
         End If
     End Function
 
-    Public Function GetRootPath(nodeId As Integer) As String Implements IDatabaseConnector.GetRootPath
+    Public Function GetRootPath(nodeId As Integer) As String
         Dim query = From r In dbs.RootPaths Where r.TreeItemId = nodeId
         If query.Count() > 0 Then
             GetRootPath = query.FirstOrDefault().RootPath1
@@ -223,7 +222,7 @@ Public Class MsSqlConnector
         End If
     End Function
 
-    Public Function CheckIfNameExists(parentNodeId As Integer, newName As String) As Boolean Implements IDatabaseConnector.CheckIfNameExists
+    Public Function CheckIfNameExists(parentNodeId As Integer, newName As String) As Boolean
         Dim query As IQueryable(Of TreeItem)
         If parentNodeId = 0 Then
             query = (From r In dbs.TreeItems Where r.ParentNodeId Is Nothing And r.NodeText = newName.Replace("'", "''"))
@@ -248,17 +247,17 @@ Public Class MsSqlConnector
         End If
     End Function
 
-    Private Function GetMaxTreeItemFileId(treeItemId As Integer) As Integer
-        DirectCast(dbs, IObjectContextAdapter).ObjectContext.Refresh(RefreshMode.StoreWins, dbs.TreeItemFiles)
-        Dim query = (From r In dbs.TreeItemFiles Where r.TreeItemId = treeItemId Select r.SortOrder)
+    Private Function GetMaxListItemId(treeItemId As Integer) As Integer
+        DirectCast(dbs, IObjectContextAdapter).ObjectContext.Refresh(RefreshMode.StoreWins, dbs.ListItems)
+        Dim query = (From r In dbs.ListItems Where r.TreeItemId = treeItemId Select r.SortOrder)
         Dim maxId As Integer
         If query.Any() Then
             maxId = query.Max()
         End If
-        GetMaxTreeItemFileId = maxId
+        GetMaxListItemId = maxId
     End Function
 
-    Public Function GetDbSetting(Key As String, Optional [Default] As String = "") As String Implements IDatabaseConnector.GetDbSetting
+    Public Function GetDbSetting(Key As String, Optional [Default] As String = "") As String
         Dim query = From r In dbs.Settings Where r.SettingName = Key
         If query.Count() > 0 Then
             GetDbSetting = query.FirstOrDefault().SettingValue
@@ -267,7 +266,7 @@ Public Class MsSqlConnector
         End If
     End Function
 
-    Public Sub SaveDbSetting(Key As String, Setting As String) Implements IDatabaseConnector.SaveDbSetting
+    Public Sub SaveDbSetting(Key As String, Setting As String)
         Dim query = From r In dbs.Settings Where r.SettingName = Key
         Dim record As Setting
         If query.Count() = 0 Then
@@ -287,12 +286,12 @@ Public Class MsSqlConnector
         SaveChanges()
     End Sub
 
-    Public Function HasAccess() As Boolean Implements IDatabaseConnector.HasAccess
+    Public Function HasAccess() As Boolean
         Dim query = From r In dbs.AppUsers Where r.UserDomain.ToLower() = Environment.UserDomainName.ToLower() And r.UserName.ToLower() = Environment.UserName.ToLower()
         HasAccess = query.Count() = 1
     End Function
 
-    Public Function GetDbUserSetting(Key As String, Optional [Default] As String = "") As String Implements IDatabaseConnector.GetDbUserSetting
+    Public Function GetDbUserSetting(Key As String, Optional [Default] As String = "") As String
         Dim query = From r In dbs.AppUserSettings Where r.AppUser.UserDomain.ToLower() = Environment.UserDomainName.ToLower() And r.AppUser.UserName.ToLower() = Environment.UserName.ToLower() And r.SettingName = Key
         If query.Count() > 0 Then
             GetDbUserSetting = query.FirstOrDefault().SettingValue
@@ -301,7 +300,7 @@ Public Class MsSqlConnector
         End If
     End Function
 
-    Public Sub SaveDbUserSetting(Key As String, Setting As String) Implements IDatabaseConnector.SaveDbUserSetting
+    Public Sub SaveDbUserSetting(Key As String, Setting As String)
         Dim query = From r In dbs.AppUserSettings Where r.AppUser.UserDomain.ToLower() = Environment.UserDomainName.ToLower() And r.AppUser.UserName.ToLower() = Environment.UserName.ToLower() And r.SettingName = Key
         Dim record As AppUserSetting
         If query.Count() = 0 Then
@@ -334,7 +333,7 @@ Public Class MsSqlConnector
         GetAppUserId = appUserId
     End Function
 
-    Public Function IsAdmin() As Boolean Implements IDatabaseConnector.IsAdmin
+    Public Function IsAdmin() As Boolean
         If adminState = 0 Then
             Dim query = From r In dbs.AppUsers Where r.UserDomain.ToLower() = Environment.UserDomainName.ToLower() And r.UserName.ToLower() = Environment.UserName.ToLower() And r.IsAdmin = True
             adminState = IIf(query.Count() = 0, -1, 1)
@@ -342,7 +341,7 @@ Public Class MsSqlConnector
         IsAdmin = adminState = 1
     End Function
 
-    Public Function GetGroupRight(treeItemId As Integer, sid As String) As OrgManEnums.AccessRight Implements IDatabaseConnector.GetGroupRight
+    Public Function GetGroupRight(treeItemId As Integer, sid As String) As OrgManEnums.AccessRight
         Dim query = From r In dbs.TreeItemGroupRights Where r.GroupId = sid And r.TreeItemId = treeItemId
         If query.Count() > 0 Then
             GetGroupRight = query.FirstOrDefault().AccessRight
@@ -351,7 +350,7 @@ Public Class MsSqlConnector
         End If
     End Function
 
-    Public Sub SetGroupRight(treeItemId As Integer, sid As String, accessRight As OrgManEnums.AccessRight) Implements IDatabaseConnector.SetGroupRight
+    Public Sub SetGroupRight(treeItemId As Integer, sid As String, accessRight As OrgManEnums.AccessRight)
         Dim query = From r In dbs.TreeItemGroupRights Where r.GroupId = sid And r.TreeItemId = treeItemId
         Dim record As TreeItemGroupRight
         If query.Count() = 0 Then
@@ -380,7 +379,7 @@ Public Class MsSqlConnector
         SaveChanges()
     End Sub
 
-    Public Function GetUserRight(treeItemId As Integer, sid As String) As OrgManEnums.AccessRight Implements IDatabaseConnector.GetUserRight
+    Public Function GetUserRight(treeItemId As Integer, sid As String) As OrgManEnums.AccessRight
         Dim query = From r In dbs.TreeItemUserRights Where r.UserId = sid And r.TreeItemId = treeItemId
         If query.Count() > 0 Then
             GetUserRight = query.FirstOrDefault().AccessRight
@@ -389,7 +388,7 @@ Public Class MsSqlConnector
         End If
     End Function
 
-    Public Sub SetUserRight(treeItemId As Integer, sid As String, accessRight As OrgManEnums.AccessRight) Implements IDatabaseConnector.SetUserRight
+    Public Sub SetUserRight(treeItemId As Integer, sid As String, accessRight As OrgManEnums.AccessRight)
         Dim query = From r In dbs.TreeItemUserRights Where r.UserId = sid And r.TreeItemId = treeItemId
         Dim record As TreeItemUserRight
         If query.Count() = 0 Then
@@ -418,7 +417,7 @@ Public Class MsSqlConnector
         SaveChanges()
     End Sub
 
-    Public Function GetGroupRights(treeItemId As Integer) As IList(Of OrgManAccessRight) Implements IDatabaseConnector.GetGroupRights
+    Public Function GetGroupRights(treeItemId As Integer) As IList(Of OrgManAccessRight)
         Dim results = New List(Of OrgManAccessRight)
         Dim query = From r In dbs.TreeItemGroupRights Where r.TreeItemId = treeItemId
         If query.Count() > 0 Then
@@ -429,7 +428,7 @@ Public Class MsSqlConnector
         GetGroupRights = results
     End Function
 
-    Public Function GetUserRights(treeItemId As Integer) As IList(Of OrgManAccessRight) Implements IDatabaseConnector.GetUserRights
+    Public Function GetUserRights(treeItemId As Integer) As IList(Of OrgManAccessRight)
         Dim results = New List(Of OrgManAccessRight)
         Dim query = From r In dbs.TreeItemUserRights Where r.TreeItemId = treeItemId
         If query.Count() > 0 Then
@@ -440,109 +439,42 @@ Public Class MsSqlConnector
         GetUserRights = results
     End Function
 
-    Public Function GetReminderDate(treeItemId As Integer, filename As String) As Date Implements IDatabaseConnector.GetReminderDate
-        Dim userId = GetAppUserId()
-        Dim query = From r In dbs.Reminders Where r.AppUserId = userId And r.TreeItemId = treeItemId And r.Filename = filename And r.Done = False
-        If query.Count() > 0 Then
-            GetReminderDate = query.FirstOrDefault().ReminderDate
-        Else
-            GetReminderDate = Nothing
-        End If
-    End Function
-
-    Public Sub SetReminderDate(treeItemId As Integer, filename As String, reminderDate As Date) Implements IDatabaseConnector.SetReminderDate
-        Dim userId = GetAppUserId()
-        Dim query = From r In dbs.Reminders Where r.AppUserId = userId And r.TreeItemId = treeItemId And r.Filename = filename
-        Dim record As Reminder
-        If query.Count() = 0 Then
-            record = dbs.Reminders.Create()
-            record.AppUserId = GetAppUserId()
-            record.TreeItemId = treeItemId
-            record.Filename = filename
-            record.Creation = Now
-            record.CreationUser = Environment.UserName
-            record.RowVersion = 1
-            dbs.Reminders.Add(record)
-        Else
-            record = query.FirstOrDefault()
-            record.LastUpdate = Now
-            record.LastUpdateUser = Environment.UserName
-            record.RowVersion = record.RowVersion + 1
-        End If
-        record.Done = False
-        record.ReminderDate = reminderDate
-        SaveChanges()
-    End Sub
-
-    Public Sub DeleteReminderDate(treeItemId As Integer, filename As String) Implements IDatabaseConnector.DeleteReminderDate
-        Dim userId = GetAppUserId()
-        Dim query = From r In dbs.Reminders Where r.AppUserId = userId And r.TreeItemId = treeItemId And r.Filename = filename
-        If query.Count() > 0 Then
-            dbs.Reminders.Remove(query.FirstOrDefault())
-            SaveChanges()
-        End If
-    End Sub
-
-    Public Function GetReminders() As List(Of OrgManReminder) Implements IDatabaseConnector.GetReminders
-        Dim results = New List(Of OrgManReminder)
-        Dim userId = GetAppUserId()
-        Dim query = From r In dbs.Reminders Where r.AppUserId = userId And r.ReminderDate <= DateTime.Now And r.Done = False Order By r.ReminderDate
-        If query.Count() > 0 Then
-            For Each rec In query
-                results.Add(New OrgManReminder(rec.TreeItemId, rec.Filename, rec.ReminderDate))
-            Next
-        End If
-        GetReminders = results
-    End Function
-
-    Public Sub FinishReminder(treeItemId As Integer, filename As String) Implements IDatabaseConnector.FinishReminder
-        Dim userId = GetAppUserId()
-        Dim query = From r In dbs.Reminders Where r.AppUserId = userId And r.TreeItemId = treeItemId And r.Filename = filename
-        If query.Count() > 0 Then
-            Dim record = query.FirstOrDefault()
-            record.Done = True
-            record.LastUpdate = Now
-            record.LastUpdateUser = Environment.UserName
-            record.RowVersion = record.RowVersion + 1
-            SaveChanges()
-        End If
-    End Sub
-
-    Public Function AddNewTreeItemFile(treeItemId As Integer, filename As String) As OrgManTreeItemFile Implements IDatabaseConnector.AddNewTreeItemFile
+    Public Function AddNewListItem(treeItemId As Integer, filename As String, Optional displayname As String = "") As OrgManListItem
         If treeItemId <= 0 Or filename Is Nothing Then
-            AddNewTreeItemFile = Nothing
+            AddNewListItem = Nothing
             Exit Function
         End If
-        Dim item As TreeItemFile = dbs.TreeItemFiles.Create()
+        Dim item As ListItem = dbs.ListItems.Create()
         item.Creation = Now
         item.CreationUser = Environment.UserName
         item.RowVersion = 1
         item.Filename = filename
+        item.Displayname = displayname
         item.TreeItemId = treeItemId
-        item.SortOrder = GetMaxTreeItemFileId(treeItemId) + 10
-        dbs.TreeItemFiles.Add(item)
+        item.SortOrder = GetMaxListItemId(treeItemId) + 10
+        dbs.ListItems.Add(item)
         If SaveChanges() > 0 Then
-            Dim result = New OrgManTreeItemFile(item)
-            AddNewTreeItemFile = result
+            Dim result = New OrgManListItem(item)
+            AddNewListItem = result
         Else
-            AddNewTreeItemFile = Nothing
+            AddNewListItem = Nothing
         End If
     End Function
 
-    Public Function AddNewFileIndex(fileId As Integer, indexName As String, indexValue As String) As Boolean
+    Public Function AddNewListItemIndex(fileId As Integer, indexName As String, indexValue As String) As Boolean
         If String.IsNullOrEmpty(indexValue) Then
             Exit Function
         End If
         Dim indexId = GetIndexId(indexName)
-        Dim item As FileIndex = dbs.FileIndexes.Create()
+        Dim item As ListItemIndex = dbs.ListItemIndexes.Create()
         item.Creation = Now
         item.CreationUser = Environment.UserName
         item.RowVersion = 1
-        item.FileId = fileId
+        item.ListItemId = fileId
         item.IndexId = indexId
         item.IndexValue = indexValue
-        dbs.FileIndexes.Add(item)
-        AddNewFileIndex = (SaveChanges() > 0)
+        dbs.ListItemIndexes.Add(item)
+        AddNewListItemIndex = (SaveChanges() > 0)
     End Function
 
     Private Function GetIndexId(indexName As String) As Integer
@@ -573,25 +505,25 @@ Public Class MsSqlConnector
         End Try
     End Function
 
-    Public Sub DeleteTreeItemFile(id As Integer) Implements IDatabaseConnector.DeleteTreeItemFile
+    Public Sub DeleteListItem(id As Integer)
         If id <= 0 Then
             Exit Sub
         End If
-        Dim item As TreeItemFile = dbs.TreeItemFiles.Find(id)
+        Dim item As ListItem = dbs.ListItems.Find(id)
         If Not item Is Nothing Then
-            dbs.TreeItemFiles.Remove(item)
+            dbs.ListItems.Remove(item)
             SaveChanges()
         End If
     End Sub
 
-    Public Sub SaveTreeItemFile(item As OrgManTreeItemFile) Implements IDatabaseConnector.SaveTreeItemFile
+    Public Sub SaveListItem(item As OrgManListItem)
         If item.Id <= 0 Then
             Exit Sub
         End If
-        Dim record As TreeItemFile = dbs.TreeItemFiles.Find(item.Id)
+        Dim record As ListItem = dbs.ListItems.Find(item.Id)
         If Not record Is Nothing Then
             If record.Filename <> item.Filename Then
-                dbs.Database.ExecuteSqlCommand("UPDATE [OrgMan].[TreeItemFiles] SET [Filename] = {0} WHERE [TreeItemId] = {1} AND [Filename] = {2}", item.Filename, item.TreeItemId, record.Filename)
+                dbs.Database.ExecuteSqlCommand("UPDATE [OrgMan].[ListItems] SET [Filename] = {0} WHERE [TreeItemId] = {1} AND [Filename] = {2}", item.Filename, item.TreeItemId, record.Filename)
                 Exit Sub
             End If
             record.TreeItemId = item.TreeItemId
@@ -603,11 +535,11 @@ Public Class MsSqlConnector
         End If
     End Sub
 
-    Public Sub MoveTreeItemFile(item As OrgManTreeItemFile, offset As Integer) Implements IDatabaseConnector.MoveTreeItemFile
-        Dim query1 = From r In dbs.TreeItemFiles Where r.Id = item.Id
-        Dim record1 As TreeItemFile = query1.FirstOrDefault()
-        Dim query2 = From r In dbs.TreeItemFiles Where r.TreeItemId = item.TreeItemId And r.SortOrder = (item.SortOrder + offset)
-        Dim record2 As TreeItemFile = query2.FirstOrDefault()
+    Public Sub MoveListItem(item As OrgManListItem, offset As Integer)
+        Dim query1 = From r In dbs.ListItems Where r.Id = item.Id
+        Dim record1 As ListItem = query1.FirstOrDefault()
+        Dim query2 = From r In dbs.ListItems Where r.TreeItemId = item.TreeItemId And r.SortOrder = (item.SortOrder + offset)
+        Dim record2 As ListItem = query2.FirstOrDefault()
         record1.LastUpdate = Now
         record1.LastUpdateUser = Environment.UserName
         record1.RowVersion = record1.RowVersion + 1
@@ -619,12 +551,12 @@ Public Class MsSqlConnector
         SaveChanges()
     End Sub
 
-    Public Function GetTreeItemFile(treeItemId As Integer, filename As String) As OrgManTreeItemFile Implements IDatabaseConnector.GetTreeItemFile
-        Dim query = From r In dbs.TreeItemFiles Where r.TreeItemId = treeItemId And r.Filename = filename
+    Public Function GetListItem(treeItemId As Integer, filename As String) As OrgManListItem
+        Dim query = From r In dbs.ListItems Where r.TreeItemId = treeItemId And r.Filename = filename
         If query.Count() > 0 Then
-            GetTreeItemFile = New OrgManTreeItemFile(query.FirstOrDefault())
+            GetListItem = New OrgManListItem(query.FirstOrDefault())
         Else
-            GetTreeItemFile = AddNewTreeItemFile(treeItemId, filename)
+            GetListItem = AddNewListItem(treeItemId, filename)
         End If
     End Function
 

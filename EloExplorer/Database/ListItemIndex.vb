@@ -12,8 +12,8 @@ Imports System.Collections.Generic
 
 Namespace EloExplorer
 
-    Partial Public Class FileIndex
-        Public Property FileId As Integer
+    Partial Public Class ListItemIndex
+        Public Property ListItemId As Integer
         Public Property IndexId As Integer
         Public Property IndexValue As String
         Public Property Creation As Date
@@ -22,8 +22,8 @@ Namespace EloExplorer
         Public Property LastUpdateUser As String
         Public Property RowVersion As Integer
     
-        Public Overridable Property TreeItemFile As TreeItemFile
         Public Overridable Property StIndex As StIndex
+        Public Overridable Property ListItem As ListItem
     
     End Class
 

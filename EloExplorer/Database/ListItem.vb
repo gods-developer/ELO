@@ -12,10 +12,11 @@ Imports System.Collections.Generic
 
 Namespace EloExplorer
 
-    Partial Public Class TreeItemFile
+    Partial Public Class ListItem
         Public Property Id As Integer
         Public Property TreeItemId As Integer
         Public Property Filename As String
+        Public Property Displayname As String
         Public Property SortOrder As Integer
         Public Property Creation As Date
         Public Property CreationUser As String
@@ -23,8 +24,9 @@ Namespace EloExplorer
         Public Property LastUpdateUser As String
         Public Property RowVersion As Integer
     
+        Public Overridable Property ListItemIndexes As ICollection(Of ListItemIndex) = New HashSet(Of ListItemIndex)
         Public Overridable Property TreeItem As TreeItem
-        Public Overridable Property FileIndexes As ICollection(Of FileIndex) = New HashSet(Of FileIndex)
+        Public Overridable Property Reminders As ICollection(Of Reminder) = New HashSet(Of Reminder)
     
     End Class
 

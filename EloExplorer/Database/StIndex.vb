@@ -21,7 +21,7 @@ Namespace EloExplorer
         Public Property LastUpdateUser As String
         Public Property RowVersion As Integer
     
-        Public Overridable Property FileIndexes As ICollection(Of FileIndex) = New HashSet(Of FileIndex)
+        Public Overridable Property ListItemIndexes As ICollection(Of ListItemIndex) = New HashSet(Of ListItemIndex)
     
     End Class
 

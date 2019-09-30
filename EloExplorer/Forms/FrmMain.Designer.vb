@@ -56,8 +56,8 @@ Partial Class FrmMain
         Me.ToolStripSeparator4 = New System.Windows.Forms.ToolStripSeparator()
         Me.MenuShowFilePreviewer = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSeparator7 = New System.Windows.Forms.ToolStripSeparator()
-        Me.MenuOnlyIndex = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuRefreshFiles = New System.Windows.Forms.ToolStripMenuItem()
+        Me.MenuVersions = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuEloData = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuFileEloIndex = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuPropertiesFile = New System.Windows.Forms.ToolStripMenuItem()
@@ -66,6 +66,7 @@ Partial Class FrmMain
         Me.MainStatusStrip = New System.Windows.Forms.StatusStrip()
         Me.StatusLabelInfo = New System.Windows.Forms.ToolStripStatusLabel()
         Me.FilesRefreshTimer = New System.Windows.Forms.Timer(Me.components)
+        Me.ColumnHeaderVersion = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.ContextMenuExplorer.SuspendLayout()
         CType(Me.MainSplitContainer, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.MainSplitContainer.Panel1.SuspendLayout()
@@ -194,6 +195,7 @@ Partial Class FrmMain
         'TvwExplorer
         '
         Me.TvwExplorer.AllowDrop = True
+        Me.TvwExplorer.CheckBoxes = True
         Me.TvwExplorer.ContextMenuStrip = Me.ContextMenuExplorer
         Me.TvwExplorer.Dock = System.Windows.Forms.DockStyle.Fill
         Me.TvwExplorer.Font = New System.Drawing.Font("Calibri", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -205,7 +207,6 @@ Partial Class FrmMain
         Me.TvwExplorer.SelectedImageIndex = 0
         Me.TvwExplorer.ShowNodeToolTips = True
         Me.TvwExplorer.Size = New System.Drawing.Size(383, 818)
-        Me.TvwExplorer.StateImageList = Me.ImageListExplorer
         Me.TvwExplorer.TabIndex = 1
         '
         'FilesSplitContainer
@@ -230,7 +231,7 @@ Partial Class FrmMain
         'LvwFiles
         '
         Me.LvwFiles.AllowDrop = True
-        Me.LvwFiles.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.ColumnHeaderName, Me.ColumnHeaderDate, Me.ColumnHeaderType, Me.ColumnHeaderSize})
+        Me.LvwFiles.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.ColumnHeaderName, Me.ColumnHeaderDate, Me.ColumnHeaderType, Me.ColumnHeaderSize, Me.ColumnHeaderVersion})
         Me.LvwFiles.ContextMenuStrip = Me.ContextMenuFiles
         Me.LvwFiles.Dock = System.Windows.Forms.DockStyle.Fill
         Me.LvwFiles.Font = New System.Drawing.Font("Calibri", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -271,7 +272,7 @@ Partial Class FrmMain
         'ContextMenuFiles
         '
         Me.ContextMenuFiles.Font = New System.Drawing.Font("Calibri", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.ContextMenuFiles.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.MenuOpenFile, Me.MenuCutFile, Me.MenuCopyFile, Me.MenuDeleteFile, Me.MenuRenameFile, Me.ToolStripSeparator4, Me.MenuShowFilePreviewer, Me.ToolStripSeparator7, Me.MenuOnlyIndex, Me.MenuRefreshFiles, Me.MenuEloData, Me.MenuFileEloIndex, Me.MenuPropertiesFile})
+        Me.ContextMenuFiles.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.MenuOpenFile, Me.MenuCutFile, Me.MenuCopyFile, Me.MenuDeleteFile, Me.MenuRenameFile, Me.ToolStripSeparator4, Me.MenuShowFilePreviewer, Me.ToolStripSeparator7, Me.MenuRefreshFiles, Me.MenuVersions, Me.MenuEloData, Me.MenuFileEloIndex, Me.MenuPropertiesFile})
         Me.ContextMenuFiles.Name = "ContextMenuFiles"
         Me.ContextMenuFiles.Size = New System.Drawing.Size(164, 258)
         '
@@ -322,17 +323,17 @@ Partial Class FrmMain
         Me.ToolStripSeparator7.Name = "ToolStripSeparator7"
         Me.ToolStripSeparator7.Size = New System.Drawing.Size(160, 6)
         '
-        'MenuOnlyIndex
-        '
-        Me.MenuOnlyIndex.Name = "MenuOnlyIndex"
-        Me.MenuOnlyIndex.Size = New System.Drawing.Size(163, 22)
-        Me.MenuOnlyIndex.Text = "Nur mit Index"
-        '
         'MenuRefreshFiles
         '
         Me.MenuRefreshFiles.Name = "MenuRefreshFiles"
         Me.MenuRefreshFiles.Size = New System.Drawing.Size(163, 22)
         Me.MenuRefreshFiles.Text = "Aktualisieren"
+        '
+        'MenuVersions
+        '
+        Me.MenuVersions.Name = "MenuVersions"
+        Me.MenuVersions.Size = New System.Drawing.Size(163, 22)
+        Me.MenuVersions.Text = "Versionen"
         '
         'MenuEloData
         '
@@ -386,6 +387,12 @@ Partial Class FrmMain
         'FilesRefreshTimer
         '
         Me.FilesRefreshTimer.Interval = 2000
+        '
+        'ColumnHeaderVersion
+        '
+        Me.ColumnHeaderVersion.Text = "Version"
+        Me.ColumnHeaderVersion.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
+        Me.ColumnHeaderVersion.Width = 35
         '
         'FrmMain
         '
@@ -448,11 +455,12 @@ Partial Class FrmMain
     Friend WithEvents FilesSplitContainer As SplitContainer
     Friend WithEvents MenuShowFilePreviewer As ToolStripMenuItem
     Friend WithEvents FilePreviewHandlerHost As Win.Common.Tools.PreviewHandlerHost
-    Friend WithEvents MenuOnlyIndex As ToolStripMenuItem
     Friend WithEvents MenuEloData As ToolStripMenuItem
     Friend WithEvents MenuFileEloIndex As ToolStripMenuItem
     Friend WithEvents MenuEloIndex As ToolStripMenuItem
     Friend WithEvents MenuExpandAll As ToolStripMenuItem
     Friend WithEvents MenuMigrate As ToolStripMenuItem
     Friend WithEvents ToolStripSeparator1 As ToolStripSeparator
+    Friend WithEvents MenuVersions As ToolStripMenuItem
+    Friend WithEvents ColumnHeaderVersion As ColumnHeader
 End Class
