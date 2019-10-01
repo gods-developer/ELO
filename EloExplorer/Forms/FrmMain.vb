@@ -81,7 +81,7 @@ Public Class FrmMain
             MsgBox("Der ELO Explorer muss mit einem gültigen Pfad als Parameter gestartet werden!", MsgBoxStyle.Exclamation, "Fehler beim Starten")
             End
         Else
-            initDir = Command()
+            initDir = "A:\Elo_Neuarchiv_29..09.2019 0930\000353F6" 'Command()
         End If
         'Dim args = New ApplicationHelper().GetStartUpParameters()
         'For Each a In args
@@ -157,6 +157,7 @@ Public Class FrmMain
                 Dim guid = GetEswValue(SubDir.FullName, "GUID")
                 Dim newNode = parentNode.Nodes.Add(guid, GetEswValue(SubDir.FullName, "SHORTDESC"), "Folder.ico", "Folder.ico")
                 newNode.Tag = New EloTreeItem(guid, SubDir.Name, GetEswValue(SubDir.FullName, "ABLDATE"))
+                newNode.Checked = parentNode.Checked
                 newNode.Nodes.Add("..")
             Next
         End If
@@ -661,8 +662,8 @@ mRetry:
     End Sub
 
     Private Sub TvwExplorer_NodeMouseClick(sender As Object, e As TreeNodeMouseClickEventArgs) Handles TvwExplorer.NodeMouseClick
-        If e.Node?.Name = TvwExplorer.SelectedNode?.Name Then Exit Sub
-        TreeNodeClick(e.Node)
+        '        If e.Node?.Name = TvwExplorer.SelectedNode?.Name Then Exit Sub
+        '        TreeNodeClick(e.Node)
     End Sub
     Private Sub TreeNodeClick(clickNode As TreeNode)
         TvwExplorer.SelectedNode = clickNode
@@ -685,6 +686,7 @@ mRetry:
     Private Sub LoadFiles()
         Me.Cursor = Cursors.AppStarting
         FilesAreLoading = True
+        Dim startPoint = DateTime.Now
         StatusLabelInfo.Text = "Dateien werden aufgelistet..."
         Me.Refresh()
         ClearFilePreview()
@@ -695,7 +697,8 @@ mRetry:
             Dim file = files.Item(cp)
             AddFileItem(file, cp)
         Next
-        StatusLabelInfo.Text = files.Count & " Datei(en)"
+        Dim span = DateTime.Now - startPoint
+        StatusLabelInfo.Text = files.Count & " Datei(en) in " & Math.Round(span.TotalSeconds) & " Sekunden"
         FilesAreLoading = False
         Me.Cursor = Cursors.Default
     End Sub
@@ -1447,10 +1450,12 @@ mRetry:
         'TvwExplorer.SelectedNode = e.Node
         If e.Node.Nodes.Count = 1 Then
             If e.Node.Nodes(0).Text = ".." Then
+                Me.Cursor = Cursors.AppStarting
                 e.Node.Nodes.Clear()
                 TvwExplorer.Refresh()
                 Dim baseDir = GetFullPathOfNode(e.Node)
                 LoadSubDirs(baseDir, e.Node)
+                Me.Cursor = Cursors.Default
             End If
         End If
         TvwExplorer.Refresh()
@@ -1674,7 +1679,7 @@ mRetry:
 
     Private Sub AddGeneralKeyToDatabase(fileId As Integer, ini As String, key As String)
         Dim value = IniFileHelper.IniReadValue(ini, "GENERAL", key)
-        dbc.AddNewListItemIndex(fileId, "ELO " & key, value)
+        dbc.AddNewListItemIndex(fileId, "ELO " & key, value, True)
     End Sub
 
     Private Sub MenuFileEloIndex_Click(sender As Object, e As EventArgs) Handles MenuFileEloIndex.Click
@@ -1738,16 +1743,19 @@ mRetry:
         Try
             StatusLabelInfo.Text = "Baum wird aufgebaut..."
             Me.Refresh()
-            TvwExplorer.SelectedNode.ExpandAll()
+            'TvwExplorer.SelectedNode.ExpandAll()
             Me.Cancel = False
-            CountFolders = CountFolders + 1
-            Dim rootNode = dbc.AddNewTreeItem(newName, newText, newRootPath)
-            If Not rootNode Is Nothing Then
-                dbc.AddNewTreeItem(Me.TemplateFolderName, , , rootNode.Id)
+            Dim created As Boolean
+            Dim rootNode = dbc.GetOrAddNewTreeItem(newName, newText, newRootPath, created)
+            If created Then
+                CountFolders = CountFolders + 1
+                If Not rootNode Is Nothing Then
+                    dbc.AddNewTreeItem(Me.TemplateFolderName, , , rootNode.Id)
+                End If
             End If
             OpenCancelForm()
             Me.Refresh()
-            Migrate(TvwExplorer.SelectedNode, rootNode.Id, newRootPath)
+            Migrate(TvwExplorer.SelectedNode, rootNode.Id, newRootPath, created)
         Catch ex As Exception
             MsgBox(ex.Message, MsgBoxStyle.Critical, "Fehler")
         End Try
@@ -1757,25 +1765,29 @@ mRetry:
         StatusLabelInfo.Text = CountFolders & " Ordner, " & CountFiles & " Dateien, " & (Math.Round(SumBytes / 1024)) & " KB verarbeitet in " & Math.Round(span.TotalSeconds) & " Sekunden, " & Math.Round(span.TotalMinutes) & " Minuten!"
     End Sub
 
-    Private Sub Migrate(rootNode As TreeNode, rootId As Integer, rootPath As String)
+    Private Sub Migrate(rootNode As TreeNode, rootId As Integer, rootPath As String, processFiles As Boolean)
         If Me.Cancel Then
             Exit Sub
         End If
         Application.DoEvents()
-        CountFolders = CountFolders + 1
+        rootNode.Expand()
+        Dim treePath As String = GetFullPathOfNode(rootNode)
         Dim node As TreeNode
-        TreeNodeClick(rootNode)
         StatusLabelInfo.Text = "Ordner " + rootNode.Text + " wird verarbeitet..."
         Me.Refresh()
-        Dim treePath As String = GetFullPathOfNode(rootNode)
-        MigrateFiles(rootId, treePath, rootPath)
+        If processFiles Then
+            TreeNodeClick(rootNode)
+            CountFolders = CountFolders + 1
+            MigrateFiles(rootId, treePath, rootPath)
+        End If
         For Each node In rootNode.Nodes
             If node.Checked Then
                 'Dim newName = ConvertToValidName(node.Text).Trim()
                 Dim newName = GetPhysicalNameFromTag(node.Tag)
                 Dim newText = GetEswValue(treePath & "\" & newName, "SHORTDESC")
-                Dim newItem = dbc.AddNewTreeItem(newName, newText, , rootId)
-                Migrate(node, newItem.Id, rootPath & "\" & newName)
+                Dim created As Boolean
+                Dim newItem = dbc.GetOrAddNewTreeItem(newName, newText, , rootId, created)
+                Migrate(node, newItem.Id, rootPath & "\" & newName, created)
             End If
         Next
     End Sub
@@ -1798,11 +1810,11 @@ mRetry:
         Dim item As ListViewItem
         'System.IO.Directory.CreateDirectory(rootPath)
         'If Not Delimon.Win32.IO.Directory.Exists(rootPath) Then
-        Try
-            Delimon.Win32.IO.Directory.CreateDirectory(rootPath)
-        Catch ex As Exception
+        'Try
+        Directory.CreateDirectory(rootPath)
+        'Catch ex As Exception
 
-        End Try
+        'End Try
         'End If
         For Each item In LvwFiles.Items
             Dim fileItem = DirectCast(item.Tag, EloExplorerFileInfo)
@@ -1813,7 +1825,7 @@ mRetry:
                 SumBytes = SumBytes + fileItem.FileLen
                 Dim filename = fileItem.Physicalname 'ConvertToValidName(item.Text)
                 'FileIO.FileSystem.CopyFile(treePath & "\" & fileItem.Physicalname, rootPath & "\" & filename, FileIO.UIOption.OnlyErrorDialogs, FileIO.UICancelOption.ThrowException)
-                Delimon.Win32.IO.File.Copy(treePath & "\" & fileItem.Physicalname, rootPath & "\" & filename, True)
+                IO.File.Copy(treePath & "\" & fileItem.Physicalname, rootPath & "\" & filename, True)
                 Dim displayname = IniFileHelper.IniReadValue(fname, "GENERAL", "SHORTDESC") '& IniFileHelper.IniReadValue(fname, "GENERAL", "DOCEXT")
                 Dim newFile = dbc.AddNewListItem(treeItemId, filename, displayname)
                 MigrateFileIndexes(fname, fileItem, newFile.Id)
@@ -1823,7 +1835,7 @@ mRetry:
 
     Private Sub MigrateFileIndexes(fname As String, fileItem As EloExplorerFileInfo, fileId As Integer)
         Dim sections = IniFileHelper.IniReadSections(fname)
-        dbc.AddNewListItemIndex(fileId, "ELO Dateiname", fileItem.Physicalname)
+        dbc.AddNewListItemIndex(fileId, "ELO Dateiname", fileItem.Physicalname, True)
         AddGeneralKeyToDatabase(fileId, fname, "SHORTDESC")
         AddGeneralKeyToDatabase(fileId, fname, "DOCEXT")
         AddGeneralKeyToDatabase(fileId, fname, "DOCTYPE")
@@ -1842,9 +1854,10 @@ mRetry:
                 Else
                     keyName = "ELO " & keyName
                 End If
-                dbc.AddNewListItemIndex(fileId, keyName, IniFileHelper.IniReadValue(fname, section, "KEYTEXT").Replace(Chr(182), ""))
+                dbc.AddNewListItemIndex(fileId, keyName, IniFileHelper.IniReadValue(fname, section, "KEYTEXT").Replace(Chr(182), ""), True)
             End If
         Next
+        dbc.SaveChanges()
     End Sub
 
     Private Sub FrmMain_Resize(sender As Object, e As EventArgs) Handles MyBase.Resize
@@ -1860,7 +1873,7 @@ mRetry:
     End Sub
 
     Private Sub TvwExplorer_AfterCheck(sender As Object, e As TreeViewEventArgs) Handles TvwExplorer.AfterCheck
-        e.Node.ExpandAll()
+        'e.Node.ExpandAll()
         SetNodeChildrenChecked(e.Node, e.Node.Checked)
     End Sub
 
@@ -1870,6 +1883,10 @@ mRetry:
             child.Checked = checked
             SetNodeChildrenChecked(child, checked)
         Next
+    End Sub
+
+    Private Sub TvwExplorer_AfterSelect(sender As Object, e As TreeViewEventArgs) Handles TvwExplorer.AfterSelect
+        TreeNodeClick(e.Node)
     End Sub
 
     Private Sub MenuShowFilePreviewer_Click(sender As Object, e As EventArgs) Handles MenuShowFilePreviewer.Click

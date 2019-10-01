@@ -173,6 +173,26 @@ Public Class MsSqlConnector
         Next
         GetChildTreeItems = results
     End Function
+    Public Function GetOrAddNewTreeItem(newName As String, Optional newText As String = "", Optional newRootPath As String = "", Optional parentNodeId As Integer = 0, Optional ByRef created As Boolean = False) As OrgManTreeItem
+        Dim query = From r In dbs.TreeItems Where r.NodeName = newName And r.NodeText = newText
+        If query.Count() > 0 Then
+            GetOrAddNewTreeItem = New OrgManTreeItem(parentNodeId, query.First()) With {.RootPath = newRootPath}
+        Else
+            GetOrAddNewTreeItem = AddNewTreeItem(newName, newText, newRootPath, parentNodeId)
+            created = True
+        End If
+    End Function
+
+    Private lastParentNodeId As Integer = -1, lastMaxTreeItemId As Integer
+
+    Private Function GetMaxTreeItemIdEx(parentNodeId As Integer) As Integer
+        If lastParentNodeId <> parentNodeId Then
+            lastMaxTreeItemId = GetMaxTreeItemId(parentNodeId)
+        End If
+        lastParentNodeId = parentNodeId
+        lastMaxTreeItemId = lastMaxTreeItemId + 10
+        GetMaxTreeItemIdEx = lastMaxTreeItemId
+    End Function
 
     Public Function AddNewTreeItem(newName As String, Optional newText As String = "", Optional newRootPath As String = "", Optional parentNodeId As Integer = 0) As OrgManTreeItem
         Dim treeItem As TreeItem = dbs.TreeItems.Create()
@@ -184,7 +204,7 @@ Public Class MsSqlConnector
         If parentNodeId > 0 Then
             treeItem.ParentNodeId = parentNodeId
         End If
-        treeItem.SortOrder = GetMaxTreeItemId(parentNodeId) + 10
+        treeItem.SortOrder = GetMaxTreeItemIdEx(parentNodeId) + 10
         treeItem.ChildrenSortBy = 0 'Benutzerdefiniert
         treeItem.ChildrenSortWay = 0 'Aufsteigend
         treeItem.FilesSortBy = 0 'Name
@@ -439,6 +459,17 @@ Public Class MsSqlConnector
         GetUserRights = results
     End Function
 
+    Private lastTreeItemId As Integer, lastMaxListItemId As Integer
+
+    Private Function GetMaxListItemIdEx(treeItemId As Integer) As Integer
+        If lastTreeItemId <> treeItemId Then
+            lastMaxListItemId = GetMaxListItemId(treeItemId)
+        End If
+        lastTreeItemId = treeItemId
+        lastMaxListItemId = lastMaxListItemId + 10
+        GetMaxListItemIdEx = lastMaxListItemId
+    End Function
+
     Public Function AddNewListItem(treeItemId As Integer, filename As String, Optional displayname As String = "") As OrgManListItem
         If treeItemId <= 0 Or filename Is Nothing Then
             AddNewListItem = Nothing
@@ -451,7 +482,7 @@ Public Class MsSqlConnector
         item.Filename = filename
         item.Displayname = displayname
         item.TreeItemId = treeItemId
-        item.SortOrder = GetMaxListItemId(treeItemId) + 10
+        item.SortOrder = GetMaxListItemIdEx(treeItemId)
         dbs.ListItems.Add(item)
         If SaveChanges() > 0 Then
             Dim result = New OrgManListItem(item)
@@ -461,7 +492,7 @@ Public Class MsSqlConnector
         End If
     End Function
 
-    Public Function AddNewListItemIndex(fileId As Integer, indexName As String, indexValue As String) As Boolean
+    Public Function AddNewListItemIndex(fileId As Integer, indexName As String, indexValue As String, noSave As Boolean) As Boolean
         If String.IsNullOrEmpty(indexValue) Then
             Exit Function
         End If
@@ -474,7 +505,9 @@ Public Class MsSqlConnector
         item.IndexId = indexId
         item.IndexValue = indexValue
         dbs.ListItemIndexes.Add(item)
-        AddNewListItemIndex = (SaveChanges() > 0)
+        If Not noSave Then
+            AddNewListItemIndex = (SaveChanges() > 0)
+        End If
     End Function
 
     Private Function GetIndexId(indexName As String) As Integer
@@ -494,7 +527,7 @@ Public Class MsSqlConnector
         End If
     End Function
 
-    Private Function SaveChanges() As Integer
+    Public Function SaveChanges() As Integer
         Try
             dbs.Database.BeginTransaction()
             SaveChanges = dbs.SaveChanges()

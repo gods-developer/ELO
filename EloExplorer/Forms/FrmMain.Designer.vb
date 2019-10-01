@@ -47,6 +47,7 @@ Partial Class FrmMain
         Me.ColumnHeaderDate = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.ColumnHeaderType = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.ColumnHeaderSize = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+        Me.ColumnHeaderVersion = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.ContextMenuFiles = New System.Windows.Forms.ContextMenuStrip(Me.components)
         Me.MenuOpenFile = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuCutFile = New System.Windows.Forms.ToolStripMenuItem()
@@ -66,7 +67,6 @@ Partial Class FrmMain
         Me.MainStatusStrip = New System.Windows.Forms.StatusStrip()
         Me.StatusLabelInfo = New System.Windows.Forms.ToolStripStatusLabel()
         Me.FilesRefreshTimer = New System.Windows.Forms.Timer(Me.components)
-        Me.ColumnHeaderVersion = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.ContextMenuExplorer.SuspendLayout()
         CType(Me.MainSplitContainer, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.MainSplitContainer.Panel1.SuspendLayout()
@@ -269,6 +269,12 @@ Partial Class FrmMain
         Me.ColumnHeaderSize.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
         Me.ColumnHeaderSize.Width = 100
         '
+        'ColumnHeaderVersion
+        '
+        Me.ColumnHeaderVersion.Text = "Version"
+        Me.ColumnHeaderVersion.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
+        Me.ColumnHeaderVersion.Width = 35
+        '
         'ContextMenuFiles
         '
         Me.ContextMenuFiles.Font = New System.Drawing.Font("Calibri", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -387,12 +393,6 @@ Partial Class FrmMain
         'FilesRefreshTimer
         '
         Me.FilesRefreshTimer.Interval = 2000
-        '
-        'ColumnHeaderVersion
-        '
-        Me.ColumnHeaderVersion.Text = "Version"
-        Me.ColumnHeaderVersion.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
-        Me.ColumnHeaderVersion.Width = 35
         '
         'FrmMain
         '

@@ -5,6 +5,7 @@ Module FileIcons
     Private exeCounter As Double
     Private lnkCounter As Double
     Private icoCounter As Double
+    Private FileTypes As New Dictionary(Of String, String)
 
     Public Function AddIconToImageList(
                                       ByVal sPath As String,
@@ -107,11 +108,18 @@ ErrorHandler:
         If String.IsNullOrEmpty(extension) Then
             Return "Datei"
         End If
+        Dim result As String = ""
+        If FileTypes.TryGetValue(extension, result) Then
+            GetFileType = result
+            Exit Function
+        End If
         Dim extensionValue = My.Computer.Registry.GetValue("HKEY_CLASSES_ROOT\" & extension, "", extension)
         If extensionValue Is Nothing Then
             Return extension.Substring(1) & "-Datei"
         End If
-        Return My.Computer.Registry.GetValue("HKEY_CLASSES_ROOT\" & extensionValue.ToString, "", extension).ToString
+        result = My.Computer.Registry.GetValue("HKEY_CLASSES_ROOT\" & extensionValue.ToString, "", extensionValue).ToString
+        FileTypes.Add(extension, result)
+        GetFileType = result
     End Function
 
     Public Function GetIcon(
@@ -184,29 +192,33 @@ ErrorHandler:
     Public Function GetFiles(folder As String, onlyIndex As Boolean) As List(Of EloExplorerFileInfo)
         Dim foundFiles As New List(Of EloExplorerFileInfo)
         Dim foundFile As String
-        foundFile = Dir(folder, vbNormal + vbHidden + vbSystem) ' Ersten Eintrag abrufen.
-        Do While foundFile <> ""    ' Schleife beginnen.
+        Dim files = Directory.GetFiles(folder)
+        'foundFile = Dir(folder, vbNormal + vbHidden + vbSystem) ' Ersten Eintrag abrufen.
+        'Do While foundFile <> ""    ' Schleife beginnen.
+        For Each foundFile In files
             If Not foundFile.ToUpper().EndsWith(".ESW") Then
-                Dim realName = GetFileEswValue(folder & foundFile, "SHORTDESC")
+                Dim sname = New FileInfo(foundFile).Name
+                Dim realName = GetFileEswValue(foundFile, "SHORTDESC")
                 If String.IsNullOrEmpty(realName) Then
                     If Not onlyIndex Then
-                        realName = "?? " + foundFile
+                        realName = "?? " + sname
                     End If
                 Else
-                    realName = realName & GetFileEswValue(folder & foundFile, "DOCEXT").ToLower()
+                    realName = realName & GetFileEswValue(foundFile, "DOCEXT").ToLower()
                 End If
                 If Not String.IsNullOrEmpty(realName) Then
-                    Dim version = GetFileEswValue(folder & foundFile, "SREG")
+                    Dim version = GetFileEswValue(foundFile, "SREG")
                     If String.IsNullOrEmpty(version) Then
                         version = "1.0"
                     End If
-                    Dim file As EloExplorerFileInfo = GetFileInfo(folder, foundFile, realName, version)
+                    Dim file As EloExplorerFileInfo = GetFileInfo(folder, sname, realName, version)
                     foundFiles.Add(file)
                 End If
             End If
-                foundFile = Dir()   ' Nächsten Eintrag abrufen.
+            ' foundFile = Dir()   ' Nächsten Eintrag abrufen.
             Application.DoEvents()
-        Loop
+            'Loop
+        Next
         GetFiles = foundFiles
     End Function
 
