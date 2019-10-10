@@ -242,6 +242,8 @@ ErrorHandler:
         If Not light Then
             file.FileDateTime = fi.LastWriteTime 'FileDateTime(folder & filename),
             file.FileType = GetFileTypeName(fi.Name)
+        ElseIf fi.Name.Contains(".") Then
+            file.Fileextension = fi.Name.Substring(fi.Name.LastIndexOf(".")).ToLower()
         End If
         GetFileInfo = file
     End Function

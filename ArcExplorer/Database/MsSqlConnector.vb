@@ -215,7 +215,9 @@ Public Class MsSqlConnector
         treeItem.CreationUser = Environment.UserName
         treeItem.RowVersion = 1
         treeItem.NodeName = newName
-        treeItem.NodeText = newText
+        If newText <> newName Then
+            treeItem.NodeText = newText
+        End If
         If parentNodeId > 0 Then
             treeItem.ParentNodeId = parentNodeId
         End If

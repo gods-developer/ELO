@@ -8,6 +8,7 @@ Imports Win.Common.Tools
 Imports CefSharp
 Imports CefSharp.WinForms
 Imports Win.Common.Tools.Logging
+Imports Win.Common.Tools.Filesystem
 
 Public Class FrmMain
     Dim copyNodeKey As String, copyMode As Byte
@@ -1738,6 +1739,7 @@ mRetry:
         Dim newName = GetPhysicalNameFromTag(TvwExplorer.SelectedNode.Tag)
         newName = New DirectoryInfo(newName).Name
         Dim newText = TvwExplorer.SelectedNode.Text
+        newName = ConvertToValidName(newText)
         Dim newRootPath = Me.DefaultRootPath & "\" & newName
         Dim dlgResult = SelectRootPath(newRootPath)
         If dlgResult = DialogResult.Cancel Then
@@ -1789,9 +1791,9 @@ mRetry:
         End If
         For Each node In rootNode.Nodes
             If node.Checked Then
-                'Dim newName = ConvertToValidName(node.Text).Trim()
-                Dim newName = GetPhysicalNameFromTag(node.Tag)
-                Dim newText = GetEswValue(treePath & "\" & newName, "SHORTDESC")
+                Dim newName = ConvertToValidName(node.Text).Trim()
+                Dim physName = GetPhysicalNameFromTag(node.Tag)
+                Dim newText = GetEswValue(treePath & "\" & physName, "SHORTDESC")
                 Dim created As Boolean
                 If Me.Cancel Then
                     Exit Sub
@@ -1809,7 +1811,10 @@ mRetry:
         For Each ch In chars
             newPath = newPath.Replace(ch, "")
         Next
-        ConvertToValidName = newPath
+        Do While newPath.EndsWith(".")
+            newPath = newPath.Left(newPath.Length - 1)
+        Loop
+        ConvertToValidName = newPath.TrimAll()
     End Function
 
     Private Sub MigrateFiles(treeItemId As Integer, treePath As String, rootPath As String)
@@ -1823,7 +1828,7 @@ mRetry:
         'System.IO.Directory.CreateDirectory(rootPath)
         'If Not Delimon.Win32.IO.Directory.Exists(rootPath) Then
         'Try
-        Directory.CreateDirectory(rootPath)
+        LongPathHandler.DirectoryCreate(rootPath)
         'Catch ex As Exception
 
         'End Try
@@ -1844,11 +1849,15 @@ mRetry:
             If IO.File.Exists(fname) Then
                 CountFiles = CountFiles + 1
                 SumBytes = SumBytes + item.FileLen
-                'Dim filename = fileItem.Physicalname 'ConvertToValidName(item.Text)
-                'FileIO.FileSystem.CopyFile(treePath & "\" & fileItem.Physicalname, rootPath & "\" & filename, FileIO.UIOption.OnlyErrorDialogs, FileIO.UICancelOption.ThrowException)
-                IO.File.Copy(treePath & "\" & item.Physicalname, rootPath & "\" & item.Physicalname, True)
                 Dim displayname = IniFileHelper.IniReadValue(fname, "GENERAL", "SHORTDESC") '& IniFileHelper.IniReadValue(fname, "GENERAL", "DOCEXT")
-                Dim newFile = dbc.AddNewListItem(treeItemId, item.Physicalname, displayname)
+                Dim filename = ConvertToValidName(displayname)
+                If filename = displayname Then
+                    displayname = Nothing
+                End If
+                filename = filename & item.Fileextension
+                'FileIO.FileSystem.CopyFile(treePath & "\" & fileItem.Physicalname, rootPath & "\" & filename, FileIO.UIOption.OnlyErrorDialogs, FileIO.UICancelOption.ThrowException)
+                LongPathHandler.FileCopy(treePath & "\" & item.Physicalname, rootPath & "\" & filename, True)
+                Dim newFile = dbc.AddNewListItem(treeItemId, filename, displayname)
                 MigrateFileIndexes(fname, item.Physicalname, newFile.Id, item.Version)
             End If
         Next
