@@ -63,7 +63,7 @@ Partial Class FrmMain
         Me.MenuFileEloIndex = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuPropertiesFile = New System.Windows.Forms.ToolStripMenuItem()
         Me.ImageListFiles = New System.Windows.Forms.ImageList(Me.components)
-        Me.FilePreviewHandlerHost = New Win.Common.Tools.PreviewHandlerHost()
+        Me.FilePreviewHandlerHost = New DigiSped.Common.Tools.PreviewHandlerHost()
         Me.MainStatusStrip = New System.Windows.Forms.StatusStrip()
         Me.StatusLabelInfo = New System.Windows.Forms.ToolStripStatusLabel()
         Me.FilesRefreshTimer = New System.Windows.Forms.Timer(Me.components)
@@ -454,7 +454,7 @@ Partial Class FrmMain
     Friend WithEvents ToolStripSeparator7 As ToolStripSeparator
     Friend WithEvents FilesSplitContainer As SplitContainer
     Friend WithEvents MenuShowFilePreviewer As ToolStripMenuItem
-    Friend WithEvents FilePreviewHandlerHost As Win.Common.Tools.PreviewHandlerHost
+    Friend WithEvents FilePreviewHandlerHost As DigiSped.Common.Tools.PreviewHandlerHost
     Friend WithEvents MenuEloData As ToolStripMenuItem
     Friend WithEvents MenuFileEloIndex As ToolStripMenuItem
     Friend WithEvents MenuEloIndex As ToolStripMenuItem

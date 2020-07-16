@@ -1,5 +1,5 @@
 ﻿Imports System.IO
-Imports Win.Common.Tools
+Imports DigiSped.Common.Tools
 
 Module FileIcons
     Private exeCounter As Double

@@ -1,5 +1,5 @@
 ﻿Imports System.Windows.Forms
-Imports Win.Common.Tools
+Imports DigiSped.Common.Tools
 
 Public Class DlgEloData
 

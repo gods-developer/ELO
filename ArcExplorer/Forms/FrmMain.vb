@@ -4,11 +4,14 @@ Imports System.Text
 Imports System.Threading
 Imports IWshRuntimeLibrary
 Imports OrgMan
-Imports Win.Common.Tools
+Imports DigiSped.Common.Tools
 Imports CefSharp
 Imports CefSharp.WinForms
-Imports Win.Common.Tools.Logging
-Imports Win.Common.Tools.Filesystem
+Imports DigiSped.Common.Tools.Logging
+Imports DigiSped.Common.Tools.Filesystem
+Imports DigiSped.Common.Database.Logging
+Imports DigiSped.Common
+Imports DigiSped.Common.Logging
 
 Public Class FrmMain
     Dim copyNodeKey As String, copyMode As Byte

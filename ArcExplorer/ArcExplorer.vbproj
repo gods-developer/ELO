@@ -173,6 +173,9 @@
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DigiSped.Common">
+      <HintPath>..\..\DigiSped.Common\DigiSped.Common\bin\Debug\DigiSped.Common.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.3.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -558,9 +561,17 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Win.Common.Tools\Win.Common.Tools\Win.Common.Tools.csproj">
-      <Project>{f3cef694-63df-4971-a75c-025584343f69}</Project>
-      <Name>Win.Common.Tools</Name>
+    <ProjectReference Include="..\..\DigiSped.Common\DigiSped.Common.Database\DigiSped.Common.Database.csproj">
+      <Project>{CA2912E7-FD63-4E34-B679-C35EE3310960}</Project>
+      <Name>DigiSped.Common.Database</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\DigiSped.Common\DigiSped.Common.Interfaces\DigiSped.Common.Interfaces.csproj">
+      <Project>{76D0DCFE-B032-4474-B9E5-659288A52E17}</Project>
+      <Name>DigiSped.Common.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\DigiSped.Common\DigiSped.Common.Tools\DigiSped.Common.Tools.csproj">
+      <Project>{F3CEF694-63DF-4971-A75C-025584343F69}</Project>
+      <Name>DigiSped.Common.Tools</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />

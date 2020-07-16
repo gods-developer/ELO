@@ -2,7 +2,7 @@
 Imports System.Data.Entity.Infrastructure
 Imports Microsoft.Office.Interop.Access.Dao
 Imports ArcExplorer
-Imports Win.Common.Tools
+Imports DigiSped.Common.Tools
 Imports ArcExplorer.ArcExplorer
 
 Public Class MsSqlConnector

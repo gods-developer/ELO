@@ -1,6 +1,6 @@
 ﻿Imports System.Threading
 Imports System.Windows.Forms
-Imports Win.Common.Tools
+Imports DigiSped.Common.Tools
 
 Public Class DlgSecurity
     Dim adcon As New WinAdConnector()
@@ -276,7 +276,7 @@ Public Class DlgSecurity
 
     Private Sub LoadSecurityData()
         If adcon.DomainIsAvailable() Then
-            OwnerForm.AdGroups = adcon.GetGroups()
+            OwnerForm.AdGroups = adcon.GetDomainGroups()
             OwnerForm.AdUsers = adcon.GetDomainUsers(True)
         End If
     End Sub
