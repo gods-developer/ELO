@@ -17,7 +17,7 @@ Module FileIcons
         Dim sTempFile As String
         Dim i As Long
         Dim iFile As Long
-        Dim iTag As Object
+        Dim iTag As Object, extFound As Boolean
 
         For i = Len(sFile) To 1 Step -1
             If (Mid$(sFile, i, 1) = ".") Then
@@ -28,8 +28,11 @@ Module FileIcons
         sExt = UCase$(sExt)
         If (sExt <> "") And (sExt <> "EXE") Then
             On Error Resume Next
-            iTag = ilsThis.Images(sExt).Tag
-            If (Err.Number = 0) Then
+            If Not ilsThis.Images(sExt) Is Nothing Then
+                iTag = ilsThis.Images(sExt).Tag
+                extFound = True
+            End If
+            If (Err.Number = 0 And extFound) Then
                 AddIconToImageList = sExt
                 sFileTypeName = ilsThis.Images(sExt).Tag
             Else

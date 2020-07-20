@@ -1717,7 +1717,7 @@ mRetry:
         If IO.File.Exists(fname) Then
             dlg.RichTextBoxEditor.Text = IO.File.ReadAllText(fname)
         End If
-        dlg.ShowDialog(Me)
+        dlg.Show(Me)
     End Sub
 
     Private Sub MenuExpandAll_Click(sender As Object, e As EventArgs) Handles MenuExpandAll.Click
@@ -1922,6 +1922,148 @@ mRetry:
     Private Sub TvwExplorer_AfterSelect(sender As Object, e As TreeViewEventArgs) Handles TvwExplorer.AfterSelect
         TreeNodeClick(e.Node)
     End Sub
+
+    Private Sub MenuCombine_Click(sender As Object, e As EventArgs) Handles MenuCombine.Click
+        If TvwExplorer.SelectedNode Is Nothing Then
+            Exit Sub
+        End If
+        MenuFindDoubles_Click(sender, e)
+        'Dim parentNode = TvwExplorer.SelectedNode.Parent
+        Dim child As TreeNode
+        Dim checkedNodes As List(Of TreeNode) = New List(Of TreeNode)
+        For Each child In TvwExplorer.SelectedNode.Nodes
+            If child.Checked Then
+                checkedNodes.Add(child)
+            End If
+        Next
+        If checkedNodes.Count = 2 Then
+            If MsgBox("Knoten " & checkedNodes.ElementAt(0).Text & " und " & checkedNodes.ElementAt(1).Text & " zusammenführen?", MsgBoxStyle.Question + MsgBoxStyle.YesNo, "Nachfrage") = MsgBoxResult.Yes Then
+                MergeNodes(checkedNodes.ElementAt(0), checkedNodes.ElementAt(1))
+                CheckEmptyFolders(GetFullPathOfNode(checkedNodes.ElementAt(1)))
+                TvwExplorer.Nodes.Remove(checkedNodes.ElementAt(1))
+                LoadTree()
+            End If
+        End If
+    End Sub
+
+    Private Sub MergeNodes(baseNode As TreeNode, secondNode As TreeNode)
+        Dim child As TreeNode
+        Dim basePath As String = GetFullPathOfNode(baseNode)
+        secondNode.Expand()
+        For Each child In secondNode.Nodes
+            Dim oldPath As String = GetFullPathOfNode(child)
+            Dim di = New DirectoryInfo(oldPath)
+            If Not IsInNodes(baseNode, child.Text) Then
+                Directory.Move(oldPath, basePath & "\" & di.Name)
+                Dim fname = oldPath & ".ESW"
+                IO.File.Move(fname, basePath & "\" & di.Name + ".ESW")
+                'baseNode.Nodes.Insert(1, child)
+            Else
+                MergeNodes(GetChildNodeByText(baseNode, child.Text), child)
+            End If
+            CheckEmptyFolders(oldPath)
+        Next
+        MergeFiles(baseNode, secondNode)
+    End Sub
+
+    Private Sub CheckEmptyFolders(oldPath As String)
+        If Not Directory.Exists(oldPath) Then
+            Return
+        End If
+        Dim checkFiles = Directory.GetFiles(oldPath)
+        If Directory.GetDirectories(oldPath).Length = 0 Then
+            Dim fname = oldPath & ".ESW"
+            If checkFiles.Length = 0 Then
+                Directory.Delete(oldPath)
+                IO.File.Delete(fname)
+            ElseIf checkFiles.Length = 1 Then
+                If checkFiles.ElementAt(0).ToLower().EndsWith(".esw") Then
+                    Directory.Delete(oldPath, True)
+                    IO.File.Delete(fname)
+                End If
+            End If
+        End If
+    End Sub
+
+    Private Sub MergeFiles(baseNode As TreeNode, secondNode As TreeNode)
+        Dim basePath As String = GetFullPathOfNode(baseNode)
+        Dim oldPath As String = GetFullPathOfNode(secondNode)
+        Dim file As String
+        For Each file In Directory.GetFiles(oldPath)
+            If Not file.ToLower().EndsWith(".esw") Then
+                Dim fi = New FileInfo(file)
+                IO.File.Move(file, basePath & "\" & fi.Name)
+                Dim fname = file.Substring(0, file.LastIndexOf("."))
+                Dim eswName = fname & ".ESW"
+                fi = New FileInfo(eswName)
+                If IO.File.Exists(eswName) Then
+                    IO.File.Move(eswName, basePath & "\" & fi.Name)
+                End If
+            End If
+        Next
+    End Sub
+
+    Private Function IsInNodes(node As TreeNode, text As String) As Boolean
+        Dim child As TreeNode
+        node.Expand()
+        For Each child In node.Nodes
+            If child.Text = text Then
+                Return True
+            End If
+        Next
+    End Function
+
+    Private Function GetChildNodeByText(node As TreeNode, text As String) As TreeNode
+        Dim child As TreeNode
+        node.Expand()
+        For Each child In node.Nodes
+            If child.Text = text Then
+                Return child
+            End If
+        Next
+    End Function
+
+    Private Sub MenuFindDoubles_Click(sender As Object, e As EventArgs) Handles MenuFindDoubles.Click
+        If TvwExplorer.SelectedNode Is Nothing Then
+            Exit Sub
+        End If
+        'Dim parentNode = TvwExplorer.SelectedNode.Parent
+        Dim child As TreeNode, personalNr As Int32
+        For Each child In TvwExplorer.SelectedNode.Nodes
+            personalNr = GetPersonalNrFromNode(child)
+            If personalNr > 0 Then
+                If FindDouble(child, personalNr) Then
+                    Exit For
+                End If
+            End If
+        Next
+    End Sub
+
+    Private Function FindDouble(node As TreeNode, baseNr As Int32) As Boolean
+        Dim personalNr As Int32, child As TreeNode
+        For Each child In TvwExplorer.SelectedNode.Nodes
+            If child.Name <> node.Name Then
+                personalNr = GetPersonalNrFromNode(child)
+                If personalNr = baseNr Then
+                    child.Checked = True
+                    node.Checked = True
+                    'child.ExpandAll()
+                    'node.ExpandAll()
+                    Return True
+                End If
+            End If
+        Next
+    End Function
+
+    Private Function GetPersonalNrFromNode(node As TreeNode) As Int32
+        Dim personalNr As Int32
+        If IsNumeric(node.Text.Left(1)) Then
+            personalNr = Mid(node.Text, 1, InStr(node.Text, " "))
+        ElseIf IsNumeric(node.Text.Right(1)) Then
+            personalNr = Mid(node.Text, InStrRev(node.Text, " "))
+        End If
+        Return personalNr
+    End Function
 
     Private Sub MenuShowFilePreviewer_Click(sender As Object, e As EventArgs) Handles MenuShowFilePreviewer.Click
         MenuShowFilePreviewer.Checked = Not MenuShowFilePreviewer.Checked
