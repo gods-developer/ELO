@@ -136,6 +136,11 @@ Public Class FrmMain
         GetEswValue = IniFileHelper.IniReadValue(item & ".ESW", "GENERAL", key, "???")
     End Function
 
+    Private Function SetEswValue(item As String, key As String, val As String) As String
+        'Dim fname = item.Substring(0, item.LastIndexOf("."))
+        IniFileHelper.IniWriteValue(item & ".ESW", "GENERAL", key, val)
+    End Function
+
     Private Sub LoadTree()
         ClearFilePreview()
         LvwFiles.Items.Clear()
@@ -214,9 +219,9 @@ Public Class FrmMain
         End Select
     End Function
 
-    Private Function GetIdFromTag(tag As Object) As Integer
-        Dim treeItem = DirectCast(tag, OrgManTreeItem)
-        GetIdFromTag = treeItem.Id
+    Private Function GetIdFromTag(tag As Object) As String
+        Dim treeItem = DirectCast(tag, ArcTreeItem)
+        GetIdFromTag = treeItem.Guid
     End Function
 
     Private Function GetPhysicalNameFromTag(tag As Object) As String
@@ -535,10 +540,13 @@ mRetry:
             DeleteTreeItem(node.Nodes(0), includeFiles)
         Loop
         If includeFiles Then
-            DeleteFiles(node)
+            'DeleteFiles(node)
         End If
-        Dim nodeId As Integer = GetIdFromTag(node.Tag)
-        dbc.DeleteTreeItem(nodeId)
+        'Dim nodeId As Integer = GetIdFromTag(node.Tag)
+        ''dbc.DeleteTreeItem(nodeId)
+        Dim treePath As String = GetFullPathOfNode(node)
+        Directory.Delete(treePath)
+        IO.File.Delete(treePath & ".ESW")
         node.Remove()
     End Sub
 
@@ -565,24 +573,14 @@ mRetry:
             Exit Sub
         End If
         Dim oldPath = GetFullPathOfNode(TvwExplorer.SelectedNode)
-        Dim newText As String, node As OrgManTreeItem, parentNodeId As Integer
+        Dim newText As String
         newText = TvwExplorer.SelectedNode.Text
 mRetry:
         newText = InputBox("Bitte neuen Namen eingeben:", "Ordner umbenennen", newText)
         If newText <> "" And newText <> TvwExplorer.SelectedNode.Text Then
-            If Not TvwExplorer.SelectedNode.Parent Is Nothing Then
-                parentNodeId = GetIdFromTag(TvwExplorer.SelectedNode.Parent.Tag)
-            End If
-            node = DirectCast(TvwExplorer.SelectedNode.Tag, OrgManTreeItem)
-            If dbc.CheckIfNameExists(parentNodeId, newText) Then
-                MsgBox("Der Name existiert bereits auf dieser Ebene!", MsgBoxStyle.Exclamation, "Hinweis")
-                GoTo mRetry
-            End If
-            node.NodeText = newText
-            dbc.SaveTreeItem(node)
+            Dim fullPath As String = GetFullPathOfNode(TvwExplorer.SelectedNode)
+            SetEswValue(fullPath, "SHORTDESC", newText)
             TvwExplorer.SelectedNode.Text = newText
-            Dim newPath = GetFullPathOfNode(TvwExplorer.SelectedNode)
-            MoveFolder(oldPath, newPath)
         End If
     End Sub
 
@@ -1927,7 +1925,7 @@ mRetry:
         If TvwExplorer.SelectedNode Is Nothing Then
             Exit Sub
         End If
-        MenuFindDoubles_Click(sender, e)
+        'MenuFindDoubles_Click(sender, e)
         'Dim parentNode = TvwExplorer.SelectedNode.Parent
         Dim child As TreeNode
         Dim checkedNodes As List(Of TreeNode) = New List(Of TreeNode)
@@ -2055,15 +2053,123 @@ mRetry:
         Next
     End Function
 
+    Private Function FindDoubleName(node As TreeNode, baseName As String) As Boolean
+        Dim personalName As String, child As TreeNode
+        For Each child In TvwExplorer.SelectedNode.Nodes
+            If child.Name <> node.Name Then
+                personalName = GetNameFromNode(child)
+                If personalName = baseName Then
+                    child.Checked = True
+                    node.Checked = True
+                    'child.ExpandAll()
+                    'node.ExpandAll()
+                    Return True
+                End If
+            End If
+        Next
+    End Function
+
     Private Function GetPersonalNrFromNode(node As TreeNode) As Int32
-        Dim personalNr As Int32
+        Dim personalNr As Int32, i As Integer
         If IsNumeric(node.Text.Left(1)) Then
-            personalNr = Mid(node.Text, 1, InStr(node.Text, " "))
+            i = 2
+            Do While IsNumeric(node.Text.Left(i)) And i < node.Text.Length
+                personalNr = node.Text.Left(i)
+                i = i + 1
+            Loop
         ElseIf IsNumeric(node.Text.Right(1)) Then
-            personalNr = Mid(node.Text, InStrRev(node.Text, " "))
+            i = 2
+            Do While IsNumeric(node.Text.Right(i)) And i < node.Text.Length
+                personalNr = node.Text.Right(i)
+                i = i + 1
+            Loop
         End If
         Return personalNr
     End Function
+
+    Private Function GetNameFromNode(node As TreeNode) As String
+        Dim personalName As String
+        If Not node.Text.Contains(" ") Then
+            Return ""
+        ElseIf IsNumeric(node.Text.Left(1)) Then
+            personalName = node.Text.Substring(node.Text.IndexOf(" ")).Trim()
+        ElseIf IsNumeric(node.Text.Right(1)) Then
+            personalName = node.Text.Substring(0, node.Text.LastIndexOf(" ")).Trim()
+        End If
+        Return personalName
+    End Function
+
+    Private Sub MenuCombineAll_Click(sender As Object, e As EventArgs) Handles MenuCombineAll.Click
+        If TvwExplorer.SelectedNode Is Nothing Then
+            Exit Sub
+        End If
+        Dim foundDouble As Boolean
+        Dim child As TreeNode, personalNr As Int32
+        foundDouble = True
+        Do While foundDouble
+            For Each child In TvwExplorer.SelectedNode.Nodes
+                personalNr = GetPersonalNrFromNode(child)
+                If personalNr > 0 Then
+                    If FindDouble(child, personalNr) Then
+                        foundDouble = True
+                        Exit For
+                    End If
+                End If
+            Next
+            'Dim parentNode = TvwExplorer.SelectedNode.Parent
+            Dim checkedNodes As List(Of TreeNode) = New List(Of TreeNode)
+            For Each child In TvwExplorer.SelectedNode.Nodes
+                If child.Checked Then
+                    checkedNodes.Add(child)
+                End If
+            Next
+            If checkedNodes.Count = 2 Then
+                'If MsgBox("Knoten " & checkedNodes.ElementAt(0).Text & " und " & checkedNodes.ElementAt(1).Text & " zusammenführen?", MsgBoxStyle.Question + MsgBoxStyle.YesNo, "Nachfrage") = MsgBoxResult.Yes Then
+                MergeNodes(checkedNodes.ElementAt(0), checkedNodes.ElementAt(1))
+                CheckEmptyFolders(GetFullPathOfNode(checkedNodes.ElementAt(1)))
+                TvwExplorer.Nodes.Remove(checkedNodes.ElementAt(1))
+                LoadTree()
+                'End If
+            Else
+                Exit Do
+            End If
+        Loop
+    End Sub
+
+    Private Sub MenuMoveHigher_Click(sender As Object, e As EventArgs) Handles MenuMoveHigher.Click
+        If TvwExplorer.SelectedNode Is Nothing Then
+            Exit Sub
+        End If
+        Dim basePath = GetFullPathOfNode(TvwExplorer.SelectedNode.Parent)
+        TvwExplorer.SelectedNode.Expand()
+        For Each child In TvwExplorer.SelectedNode.Nodes
+            Dim oldPath As String = GetFullPathOfNode(child)
+            Dim di = New DirectoryInfo(oldPath)
+            Directory.Move(oldPath, basePath & "\" & di.Name)
+            Dim fname = oldPath & ".ESW"
+            IO.File.Move(fname, basePath & "\" & di.Name + ".ESW")
+        Next
+        basePath = GetFullPathOfNode(TvwExplorer.SelectedNode)
+        Directory.Delete(basePath)
+        IO.File.Delete(basePath & ".ESW")
+        LoadTree()
+    End Sub
+
+    Private Sub MenuFindDoubleNames_Click(sender As Object, e As EventArgs) Handles MenuFindDoubleNames.Click
+        If TvwExplorer.SelectedNode Is Nothing Then
+            Exit Sub
+        End If
+        'Dim parentNode = TvwExplorer.SelectedNode.Parent
+        Dim child As TreeNode, personalName As String
+        For Each child In TvwExplorer.SelectedNode.Nodes
+            personalName = GetNameFromNode(child)
+            If personalName <> "" Then
+                If FindDoubleName(child, personalName) Then
+                    Exit For
+                End If
+            End If
+        Next
+    End Sub
 
     Private Sub MenuShowFilePreviewer_Click(sender As Object, e As EventArgs) Handles MenuShowFilePreviewer.Click
         MenuShowFilePreviewer.Checked = Not MenuShowFilePreviewer.Checked
