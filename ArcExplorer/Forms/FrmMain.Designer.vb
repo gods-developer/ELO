@@ -32,7 +32,10 @@ Partial Class FrmMain
         Me.MenuDelete = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSeparator6 = New System.Windows.Forms.ToolStripSeparator()
         Me.MenuFindDoubles = New System.Windows.Forms.ToolStripMenuItem()
+        Me.MenuFindDoubleNames = New System.Windows.Forms.ToolStripMenuItem()
+        Me.MenuCombineAll = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuCombine = New System.Windows.Forms.ToolStripMenuItem()
+        Me.MenuMoveAllHigher = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuMigrate = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSeparator1 = New System.Windows.Forms.ToolStripSeparator()
         Me.MenuExpandAll = New System.Windows.Forms.ToolStripMenuItem()
@@ -69,9 +72,9 @@ Partial Class FrmMain
         Me.MainStatusStrip = New System.Windows.Forms.StatusStrip()
         Me.StatusLabelInfo = New System.Windows.Forms.ToolStripStatusLabel()
         Me.FilesRefreshTimer = New System.Windows.Forms.Timer(Me.components)
-        Me.MenuCombineAll = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuMoveHigher = New System.Windows.Forms.ToolStripMenuItem()
-        Me.MenuFindDoubleNames = New System.Windows.Forms.ToolStripMenuItem()
+        Me.MenuExpandFirst = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripSeparator2 = New System.Windows.Forms.ToolStripSeparator()
         Me.ContextMenuExplorer.SuspendLayout()
         CType(Me.MainSplitContainer, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.MainSplitContainer.Panel1.SuspendLayout()
@@ -88,9 +91,9 @@ Partial Class FrmMain
         'ContextMenuExplorer
         '
         Me.ContextMenuExplorer.Font = New System.Drawing.Font("Calibri", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.ContextMenuExplorer.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.MenuCut, Me.MenuCopy, Me.MenuPaste, Me.MenuRename, Me.MenuDelete, Me.ToolStripSeparator6, Me.MenuFindDoubles, Me.MenuFindDoubleNames, Me.MenuCombineAll, Me.MenuCombine, Me.MenuMoveHigher, Me.MenuMigrate, Me.ToolStripSeparator1, Me.MenuExpandAll, Me.MenuRefresh, Me.MenuOpenInExplorer, Me.MenuEloIndex, Me.MenuWinProperties})
+        Me.ContextMenuExplorer.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.MenuCut, Me.MenuCopy, Me.MenuPaste, Me.MenuRename, Me.MenuDelete, Me.ToolStripSeparator6, Me.MenuFindDoubles, Me.MenuFindDoubleNames, Me.MenuCombineAll, Me.MenuCombine, Me.MenuMoveHigher, Me.MenuMoveAllHigher, Me.ToolStripSeparator2, Me.MenuMigrate, Me.ToolStripSeparator1, Me.MenuExpandAll, Me.MenuExpandFirst, Me.MenuRefresh, Me.MenuOpenInExplorer, Me.MenuEloIndex, Me.MenuWinProperties})
         Me.ContextMenuExplorer.Name = "mnuContextExplorer"
-        Me.ContextMenuExplorer.Size = New System.Drawing.Size(212, 390)
+        Me.ContextMenuExplorer.Size = New System.Drawing.Size(212, 440)
         '
         'MenuCut
         '
@@ -133,11 +136,29 @@ Partial Class FrmMain
         Me.MenuFindDoubles.Size = New System.Drawing.Size(211, 22)
         Me.MenuFindDoubles.Text = "ID Dopplungen finden"
         '
+        'MenuFindDoubleNames
+        '
+        Me.MenuFindDoubleNames.Name = "MenuFindDoubleNames"
+        Me.MenuFindDoubleNames.Size = New System.Drawing.Size(211, 22)
+        Me.MenuFindDoubleNames.Text = "Name Dopplungen finden"
+        '
+        'MenuCombineAll
+        '
+        Me.MenuCombineAll.Name = "MenuCombineAll"
+        Me.MenuCombineAll.Size = New System.Drawing.Size(211, 22)
+        Me.MenuCombineAll.Text = "Alle zusammenführen"
+        '
         'MenuCombine
         '
         Me.MenuCombine.Name = "MenuCombine"
         Me.MenuCombine.Size = New System.Drawing.Size(211, 22)
         Me.MenuCombine.Text = "Zusammenführen"
+        '
+        'MenuMoveAllHigher
+        '
+        Me.MenuMoveAllHigher.Name = "MenuMoveAllHigher"
+        Me.MenuMoveAllHigher.Size = New System.Drawing.Size(211, 22)
+        Me.MenuMoveAllHigher.Text = "Alle 1 Ebene höher"
         '
         'MenuMigrate
         '
@@ -411,23 +432,22 @@ Partial Class FrmMain
         '
         Me.FilesRefreshTimer.Interval = 2000
         '
-        'MenuCombineAll
-        '
-        Me.MenuCombineAll.Name = "MenuCombineAll"
-        Me.MenuCombineAll.Size = New System.Drawing.Size(211, 22)
-        Me.MenuCombineAll.Text = "Alle zusammenführen"
-        '
         'MenuMoveHigher
         '
         Me.MenuMoveHigher.Name = "MenuMoveHigher"
         Me.MenuMoveHigher.Size = New System.Drawing.Size(211, 22)
-        Me.MenuMoveHigher.Text = "Alle 1 Ebene höher"
+        Me.MenuMoveHigher.Text = "1 Ebene höher"
         '
-        'MenuFindDoubleNames
+        'MenuExpandFirst
         '
-        Me.MenuFindDoubleNames.Name = "MenuFindDoubleNames"
-        Me.MenuFindDoubleNames.Size = New System.Drawing.Size(211, 22)
-        Me.MenuFindDoubleNames.Text = "Name Dopplungen finden"
+        Me.MenuExpandFirst.Name = "MenuExpandFirst"
+        Me.MenuExpandFirst.Size = New System.Drawing.Size(211, 22)
+        Me.MenuExpandFirst.Text = "Alle 1x öffnen"
+        '
+        'ToolStripSeparator2
+        '
+        Me.ToolStripSeparator2.Name = "ToolStripSeparator2"
+        Me.ToolStripSeparator2.Size = New System.Drawing.Size(208, 6)
         '
         'FrmMain
         '
@@ -501,6 +521,9 @@ Partial Class FrmMain
     Friend WithEvents MenuCombine As ToolStripMenuItem
     Friend WithEvents MenuFindDoubles As ToolStripMenuItem
     Friend WithEvents MenuCombineAll As ToolStripMenuItem
-    Friend WithEvents MenuMoveHigher As ToolStripMenuItem
+    Friend WithEvents MenuMoveAllHigher As ToolStripMenuItem
     Friend WithEvents MenuFindDoubleNames As ToolStripMenuItem
+    Friend WithEvents MenuMoveHigher As ToolStripMenuItem
+    Friend WithEvents MenuExpandFirst As ToolStripMenuItem
+    Friend WithEvents ToolStripSeparator2 As ToolStripSeparator
 End Class

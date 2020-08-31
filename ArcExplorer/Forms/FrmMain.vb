@@ -156,6 +156,7 @@ Public Class FrmMain
         '    AddTreeNode(Nothing, rootNode, rootNode.NodeText, True)
         'Next
         TvwExplorer.SelectedNode = rootNode
+        TvwExplorer.Sort()
         rootNode.Expand()
         TreeNodeClick(rootNode)
     End Sub
@@ -1461,6 +1462,7 @@ mRetry:
                 TvwExplorer.Refresh()
                 Dim baseDir = GetFullPathOfNode(e.Node)
                 LoadSubDirs(baseDir, e.Node)
+                TvwExplorer.Sort()
                 Me.Cursor = Cursors.Default
             End If
         End If
@@ -1722,7 +1724,9 @@ mRetry:
         If TvwExplorer.SelectedNode Is Nothing Then
             Exit Sub
         End If
+        TvwExplorer.BeginUpdate()
         TvwExplorer.SelectedNode.ExpandAll()
+        TvwExplorer.EndUpdate()
     End Sub
 
     Private SumBytes As Double
@@ -1790,17 +1794,20 @@ mRetry:
             CountFolders = CountFolders + 1
             MigrateFiles(rootId, treePath, rootPath)
         End If
+        Thread.Sleep(100)
         For Each node In rootNode.Nodes
-            If node.Checked Then
-                Dim newName = ConvertToValidName(node.Text).Trim()
+            If node Is Nothing Then
+                Debug.Print("What?")
+            ElseIf node?.Checked Then
+                'Dim newName = ConvertToValidName(node.Text).Trim()
                 Dim physName = GetPhysicalNameFromTag(node.Tag)
                 Dim newText = GetEswValue(treePath & "\" & physName, "SHORTDESC")
                 Dim created As Boolean
                 If Me.Cancel Then
                     Exit Sub
                 End If
-                Dim newItem = dbc.GetOrAddNewTreeItem(newName, newText, , rootId, created)
-                Migrate(node, newItem.Id, rootPath & "\" & newName, created)
+                Dim newItem = dbc.GetOrAddNewTreeItem(physName, newText, , rootId, created)
+                Migrate(node, newItem.Id, rootPath & "\" & physName, created)
             End If
         Next
     End Sub
@@ -1851,14 +1858,14 @@ mRetry:
                 CountFiles = CountFiles + 1
                 SumBytes = SumBytes + item.FileLen
                 Dim displayname = IniFileHelper.IniReadValue(fname, "GENERAL", "SHORTDESC") '& IniFileHelper.IniReadValue(fname, "GENERAL", "DOCEXT")
-                Dim filename = ConvertToValidName(displayname)
-                If filename = displayname Then
-                    displayname = Nothing
-                End If
-                filename = filename & item.Fileextension
+                'Dim filename = ConvertToValidName(displayname)
+                'If filename = displayname Then
+                '    displayname = Nothing
+                'End If
+                'filename = filename & item.Fileextension
                 'FileIO.FileSystem.CopyFile(treePath & "\" & fileItem.Physicalname, rootPath & "\" & filename, FileIO.UIOption.OnlyErrorDialogs, FileIO.UICancelOption.ThrowException)
-                LongPathHandler.FileCopy(treePath & "\" & item.Physicalname, rootPath & "\" & filename, True)
-                Dim newFile = dbc.AddNewListItem(treeItemId, filename, displayname)
+                LongPathHandler.FileCopy(treePath & "\" & item.Physicalname, rootPath & "\" & item.Physicalname, True)
+                Dim newFile = dbc.AddNewListItem(treeItemId, item.Physicalname, displayname)
                 MigrateFileIndexes(fname, item.Physicalname, newFile.Id, item.Version)
             End If
         Next
@@ -2031,6 +2038,7 @@ mRetry:
             personalNr = GetPersonalNrFromNode(child)
             If personalNr > 0 Then
                 If FindDouble(child, personalNr) Then
+                    MenuCombine_Click(sender, e)
                     Exit For
                 End If
             End If
@@ -2067,6 +2075,7 @@ mRetry:
                 End If
             End If
         Next
+        Return False
     End Function
 
     Private Function GetPersonalNrFromNode(node As TreeNode) As Int32
@@ -2088,7 +2097,7 @@ mRetry:
     End Function
 
     Private Function GetNameFromNode(node As TreeNode) As String
-        Dim personalName As String
+        Dim personalName As String = ""
         If Not node.Text.Contains(" ") Then
             Return ""
         ElseIf IsNumeric(node.Text.Left(1)) Then
@@ -2136,7 +2145,8 @@ mRetry:
         Loop
     End Sub
 
-    Private Sub MenuMoveHigher_Click(sender As Object, e As EventArgs) Handles MenuMoveHigher.Click
+    'alle Knoten unterhalb des selektierten auf gleiche Eben wie selektierten bringen und danach leeren Knoten entfernen
+    Private Sub MenuMoveAllHigher_Click(sender As Object, e As EventArgs) Handles MenuMoveAllHigher.Click
         If TvwExplorer.SelectedNode Is Nothing Then
             Exit Sub
         End If
@@ -2165,9 +2175,39 @@ mRetry:
             personalName = GetNameFromNode(child)
             If personalName <> "" Then
                 If FindDoubleName(child, personalName) Then
+                    MenuCombine_Click(sender, e)
                     Exit For
                 End If
             End If
+        Next
+    End Sub
+
+    Private Sub MenuMoveHigher_Click(sender As Object, e As EventArgs) Handles MenuMoveHigher.Click
+        If TvwExplorer.SelectedNode Is Nothing Then
+            Exit Sub
+        End If
+        Dim basePath = GetFullPathOfNode(TvwExplorer.SelectedNode.Parent.Parent)
+        'TvwExplorer.SelectedNode.Expand()
+        Dim child = TvwExplorer.SelectedNode
+        Dim oldPath As String = GetFullPathOfNode(child)
+        Dim di = New DirectoryInfo(oldPath)
+        Directory.Move(oldPath, basePath & "\" & di.Name)
+        Dim fname = oldPath & ".ESW"
+        IO.File.Move(fname, basePath & "\" & di.Name + ".ESW")
+        basePath = GetFullPathOfNode(TvwExplorer.SelectedNode)
+        'Directory.Delete(basePath)
+        'IO.File.Delete(basePath & ".ESW")
+        LoadTree()
+    End Sub
+
+    Private Sub MenuExpandFirst_Click(sender As Object, e As EventArgs) Handles MenuExpandFirst.Click
+        If TvwExplorer.SelectedNode Is Nothing Then
+            Exit Sub
+        End If
+        Dim child As TreeNode
+        Dim checkedNodes As List(Of TreeNode) = New List(Of TreeNode)
+        For Each child In TvwExplorer.SelectedNode.Nodes
+            child.Expand()
         Next
     End Sub
 
