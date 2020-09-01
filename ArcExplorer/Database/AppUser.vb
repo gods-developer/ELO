@@ -10,23 +10,19 @@
 Imports System
 Imports System.Collections.Generic
 
-Namespace ArcExplorer
+Partial Public Class AppUser
+    Public Property Id As Integer
+    Public Property UserDomain As String
+    Public Property UserName As String
+    Public Property DisplayName As String
+    Public Property Creation As Date
+    Public Property CreationUser As String
+    Public Property LastUpdate As Nullable(Of Date)
+    Public Property LastUpdateUser As String
+    Public Property RowVersion As Integer
+    Public Property IsAdmin As Boolean
 
-    Partial Public Class AppUser
-        Public Property Id As Integer
-        Public Property UserDomain As String
-        Public Property UserName As String
-        Public Property DisplayName As String
-        Public Property Creation As Date
-        Public Property CreationUser As String
-        Public Property LastUpdate As Nullable(Of Date)
-        Public Property LastUpdateUser As String
-        Public Property RowVersion As Integer
-        Public Property IsAdmin As Boolean
-    
-        Public Overridable Property AppUserSettings As ICollection(Of AppUserSetting) = New HashSet(Of AppUserSetting)
-        Public Overridable Property Reminders As ICollection(Of Reminder) = New HashSet(Of Reminder)
-    
-    End Class
+    Public Overridable Property AppUserSettings As ICollection(Of AppUserSetting) = New HashSet(Of AppUserSetting)
+    Public Overridable Property Reminders As ICollection(Of Reminder) = New HashSet(Of Reminder)
 
-End Namespace
+End Class

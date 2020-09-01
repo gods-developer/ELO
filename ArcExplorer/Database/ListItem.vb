@@ -10,24 +10,20 @@
 Imports System
 Imports System.Collections.Generic
 
-Namespace ArcExplorer
+Partial Public Class ListItem
+    Public Property Id As Integer
+    Public Property TreeItemId As Integer
+    Public Property Filename As String
+    Public Property Displayname As String
+    Public Property SortOrder As Integer
+    Public Property Creation As Date
+    Public Property CreationUser As String
+    Public Property LastUpdate As Nullable(Of Date)
+    Public Property LastUpdateUser As String
+    Public Property RowVersion As Integer
 
-    Partial Public Class ListItem
-        Public Property Id As Integer
-        Public Property TreeItemId As Integer
-        Public Property Filename As String
-        Public Property Displayname As String
-        Public Property SortOrder As Integer
-        Public Property Creation As Date
-        Public Property CreationUser As String
-        Public Property LastUpdate As Nullable(Of Date)
-        Public Property LastUpdateUser As String
-        Public Property RowVersion As Integer
-    
-        Public Overridable Property ListItemIndexes As ICollection(Of ListItemIndex) = New HashSet(Of ListItemIndex)
-        Public Overridable Property TreeItem As TreeItem
-        Public Overridable Property Reminders As ICollection(Of Reminder) = New HashSet(Of Reminder)
-    
-    End Class
+    Public Overridable Property ListItemIndexes As ICollection(Of ListItemIndex) = New HashSet(Of ListItemIndex)
+    Public Overridable Property TreeItem As TreeItem
+    Public Overridable Property Reminders As ICollection(Of Reminder) = New HashSet(Of Reminder)
 
-End Namespace
+End Class

@@ -10,21 +10,17 @@
 Imports System
 Imports System.Collections.Generic
 
-Namespace ArcExplorer
+Partial Public Class AppUserSetting
+    Public Property Id As Integer
+    Public Property AppUserId As Integer
+    Public Property SettingName As String
+    Public Property SettingValue As String
+    Public Property Creation As Date
+    Public Property CreationUser As String
+    Public Property LastUpdate As Nullable(Of Date)
+    Public Property LastUpdateUser As String
+    Public Property RowVersion As Integer
 
-    Partial Public Class AppUserSetting
-        Public Property Id As Integer
-        Public Property AppUserId As Integer
-        Public Property SettingName As String
-        Public Property SettingValue As String
-        Public Property Creation As Date
-        Public Property CreationUser As String
-        Public Property LastUpdate As Nullable(Of Date)
-        Public Property LastUpdateUser As String
-        Public Property RowVersion As Integer
-    
-        Public Overridable Property AppUser As AppUser
-    
-    End Class
+    Public Overridable Property AppUser As AppUser
 
-End Namespace
+End Class

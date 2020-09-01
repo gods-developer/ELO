@@ -149,6 +149,7 @@
           <Property Name="FilesSortBy" Type="tinyint" Nullable="false" />
           <Property Name="FilesSortWay" Type="tinyint" Nullable="false" />
           <Property Name="NodeName" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="ReferenceKey" Type="nvarchar" MaxLength="255" />
         </EntityType>
         <EntityType Name="TreeItemUserRights">
           <Key>
@@ -217,6 +218,18 @@
             </Principal>
             <Dependent Role="ListItemIndexes">
               <PropertyRef Name="ListItemId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ParentNodeId_TreeItem">
+          <End Role="TreeItems" Type="Self.TreeItems" Multiplicity="0..1" />
+          <End Role="TreeItems1" Type="Self.TreeItems" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TreeItems">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TreeItems1">
+              <PropertyRef Name="ParentNodeId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -330,6 +343,10 @@
             <End Role="ListItems" EntitySet="ListItems" />
             <End Role="ListItemIndexes" EntitySet="ListItemIndexes" />
           </AssociationSet>
+          <AssociationSet Name="FK_ParentNodeId_TreeItem" Association="Self.FK_ParentNodeId_TreeItem">
+            <End Role="TreeItems" EntitySet="TreeItems" />
+            <End Role="TreeItems1" EntitySet="TreeItems" />
+          </AssociationSet>
           <AssociationSet Name="FK_Reminders_AppUser" Association="Self.FK_Reminders_AppUser">
             <End Role="AppUser" EntitySet="AppUser" />
             <End Role="Reminders" EntitySet="Reminders" />
@@ -410,6 +427,10 @@
           <AssociationSet Name="FK_Reminders_ListItem" Association="OrgManModel.FK_Reminders_ListItem">
             <End Role="ListItem" EntitySet="ListItems" />
             <End Role="Reminder" EntitySet="Reminders" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ParentNodeId_TreeItem" Association="OrgManModel.FK_ParentNodeId_TreeItem">
+            <End Role="TreeItem" EntitySet="TreeItems" />
+            <End Role="TreeItem1" EntitySet="TreeItems" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="Setting">
@@ -508,6 +529,9 @@
           <NavigationProperty Name="Reminders" Relationship="OrgManModel.FK_Reminders_TreeItem" FromRole="TreeItem" ToRole="Reminder" />
           <Property Name="NodeName" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="ListItems" Relationship="OrgManModel.FK_ListItem_TreeItem" FromRole="TreeItem" ToRole="ListItem" />
+          <Property Name="ReferenceKey" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="TreeItems1" Relationship="OrgManModel.FK_ParentNodeId_TreeItem" FromRole="TreeItem" ToRole="TreeItem1" />
+          <NavigationProperty Name="TreeItem1" Relationship="OrgManModel.FK_ParentNodeId_TreeItem" FromRole="TreeItem1" ToRole="TreeItem" />
         </EntityType>
         <Association Name="FK_RootPath_TreeItem">
           <End Type="OrgManModel.TreeItem" Role="TreeItem" Multiplicity="1">
@@ -731,6 +755,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_ParentNodeId_TreeItem">
+          <End Type="OrgManModel.TreeItem" Role="TreeItem" Multiplicity="0..1" />
+          <End Type="OrgManModel.TreeItem" Role="TreeItem1" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TreeItem">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TreeItem1">
+              <PropertyRef Name="ParentNodeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -799,6 +835,7 @@
           <EntitySetMapping Name="TreeItems">
             <EntityTypeMapping TypeName="OrgManModel.TreeItem">
               <MappingFragment StoreEntitySet="TreeItems">
+                <ScalarProperty Name="ReferenceKey" ColumnName="ReferenceKey" />
                 <ScalarProperty Name="NodeName" ColumnName="NodeName" />
                 <ScalarProperty Name="FilesSortWay" ColumnName="FilesSortWay" />
                 <ScalarProperty Name="FilesSortBy" ColumnName="FilesSortBy" />

@@ -10,18 +10,14 @@
 Imports System
 Imports System.Collections.Generic
 
-Namespace ArcExplorer
+Partial Public Class Setting
+    Public Property Id As Integer
+    Public Property SettingName As String
+    Public Property SettingValue As String
+    Public Property Creation As Date
+    Public Property CreationUser As String
+    Public Property LastUpdate As Nullable(Of Date)
+    Public Property LastUpdateUser As String
+    Public Property RowVersion As Integer
 
-    Partial Public Class Setting
-        Public Property Id As Integer
-        Public Property SettingName As String
-        Public Property SettingValue As String
-        Public Property Creation As Date
-        Public Property CreationUser As String
-        Public Property LastUpdate As Nullable(Of Date)
-        Public Property LastUpdateUser As String
-        Public Property RowVersion As Integer
-    
-    End Class
-
-End Namespace
+End Class

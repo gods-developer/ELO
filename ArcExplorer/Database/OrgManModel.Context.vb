@@ -11,31 +11,27 @@ Imports System
 Imports System.Data.Entity
 Imports System.Data.Entity.Infrastructure
 
-Namespace ArcExplorer
+Partial Public Class OrgManEntities
+    Inherits DbContext
 
-    Partial Public Class OrgManEntities
-        Inherits DbContext
-    
-        Public Sub New()
-            MyBase.New("name=OrgManEntities")
-        End Sub
-    
-        Protected Overrides Sub OnModelCreating(modelBuilder As DbModelBuilder)
-            Throw New UnintentionalCodeFirstException()
-        End Sub
-    
-        Public Overridable Property Settings() As DbSet(Of Setting)
-        Public Overridable Property AppUsers() As DbSet(Of AppUser)
-        Public Overridable Property AppUserSettings() As DbSet(Of AppUserSetting)
-        Public Overridable Property RootPaths() As DbSet(Of RootPath)
-        Public Overridable Property TreeItems() As DbSet(Of TreeItem)
-        Public Overridable Property TreeItemGroupRights() As DbSet(Of TreeItemGroupRight)
-        Public Overridable Property TreeItemUserRights() As DbSet(Of TreeItemUserRight)
-        Public Overridable Property Reminders() As DbSet(Of Reminder)
-        Public Overridable Property StIndexes() As DbSet(Of StIndex)
-        Public Overridable Property ListItemIndexes() As DbSet(Of ListItemIndex)
-        Public Overridable Property ListItems() As DbSet(Of ListItem)
-    
-    End Class
+    Public Sub New()
+        MyBase.New("name=OrgManEntities")
+    End Sub
 
-End Namespace
+    Protected Overrides Sub OnModelCreating(modelBuilder As DbModelBuilder)
+        Throw New UnintentionalCodeFirstException()
+    End Sub
+
+    Public Overridable Property Settings() As DbSet(Of Setting)
+    Public Overridable Property AppUsers() As DbSet(Of AppUser)
+    Public Overridable Property AppUserSettings() As DbSet(Of AppUserSetting)
+    Public Overridable Property RootPaths() As DbSet(Of RootPath)
+    Public Overridable Property TreeItems() As DbSet(Of TreeItem)
+    Public Overridable Property TreeItemGroupRights() As DbSet(Of TreeItemGroupRight)
+    Public Overridable Property TreeItemUserRights() As DbSet(Of TreeItemUserRight)
+    Public Overridable Property Reminders() As DbSet(Of Reminder)
+    Public Overridable Property StIndexes() As DbSet(Of StIndex)
+    Public Overridable Property ListItemIndexes() As DbSet(Of ListItemIndex)
+    Public Overridable Property ListItems() As DbSet(Of ListItem)
+
+End Class

@@ -10,20 +10,16 @@
 Imports System
 Imports System.Collections.Generic
 
-Namespace ArcExplorer
+Partial Public Class RootPath
+    Public Property Id As Integer
+    Public Property TreeItemId As Integer
+    Public Property RootPath1 As String
+    Public Property Creation As Date
+    Public Property CreationUser As String
+    Public Property LastUpdate As Nullable(Of Date)
+    Public Property LastUpdateUser As String
+    Public Property RowVersion As Integer
 
-    Partial Public Class RootPath
-        Public Property Id As Integer
-        Public Property TreeItemId As Integer
-        Public Property RootPath1 As String
-        Public Property Creation As Date
-        Public Property CreationUser As String
-        Public Property LastUpdate As Nullable(Of Date)
-        Public Property LastUpdateUser As String
-        Public Property RowVersion As Integer
-    
-        Public Overridable Property TreeItem As TreeItem
-    
-    End Class
+    Public Overridable Property TreeItem As TreeItem
 
-End Namespace
+End Class

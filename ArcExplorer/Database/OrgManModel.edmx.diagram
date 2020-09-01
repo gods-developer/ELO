@@ -26,6 +26,7 @@
         <AssociationConnector Association="OrgManModel.FK_ListItemIndex_Item" />
         <AssociationConnector Association="OrgManModel.FK_ListItem_TreeItem" />
         <AssociationConnector Association="OrgManModel.FK_Reminders_ListItem" />
+        <AssociationConnector Association="OrgManModel.FK_ParentNodeId_TreeItem" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

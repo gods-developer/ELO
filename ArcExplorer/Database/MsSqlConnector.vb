@@ -188,12 +188,12 @@ Public Class MsSqlConnector
         Next
         GetChildTreeItems = results
     End Function
-    Public Function GetOrAddNewTreeItem(newName As String, Optional newText As String = "", Optional newRootPath As String = "", Optional parentNodeId As Integer = 0, Optional ByRef created As Boolean = False) As OrgManTreeItem
+    Public Function GetOrAddNewTreeItem(newName As String, Optional newText As String = "", Optional newRootPath As String = "", Optional parentNodeId As Integer = 0, Optional ByRef created As Boolean = False, Optional referenceKey As String = Nothing) As OrgManTreeItem
         Dim query = From r In dbs.TreeItems Where r.NodeName = newName And r.NodeText = newText
         If query.Count() > 0 Then
             GetOrAddNewTreeItem = New OrgManTreeItem(parentNodeId, query.First()) With {.RootPath = newRootPath}
         Else
-            GetOrAddNewTreeItem = AddNewTreeItem(newName, newText, newRootPath, parentNodeId)
+            GetOrAddNewTreeItem = AddNewTreeItem(newName, newText, newRootPath, parentNodeId, referenceKey)
             created = True
         End If
     End Function
@@ -209,7 +209,7 @@ Public Class MsSqlConnector
         GetMaxTreeItemIdEx = lastMaxTreeItemId
     End Function
 
-    Public Function AddNewTreeItem(newName As String, Optional newText As String = "", Optional newRootPath As String = "", Optional parentNodeId As Integer = 0) As OrgManTreeItem
+    Public Function AddNewTreeItem(newName As String, Optional newText As String = "", Optional newRootPath As String = "", Optional parentNodeId As Integer = 0, Optional referenceKey As String = Nothing) As OrgManTreeItem
         Dim treeItem As TreeItem = dbs.TreeItems.Create()
         treeItem.Creation = Now
         treeItem.CreationUser = Environment.UserName
@@ -226,6 +226,7 @@ Public Class MsSqlConnector
         treeItem.ChildrenSortWay = 0 'Aufsteigend
         treeItem.FilesSortBy = 0 'Name
         treeItem.FilesSortWay = 0 'Aufsteigend
+        treeItem.ReferenceKey = referenceKey
         dbs.TreeItems.Add(treeItem)
         Dim rows = SaveChanges()
         If newRootPath <> "" And rows > 0 Then

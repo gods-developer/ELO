@@ -10,21 +10,17 @@
 Imports System
 Imports System.Collections.Generic
 
-Namespace ArcExplorer
+Partial Public Class ListItemIndex
+    Public Property ListItemId As Integer
+    Public Property IndexId As Integer
+    Public Property IndexValue As String
+    Public Property Creation As Date
+    Public Property CreationUser As String
+    Public Property LastUpdate As Nullable(Of Date)
+    Public Property LastUpdateUser As String
+    Public Property RowVersion As Integer
 
-    Partial Public Class ListItemIndex
-        Public Property ListItemId As Integer
-        Public Property IndexId As Integer
-        Public Property IndexValue As String
-        Public Property Creation As Date
-        Public Property CreationUser As String
-        Public Property LastUpdate As Nullable(Of Date)
-        Public Property LastUpdateUser As String
-        Public Property RowVersion As Integer
-    
-        Public Overridable Property StIndex As StIndex
-        Public Overridable Property ListItem As ListItem
-    
-    End Class
+    Public Overridable Property StIndex As StIndex
+    Public Overridable Property ListItem As ListItem
 
-End Namespace
+End Class

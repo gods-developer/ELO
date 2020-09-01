@@ -10,19 +10,15 @@
 Imports System
 Imports System.Collections.Generic
 
-Namespace ArcExplorer
+Partial Public Class StIndex
+    Public Property Id As Integer
+    Public Property IndexName As String
+    Public Property Creation As Date
+    Public Property CreationUser As String
+    Public Property LastUpdate As Nullable(Of Date)
+    Public Property LastUpdateUser As String
+    Public Property RowVersion As Integer
 
-    Partial Public Class StIndex
-        Public Property Id As Integer
-        Public Property IndexName As String
-        Public Property Creation As Date
-        Public Property CreationUser As String
-        Public Property LastUpdate As Nullable(Of Date)
-        Public Property LastUpdateUser As String
-        Public Property RowVersion As Integer
-    
-        Public Overridable Property ListItemIndexes As ICollection(Of ListItemIndex) = New HashSet(Of ListItemIndex)
-    
-    End Class
+    Public Overridable Property ListItemIndexes As ICollection(Of ListItemIndex) = New HashSet(Of ListItemIndex)
 
-End Namespace
+End Class

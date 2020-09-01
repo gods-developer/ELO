@@ -84,11 +84,18 @@ Public Class FrmMain
     End Sub
 
     Private Sub FrmMain_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        If String.IsNullOrEmpty(Command()) Or Dir(Command(), FileAttribute.Directory) = "" Then
-            MsgBox("Der ELO Explorer muss mit einem gültigen Pfad als Parameter gestartet werden!", MsgBoxStyle.Exclamation, "Fehler beim Starten")
+        initDir = ""
+        Dim parameters = ApplicationHelper.GetStartUpParameters()
+        Dim exe = System.Reflection.Assembly.GetEntryAssembly().Location
+        For Each param In parameters
+            If param <> exe And param.StartsWith("init.dir=") Then
+                initDir = param.Substring(param.IndexOf("=") + 1)
+            End If
+        Next
+        'initDir = Command() '"A:\Elo_Neuarchiv_29..09.2019 0930\000353F6"
+        If String.IsNullOrEmpty(initDir) Or Dir(initDir, FileAttribute.Directory) = "" Then
+            MsgBox("Der ELO Archiv Explorer muss mit einem gültigen Pfad als Parameter gestartet werden!", MsgBoxStyle.Exclamation, "Fehler beim Starten")
             End
-        Else
-            initDir = Command() '"A:\Elo_Neuarchiv_29..09.2019 0930\000353F6"
         End If
         'Dim args = New ApplicationHelper().GetStartUpParameters()
         'For Each a In args
@@ -1453,20 +1460,28 @@ mRetry:
         End With
     End Sub
 
+    Private treeInUpdate As Boolean
+
     Private Sub TvwExplorer_BeforeExpand(sender As Object, e As TreeViewCancelEventArgs) Handles TvwExplorer.BeforeExpand
         'TvwExplorer.SelectedNode = e.Node
         If e.Node.Nodes.Count = 1 Then
             If e.Node.Nodes(0).Text = ".." Then
                 Me.Cursor = Cursors.AppStarting
                 e.Node.Nodes.Clear()
-                TvwExplorer.Refresh()
+                If Not treeInUpdate Then
+                    TvwExplorer.Refresh()
+                End If
                 Dim baseDir = GetFullPathOfNode(e.Node)
                 LoadSubDirs(baseDir, e.Node)
-                TvwExplorer.Sort()
+                If Not treeInUpdate Then
+                    TvwExplorer.Sort()
+                End If
                 Me.Cursor = Cursors.Default
             End If
         End If
-        TvwExplorer.Refresh()
+        If Not treeInUpdate Then
+            TvwExplorer.Refresh()
+        End If
     End Sub
 
     Private Sub MenuSecurity_Click(sender As Object, e As EventArgs)
@@ -1724,9 +1739,11 @@ mRetry:
         If TvwExplorer.SelectedNode Is Nothing Then
             Exit Sub
         End If
+        treeInUpdate = True
         TvwExplorer.BeginUpdate()
         TvwExplorer.SelectedNode.ExpandAll()
         TvwExplorer.EndUpdate()
+        treeInUpdate = False
     End Sub
 
     Private SumBytes As Double
@@ -1741,6 +1758,8 @@ mRetry:
         CountFolders = 0
         CountFiles = 0
         CheckDbConnection()
+        treeInUpdate = True
+        TvwExplorer.BeginUpdate()
         Dim newName = GetPhysicalNameFromTag(TvwExplorer.SelectedNode.Tag)
         newName = New DirectoryInfo(newName).Name
         Dim newText = TvwExplorer.SelectedNode.Text
@@ -1748,6 +1767,8 @@ mRetry:
         Dim newRootPath = Me.DefaultRootPath & "\" & newName
         Dim dlgResult = SelectRootPath(newRootPath)
         If dlgResult = DialogResult.Cancel Then
+            TvwExplorer.EndUpdate()
+            treeInUpdate = False
             Exit Sub
         End If
         Dim startPoint = DateTime.Now
@@ -1767,17 +1788,19 @@ mRetry:
             End If
             OpenCancelForm()
             Me.Refresh()
-            Migrate(TvwExplorer.SelectedNode, rootNode.Id, newRootPath, created)
+            Migrate(TvwExplorer.SelectedNode, rootNode.Id, newRootPath, created, True)
         Catch ex As Exception
             DsErrorHandler.ShowAndSaveException(NameOf(MenuMigrate_Click), ex)  'MsgBox(ex.Message, MsgBoxStyle.Critical, "Fehler")
         End Try
+        TvwExplorer.EndUpdate()
+        treeInUpdate = False
         CancelForm.Close()
         CancelForm = Nothing
         Dim span = DateTime.Now - startPoint
         StatusLabelInfo.Text = CountFolders & " Ordner, " & CountFiles & " Dateien, " & (Math.Round(SumBytes / 1024)) & " KB verarbeitet in " & Math.Round(span.TotalSeconds) & " Sekunden, " & Math.Round(span.TotalMinutes) & " Minuten!"
     End Sub
 
-    Private Sub Migrate(rootNode As TreeNode, rootId As Integer, rootPath As String, processFiles As Boolean)
+    Private Sub Migrate(rootNode As TreeNode, rootId As Integer, rootPath As String, processFiles As Boolean, useReference As Boolean)
         If Me.Cancel Then
             Exit Sub
         End If
@@ -1794,7 +1817,8 @@ mRetry:
             CountFolders = CountFolders + 1
             MigrateFiles(rootId, treePath, rootPath)
         End If
-        Thread.Sleep(100)
+        'Thread.Sleep(100)
+        Dim personalNr As String = Nothing
         For Each node In rootNode.Nodes
             If node Is Nothing Then
                 Debug.Print("What?")
@@ -1806,8 +1830,11 @@ mRetry:
                 If Me.Cancel Then
                     Exit Sub
                 End If
-                Dim newItem = dbc.GetOrAddNewTreeItem(physName, newText, , rootId, created)
-                Migrate(node, newItem.Id, rootPath & "\" & physName, created)
+                If useReference Then
+                    personalNr = GetPersonalNrFromNode(node)
+                End If
+                Dim newItem = dbc.GetOrAddNewTreeItem(physName, newText, , rootId, created, personalNr)
+                Migrate(node, newItem.Id, rootPath & "\" & physName, created, False)
             End If
         Next
     End Sub
@@ -1847,6 +1874,9 @@ mRetry:
         Me.Refresh()
 
         For Each item In files
+            If Me.Cancel Then
+                Exit Sub
+            End If
             If CountFiles.ToString().EndsWith("00") Then
                 dbc?.Close()
                 dbc = Nothing

@@ -13,7 +13,7 @@ Imports System.Runtime.InteropServices
 <Assembly: AssemblyDescription("Archiv Daten navigieren und migrieren")>
 <Assembly: AssemblyCompany("DigiSped")>
 <Assembly: AssemblyProduct("ArcExplorer")>
-<Assembly: AssemblyCopyright("Copyright © DigiSped 2019")>
+<Assembly: AssemblyCopyright("Copyright © DigiSped 2020")>
 <Assembly: AssemblyTrademark("ArcExplorer")>
 
 <Assembly: ComVisible(False)>
@@ -32,6 +32,6 @@ Imports System.Runtime.InteropServices
 ' by using the '*' as shown below:
 ' <Assembly: AssemblyVersion("1.0.*")>
 
-<Assembly: AssemblyVersion("1.0.0.26")>
-<Assembly: AssemblyFileVersion("1.0.0.26")>
+<Assembly: AssemblyVersion("1.0.0.28")>
+<Assembly: AssemblyFileVersion("1.0.0.28")>
 <Assembly: NeutralResourcesLanguage("de")>

@@ -10,30 +10,29 @@
 Imports System
 Imports System.Collections.Generic
 
-Namespace ArcExplorer
+Partial Public Class TreeItem
+    Public Property Id As Integer
+    Public Property NodeText As String
+    Public Property ParentNodeId As Nullable(Of Integer)
+    Public Property SortOrder As Nullable(Of Integer)
+    Public Property ChildrenSortBy As Byte
+    Public Property ChildrenSortWay As Byte
+    Public Property Creation As Date
+    Public Property CreationUser As String
+    Public Property LastUpdate As Nullable(Of Date)
+    Public Property LastUpdateUser As String
+    Public Property RowVersion As Integer
+    Public Property FilesSortBy As Byte
+    Public Property FilesSortWay As Byte
+    Public Property NodeName As String
+    Public Property ReferenceKey As String
 
-    Partial Public Class TreeItem
-        Public Property Id As Integer
-        Public Property NodeText As String
-        Public Property ParentNodeId As Nullable(Of Integer)
-        Public Property SortOrder As Nullable(Of Integer)
-        Public Property ChildrenSortBy As Byte
-        Public Property ChildrenSortWay As Byte
-        Public Property Creation As Date
-        Public Property CreationUser As String
-        Public Property LastUpdate As Nullable(Of Date)
-        Public Property LastUpdateUser As String
-        Public Property RowVersion As Integer
-        Public Property FilesSortBy As Byte
-        Public Property FilesSortWay As Byte
-        Public Property NodeName As String
-    
-        Public Overridable Property RootPaths As ICollection(Of RootPath) = New HashSet(Of RootPath)
-        Public Overridable Property TreeItemGroupRights As ICollection(Of TreeItemGroupRight) = New HashSet(Of TreeItemGroupRight)
-        Public Overridable Property TreeItemUserRights As ICollection(Of TreeItemUserRight) = New HashSet(Of TreeItemUserRight)
-        Public Overridable Property Reminders As ICollection(Of Reminder) = New HashSet(Of Reminder)
-        Public Overridable Property ListItems As ICollection(Of ListItem) = New HashSet(Of ListItem)
-    
-    End Class
+    Public Overridable Property RootPaths As ICollection(Of RootPath) = New HashSet(Of RootPath)
+    Public Overridable Property TreeItemGroupRights As ICollection(Of TreeItemGroupRight) = New HashSet(Of TreeItemGroupRight)
+    Public Overridable Property TreeItemUserRights As ICollection(Of TreeItemUserRight) = New HashSet(Of TreeItemUserRight)
+    Public Overridable Property Reminders As ICollection(Of Reminder) = New HashSet(Of Reminder)
+    Public Overridable Property ListItems As ICollection(Of ListItem) = New HashSet(Of ListItem)
+    Public Overridable Property TreeItems1 As ICollection(Of TreeItem) = New HashSet(Of TreeItem)
+    Public Overridable Property TreeItem1 As TreeItem
 
-End Namespace
+End Class
