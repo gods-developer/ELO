@@ -528,6 +528,25 @@ Public Class MsSqlConnector
         End If
     End Function
 
+    Public Function AddNewTreeItemIndex(treeItemId As Integer, indexName As String, indexValue As String, noSave As Boolean) As Boolean
+        If String.IsNullOrEmpty(indexValue) Then
+            Exit Function
+        End If
+        Dim indexId = GetIndexId(indexName)
+        Dim item As TreeItemIndex = dbs.TreeItemIndexes.Create()
+        item.Creation = Now
+        item.CreationUser = Environment.UserName
+        item.RowVersion = 1
+        item.TreeItemId = treeItemId
+        item.IndexId = indexId
+        item.IndexValue = indexValue
+        dbs.TreeItemIndexes.Add(item)
+        If Not noSave Then
+            AddNewTreeItemIndex = (SaveChanges() > 0)
+        End If
+    End Function
+
+
     Private Function GetIndexId(indexName As String) As Integer
         Dim query = From r In dbs.StIndexes Where r.IndexName = indexName
         If query.Count() > 0 Then

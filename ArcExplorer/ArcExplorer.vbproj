@@ -231,6 +231,9 @@
     <Compile Include="Database\StIndex.vb">
       <DependentUpon>OrgManModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\TreeItemIndex.vb">
+      <DependentUpon>OrgManModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Forms\DlgCancel.Designer.vb">
       <DependentUpon>DlgCancel.vb</DependentUpon>
     </Compile>

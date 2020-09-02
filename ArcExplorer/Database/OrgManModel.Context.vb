@@ -33,5 +33,6 @@ Partial Public Class OrgManEntities
     Public Overridable Property StIndexes() As DbSet(Of StIndex)
     Public Overridable Property ListItemIndexes() As DbSet(Of ListItemIndex)
     Public Overridable Property ListItems() As DbSet(Of ListItem)
+    Public Overridable Property TreeItemIndexes() As DbSet(Of TreeItemIndex)
 
 End Class

@@ -34,5 +34,6 @@ Partial Public Class TreeItem
     Public Overridable Property ListItems As ICollection(Of ListItem) = New HashSet(Of ListItem)
     Public Overridable Property TreeItems1 As ICollection(Of TreeItem) = New HashSet(Of TreeItem)
     Public Overridable Property TreeItem1 As TreeItem
+    Public Overridable Property TreeItemIndexes As ICollection(Of TreeItemIndex) = New HashSet(Of TreeItemIndex)
 
 End Class

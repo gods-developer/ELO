@@ -1700,9 +1700,14 @@ mRetry:
         fitem.SubItems.Add(IniFileHelper.IniReadValue(ini, "GENERAL", key))
     End Sub
 
-    Private Sub AddGeneralKeyToDatabase(fileId As Integer, ini As String, key As String)
+    Private Sub AddGeneralIndexKeyToDatabase(fileId As Integer, ini As String, key As String)
         Dim value = IniFileHelper.IniReadValue(ini, "GENERAL", key)
         dbc.AddNewListItemIndex(fileId, "ELO " & key, value, True)
+    End Sub
+
+    Private Sub AddGeneralTreeItemKeyToDatabase(treeItemId As Integer, ini As String, key As String)
+        Dim value = IniFileHelper.IniReadValue(ini, "GENERAL", key)
+        dbc.AddNewTreeItemIndex(treeItemId, "ELO " & key, value, True)
     End Sub
 
     Private Sub MenuFileEloIndex_Click(sender As Object, e As EventArgs) Handles MenuFileEloIndex.Click
@@ -1865,7 +1870,6 @@ mRetry:
         'Try
         LongPathHandler.DirectoryCreate(rootPath)
         'Catch ex As Exception
-
         'End Try
         'End If
 
@@ -1901,20 +1905,48 @@ mRetry:
         Next
     End Sub
 
+    Private Sub MigrateTreeItemIndexes(fname As String, filename As String, treeItemId As Integer, version As String)
+        Dim sections = IniFileHelper.IniReadSections(fname)
+        dbc.AddNewTreeItemIndex(treeItemId, "ELO Dateiname", filename, True)
+        dbc.AddNewTreeItemIndex(treeItemId, "ELO Version", version, True)
+        'AddGeneralKeyToDatabase(fileId, fname, "SHORTDESC")
+        'AddGeneralKeyToDatabase(fileId, fname, "DOCEXT")
+        'AddGeneralTreeItemKeyToDatabase(treeItemId, fname, "DOCTYPE")
+        'AddGeneralTreeItemKeyToDatabase(treeItemId, fname, "DOCDATE")
+        AddGeneralTreeItemKeyToDatabase(treeItemId, fname, "ABLDATE")
+        'AddGeneralKeyToDatabase(fileId, fname, "Version")
+        AddGeneralTreeItemKeyToDatabase(treeItemId, fname, "USER")
+        AddGeneralTreeItemKeyToDatabase(treeItemId, fname, "ACL")
+        'AddGeneralKeyToDatabase(fileId, fname, "SREG")
+        AddGeneralTreeItemKeyToDatabase(treeItemId, fname, "GUID")
+        For Each section In sections
+            If section.StartsWith("KEY") Then
+                Dim keyName = IniFileHelper.IniReadValue(fname, section, "KEYNAME")
+                If String.IsNullOrEmpty(keyName) Then
+                    keyName = IniFileHelper.IniReadValue(fname, section, "KEYKEY")
+                Else
+                    keyName = "ELO " & keyName
+                End If
+                dbc.AddNewTreeItemIndex(treeItemId, keyName, IniFileHelper.IniReadValue(fname, section, "KEYTEXT").Replace(Chr(182), ""), True)
+            End If
+        Next
+        dbc.SaveChanges()
+    End Sub
+
     Private Sub MigrateFileIndexes(fname As String, filename As String, fileId As Integer, version As String)
         Dim sections = IniFileHelper.IniReadSections(fname)
         dbc.AddNewListItemIndex(fileId, "ELO Dateiname", filename, True)
         dbc.AddNewListItemIndex(fileId, "ELO Version", version, True)
         'AddGeneralKeyToDatabase(fileId, fname, "SHORTDESC")
         'AddGeneralKeyToDatabase(fileId, fname, "DOCEXT")
-        AddGeneralKeyToDatabase(fileId, fname, "DOCTYPE")
-        AddGeneralKeyToDatabase(fileId, fname, "DOCDATE")
-        AddGeneralKeyToDatabase(fileId, fname, "ABLDATE")
+        AddGeneralIndexKeyToDatabase(fileId, fname, "DOCTYPE")
+        AddGeneralIndexKeyToDatabase(fileId, fname, "DOCDATE")
+        AddGeneralIndexKeyToDatabase(fileId, fname, "ABLDATE")
         'AddGeneralKeyToDatabase(fileId, fname, "Version")
-        AddGeneralKeyToDatabase(fileId, fname, "USER")
-        AddGeneralKeyToDatabase(fileId, fname, "ACL")
+        AddGeneralIndexKeyToDatabase(fileId, fname, "USER")
+        AddGeneralIndexKeyToDatabase(fileId, fname, "ACL")
         'AddGeneralKeyToDatabase(fileId, fname, "SREG")
-        AddGeneralKeyToDatabase(fileId, fname, "GUID")
+        AddGeneralIndexKeyToDatabase(fileId, fname, "GUID")
         For Each section In sections
             If section.StartsWith("KEY") Then
                 Dim keyName = IniFileHelper.IniReadValue(fname, section, "KEYNAME")

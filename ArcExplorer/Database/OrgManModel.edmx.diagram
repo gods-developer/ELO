@@ -27,6 +27,9 @@
         <AssociationConnector Association="OrgManModel.FK_ListItem_TreeItem" />
         <AssociationConnector Association="OrgManModel.FK_Reminders_ListItem" />
         <AssociationConnector Association="OrgManModel.FK_ParentNodeId_TreeItem" />
+        <EntityTypeShape EntityType="OrgManModel.TreeItemIndex" Width="1.5" PointX="14.25" PointY="3" />
+        <AssociationConnector Association="OrgManModel.FK_TreeItemIndex_Index" />
+        <AssociationConnector Association="OrgManModel.FK_TreeItemIndex_Item" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

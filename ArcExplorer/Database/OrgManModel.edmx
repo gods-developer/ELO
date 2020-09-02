@@ -131,6 +131,20 @@
           <Property Name="LastUpdateUser" Type="nvarchar" MaxLength="50" />
           <Property Name="RowVersion" Type="int" Nullable="false" />
         </EntityType>
+        <EntityType Name="TreeItemIndexes">
+          <Key>
+            <PropertyRef Name="TreeItemId" />
+            <PropertyRef Name="IndexId" />
+          </Key>
+          <Property Name="TreeItemId" Type="int" Nullable="false" />
+          <Property Name="IndexId" Type="int" Nullable="false" />
+          <Property Name="IndexValue" Type="nvarchar" MaxLength="4000" />
+          <Property Name="Creation" Type="datetime" Nullable="false" />
+          <Property Name="CreationUser" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="LastUpdate" Type="datetime" />
+          <Property Name="LastUpdateUser" Type="nvarchar" MaxLength="50" />
+          <Property Name="RowVersion" Type="int" Nullable="false" />
+        </EntityType>
         <EntityType Name="TreeItems">
           <Key>
             <PropertyRef Name="Id" />
@@ -301,6 +315,34 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_TreeItemIndex_Index">
+          <End Role="StIndex" Type="Self.StIndex" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="TreeItemIndexes" Type="Self.TreeItemIndexes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="StIndex">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TreeItemIndexes">
+              <PropertyRef Name="IndexId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TreeItemIndex_Item">
+          <End Role="TreeItems" Type="Self.TreeItems" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="TreeItemIndexes" Type="Self.TreeItemIndexes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TreeItems">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TreeItemIndexes">
+              <PropertyRef Name="TreeItemId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_TreeItemUserRights_TreeItem">
           <End Role="TreeItems" Type="Self.TreeItems" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -325,6 +367,7 @@
           <EntitySet Name="Settings" EntityType="Self.Settings" Schema="OrgMan" store:Type="Tables" />
           <EntitySet Name="StIndex" EntityType="Self.StIndex" Schema="OrgMan" store:Type="Tables" />
           <EntitySet Name="TreeItemGroupRights" EntityType="Self.TreeItemGroupRights" Schema="OrgMan" store:Type="Tables" />
+          <EntitySet Name="TreeItemIndexes" EntityType="Self.TreeItemIndexes" Schema="OrgMan" store:Type="Tables" />
           <EntitySet Name="TreeItems" EntityType="Self.TreeItems" Schema="OrgMan" store:Type="Tables" />
           <EntitySet Name="TreeItemUserRights" EntityType="Self.TreeItemUserRights" Schema="OrgMan" store:Type="Tables" />
           <AssociationSet Name="FK_AppUserSettings_AppUser" Association="Self.FK_AppUserSettings_AppUser">
@@ -366,6 +409,14 @@
           <AssociationSet Name="FK_TreeItemGroupRights_TreeItem" Association="Self.FK_TreeItemGroupRights_TreeItem">
             <End Role="TreeItems" EntitySet="TreeItems" />
             <End Role="TreeItemGroupRights" EntitySet="TreeItemGroupRights" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TreeItemIndex_Index" Association="Self.FK_TreeItemIndex_Index">
+            <End Role="StIndex" EntitySet="StIndex" />
+            <End Role="TreeItemIndexes" EntitySet="TreeItemIndexes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TreeItemIndex_Item" Association="Self.FK_TreeItemIndex_Item">
+            <End Role="TreeItems" EntitySet="TreeItems" />
+            <End Role="TreeItemIndexes" EntitySet="TreeItemIndexes" />
           </AssociationSet>
           <AssociationSet Name="FK_TreeItemUserRights_TreeItem" Association="Self.FK_TreeItemUserRights_TreeItem">
             <End Role="TreeItems" EntitySet="TreeItems" />
@@ -431,6 +482,15 @@
           <AssociationSet Name="FK_ParentNodeId_TreeItem" Association="OrgManModel.FK_ParentNodeId_TreeItem">
             <End Role="TreeItem" EntitySet="TreeItems" />
             <End Role="TreeItem1" EntitySet="TreeItems" />
+          </AssociationSet>
+          <EntitySet Name="TreeItemIndexes" EntityType="OrgManModel.TreeItemIndex" />
+          <AssociationSet Name="FK_TreeItemIndex_Index" Association="OrgManModel.FK_TreeItemIndex_Index">
+            <End Role="StIndex" EntitySet="StIndexes" />
+            <End Role="TreeItemIndex" EntitySet="TreeItemIndexes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TreeItemIndex_Item" Association="OrgManModel.FK_TreeItemIndex_Item">
+            <End Role="TreeItem" EntitySet="TreeItems" />
+            <End Role="TreeItemIndex" EntitySet="TreeItemIndexes" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="Setting">
@@ -532,6 +592,7 @@
           <Property Name="ReferenceKey" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="TreeItems1" Relationship="OrgManModel.FK_ParentNodeId_TreeItem" FromRole="TreeItem" ToRole="TreeItem1" />
           <NavigationProperty Name="TreeItem1" Relationship="OrgManModel.FK_ParentNodeId_TreeItem" FromRole="TreeItem1" ToRole="TreeItem" />
+          <NavigationProperty Name="TreeItemIndexes" Relationship="OrgManModel.FK_TreeItemIndex_Item" FromRole="TreeItem" ToRole="TreeItemIndex" />
         </EntityType>
         <Association Name="FK_RootPath_TreeItem">
           <End Type="OrgManModel.TreeItem" Role="TreeItem" Multiplicity="1">
@@ -664,6 +725,7 @@
           <Property Name="LastUpdateUser" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="RowVersion" Type="Int32" Nullable="false" />
           <NavigationProperty Name="ListItemIndexes" Relationship="OrgManModel.FK_ListItemIndex_Index" FromRole="StIndex" ToRole="ListItemIndex" />
+          <NavigationProperty Name="TreeItemIndexes" Relationship="OrgManModel.FK_TreeItemIndex_Index" FromRole="StIndex" ToRole="TreeItemIndex" />
         </EntityType>
         <EntityType Name="ListItemIndex">
           <Key>
@@ -764,6 +826,50 @@
             </Principal>
             <Dependent Role="TreeItem1">
               <PropertyRef Name="ParentNodeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="TreeItemIndex">
+          <Key>
+            <PropertyRef Name="TreeItemId" />
+            <PropertyRef Name="IndexId" />
+          </Key>
+          <Property Name="TreeItemId" Type="Int32" Nullable="false" />
+          <Property Name="IndexId" Type="Int32" Nullable="false" />
+          <Property Name="IndexValue" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" />
+          <Property Name="Creation" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CreationUser" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="LastUpdate" Type="DateTime" Precision="3" />
+          <Property Name="LastUpdateUser" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="RowVersion" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="StIndex" Relationship="OrgManModel.FK_TreeItemIndex_Index" FromRole="TreeItemIndex" ToRole="StIndex" />
+          <NavigationProperty Name="TreeItem" Relationship="OrgManModel.FK_TreeItemIndex_Item" FromRole="TreeItemIndex" ToRole="TreeItem" />
+        </EntityType>
+        <Association Name="FK_TreeItemIndex_Index">
+          <End Type="OrgManModel.StIndex" Role="StIndex" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="OrgManModel.TreeItemIndex" Role="TreeItemIndex" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="StIndex">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TreeItemIndex">
+              <PropertyRef Name="IndexId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TreeItemIndex_Item">
+          <End Type="OrgManModel.TreeItem" Role="TreeItem" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="OrgManModel.TreeItemIndex" Role="TreeItemIndex" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TreeItem">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TreeItemIndex">
+              <PropertyRef Name="TreeItemId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -940,6 +1046,20 @@
                 <ScalarProperty Name="Filename" ColumnName="Filename" />
                 <ScalarProperty Name="TreeItemId" ColumnName="TreeItemId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TreeItemIndexes">
+            <EntityTypeMapping TypeName="OrgManModel.TreeItemIndex">
+              <MappingFragment StoreEntitySet="TreeItemIndexes">
+                <ScalarProperty Name="RowVersion" ColumnName="RowVersion" />
+                <ScalarProperty Name="LastUpdateUser" ColumnName="LastUpdateUser" />
+                <ScalarProperty Name="LastUpdate" ColumnName="LastUpdate" />
+                <ScalarProperty Name="CreationUser" ColumnName="CreationUser" />
+                <ScalarProperty Name="Creation" ColumnName="Creation" />
+                <ScalarProperty Name="IndexValue" ColumnName="IndexValue" />
+                <ScalarProperty Name="IndexId" ColumnName="IndexId" />
+                <ScalarProperty Name="TreeItemId" ColumnName="TreeItemId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
