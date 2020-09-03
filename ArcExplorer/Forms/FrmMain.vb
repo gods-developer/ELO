@@ -60,7 +60,7 @@ Public Class FrmMain
         dbc = New MsSqlConnector
         Try
             If Not dbc.HasAccess() Then
-                MsgBox("Sie haben keine Berechtigung, den Organisationsmanager zu benutzen!" & vbCrLf & "Bitte wenden Sie sich an den Administrator.", MsgBoxStyle.Exclamation, "Hinweis")
+                MsgBox("Sie haben keine Berechtigung, den ELO Archiv Explorer zu benutzen!" & vbCrLf & "Bitte wenden Sie sich an den Administrator.", MsgBoxStyle.Exclamation, "Hinweis")
                 End
             End If
         Catch ex As Exception
@@ -108,7 +108,7 @@ Public Class FrmMain
         'InitChromeControl()
         'FindChromeExe()
         'FilesRefreshTimer.Enabled = My.Settings.ListAutoRefresh
-        Me.Text += " " + Application.ProductVersion + " [" + initDir + "]" + If(IsAdmin, " (" + dbc.Path + ")", "")
+        Me.Text += " " + Application.ProductVersion + " [" + ArcExplorerGlobals.AppEnvironment + "] [" + initDir + "]" + If(IsAdmin, " (" + dbc.Path + ")", "")
         Me.WindowState = GetSetting(Application.ProductName, "Window", "LastWindowState", FormWindowState.Normal)
         Me.Top = GetSetting(Application.ProductName, "Window", "LastWindowTop", Me.Top)
         Me.Left = GetSetting(Application.ProductName, "Window", "LastWindowLeft", Me.Left)
@@ -1469,18 +1469,18 @@ mRetry:
                 Me.Cursor = Cursors.AppStarting
                 e.Node.Nodes.Clear()
                 If Not treeInUpdate Then
-                    TvwExplorer.Refresh()
+                    'TvwExplorer.Refresh()
                 End If
                 Dim baseDir = GetFullPathOfNode(e.Node)
                 LoadSubDirs(baseDir, e.Node)
                 If Not treeInUpdate Then
-                    TvwExplorer.Sort()
+                    'TvwExplorer.Sort()
                 End If
                 Me.Cursor = Cursors.Default
             End If
         End If
         If Not treeInUpdate Then
-            TvwExplorer.Refresh()
+            'TvwExplorer.Refresh()
         End If
     End Sub
 
@@ -1784,13 +1784,16 @@ mRetry:
             'TvwExplorer.SelectedNode.ExpandAll()
             Me.Cancel = False
             Dim created As Boolean
-            Dim rootNode = dbc.GetOrAddNewTreeItem(newName, newText, newRootPath, created)
-            If created Then
-                CountFolders = CountFolders + 1
-                If Not rootNode Is Nothing Then
-                    dbc.AddNewTreeItem(Me.TemplateFolderName, , , rootNode.Id)
-                End If
-            End If
+            Dim rootNode = dbc.GetOrAddNewTreeItem(newName, newText, newRootPath, , created)
+            Dim treePath As String = GetFullPathOfNode(TvwExplorer.SelectedNode)
+            Dim physName = GetPhysicalNameFromTag(TvwExplorer.SelectedNode.Tag)
+            MigrateTreeItemIndexes(treePath & ".ESW", New DirectoryInfo(physName).Name, rootNode.Id)
+            'If created Then
+            '    CountFolders = CountFolders + 1
+            '    If Not rootNode Is Nothing Then
+            '        dbc.AddNewTreeItem(Me.TemplateFolderName, , , rootNode.Id)
+            '    End If
+            'End If
             OpenCancelForm()
             Me.Refresh()
             Migrate(TvwExplorer.SelectedNode, rootNode.Id, newRootPath, created, True)
@@ -1839,6 +1842,7 @@ mRetry:
                     personalNr = GetPersonalNrFromNode(node)
                 End If
                 Dim newItem = dbc.GetOrAddNewTreeItem(physName, newText, , rootId, created, personalNr)
+                MigrateTreeItemIndexes(treePath & "\" & physName + ".ESW", physName, newItem.Id)
                 Migrate(node, newItem.Id, rootPath & "\" & physName, created, False)
             End If
         Next
@@ -1861,7 +1865,8 @@ mRetry:
         If Me.Cancel Then
             Exit Sub
         End If
-        If treeItemId.ToString().EndsWith("0") Then
+        Dim strId = treeItemId.ToString()
+        If strId.EndsWith("0") Or strId.EndsWith("3") Or strId.EndsWith("6") Then
             Application.DoEvents()
         End If
         Dim item As ArcExplorerFileInfo
@@ -1905,10 +1910,11 @@ mRetry:
         Next
     End Sub
 
-    Private Sub MigrateTreeItemIndexes(fname As String, filename As String, treeItemId As Integer, version As String)
+    Private Sub MigrateTreeItemIndexes(fname As String, filename As String, treeItemId As Integer)
         Dim sections = IniFileHelper.IniReadSections(fname)
         dbc.AddNewTreeItemIndex(treeItemId, "ELO Dateiname", filename, True)
-        dbc.AddNewTreeItemIndex(treeItemId, "ELO Version", version, True)
+        'dbc.AddNewTreeItemIndex(treeItemId, "ELO Version", Version, True)
+        AddGeneralTreeItemKeyToDatabase(treeItemId, fname, "Version")
         'AddGeneralKeyToDatabase(fileId, fname, "SHORTDESC")
         'AddGeneralKeyToDatabase(fileId, fname, "DOCEXT")
         'AddGeneralTreeItemKeyToDatabase(treeItemId, fname, "DOCTYPE")

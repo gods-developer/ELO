@@ -189,7 +189,7 @@ Public Class MsSqlConnector
         GetChildTreeItems = results
     End Function
     Public Function GetOrAddNewTreeItem(newName As String, Optional newText As String = "", Optional newRootPath As String = "", Optional parentNodeId As Integer = 0, Optional ByRef created As Boolean = False, Optional referenceKey As String = Nothing) As OrgManTreeItem
-        Dim query = From r In dbs.TreeItems Where r.NodeName = newName And r.NodeText = newText
+        Dim query = From r In dbs.TreeItems Where r.NodeName = newName And r.NodeText = newText And (parentNodeId = 0 Or r.ParentNodeId = parentNodeId)
         If query.Count() > 0 Then
             GetOrAddNewTreeItem = New OrgManTreeItem(parentNodeId, query.First()) With {.RootPath = newRootPath}
         Else
