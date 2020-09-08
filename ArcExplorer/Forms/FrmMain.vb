@@ -1842,8 +1842,14 @@ mRetry:
                     personalNr = GetPersonalNrFromNode(node)
                 End If
                 Dim newItem = dbc.GetOrAddNewTreeItem(physName, newText, , rootId, created, personalNr)
+                Dim newRootPath = rootPath & "\" & physName
+                If useReference Then
+                    Dim code = StringExtensions.RandomString(10)
+                    newRootPath += "\" & code
+                    newItem = dbc.GetOrAddNewTreeItem(code, "Altdaten", , newItem.Id, created, Nothing)
+                End If
                 MigrateTreeItemIndexes(treePath & "\" & physName + ".ESW", physName, newItem.Id)
-                Migrate(node, newItem.Id, rootPath & "\" & physName, created, False)
+                Migrate(node, newItem.Id, newRootPath, created, False)
             End If
         Next
     End Sub

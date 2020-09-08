@@ -92,7 +92,7 @@ Namespace My
         
         <Global.System.Configuration.ApplicationScopedSettingAttribute(),  _
          Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("Prod")>  _
+         Global.System.Configuration.DefaultSettingValueAttribute("Dev")>  _
         Public ReadOnly Property EnvironmentName() As String
             Get
                 Return CType(Me("EnvironmentName"),String)
