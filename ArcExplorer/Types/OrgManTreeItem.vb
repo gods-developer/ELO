@@ -4,6 +4,7 @@ Public Class OrgManTreeItem
     Public Id As Integer
     Public ParentId As Integer?
     Public Node As TreeNode
+    Public NodeName As String
     Public NodeText As String
     Public RootPath As String
     Public SortOrder As Integer
@@ -21,6 +22,7 @@ Public Class OrgManTreeItem
         If item Is Nothing Then Exit Sub
         Me.Id = item.Id
         Me.ParentId = parentId
+        Me.NodeName = item.NodeName
         Me.NodeText = item.NodeText
         If item.RootPaths.Any() Then
             Me.RootPath = item.RootPaths(0).RootPath1

@@ -270,6 +270,16 @@ Public Class MsSqlConnector
         CheckIfNameExists = (query.Count() > 0)
     End Function
 
+    Public Function CheckIfCodeExists(parentNodeId As Integer, code As String) As Boolean
+        Dim query As IQueryable(Of TreeItem)
+        If parentNodeId = 0 Then
+            query = (From r In dbs.TreeItems Where r.ParentNodeId Is Nothing And r.NodeName = code.Replace("'", "''"))
+        Else
+            query = (From r In dbs.TreeItems Where r.ParentNodeId = parentNodeId And r.NodeName = code.Replace("'", "''"))
+        End If
+        CheckIfCodeExists = (query.Count() > 0)
+    End Function
+
     Private Function GetMaxTreeItemId(parentNodeId As Integer) As Integer
         DirectCast(dbs, IObjectContextAdapter).ObjectContext.Refresh(RefreshMode.StoreWins, dbs.TreeItems)
         If parentNodeId = 0 Then

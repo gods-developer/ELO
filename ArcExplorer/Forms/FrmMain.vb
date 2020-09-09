@@ -52,6 +52,7 @@ Public Class FrmMain
     End Function
 
     Private initDir As String
+    Private initEnv As String
 
     Private Sub CheckDbConnection()
         If Not dbc Is Nothing Then
@@ -90,6 +91,8 @@ Public Class FrmMain
         For Each param In parameters
             If param <> exe And param.StartsWith("init.dir=") Then
                 initDir = param.Substring(param.IndexOf("=") + 1)
+            ElseIf param <> exe And param.StartsWith("init.env=") Then
+                initEnv = param.Substring(param.IndexOf("=") + 1)
             End If
         Next
         'initDir = Command() '"A:\Elo_Neuarchiv_29..09.2019 0930\000353F6"
@@ -104,7 +107,11 @@ Public Class FrmMain
         '        OrgManGlobals.AppEnvironment = a.Substring(a.IndexOf("=") + 1)
         '    End If
         'Next
-        SetEnvironment(My.Settings.Default.EnvironmentName)
+        If String.IsNullOrEmpty(initEnv) Then
+            SetEnvironment(My.Settings.Default.EnvironmentName)
+        Else
+            SetEnvironment(initEnv)
+        End If
         'InitChromeControl()
         'FindChromeExe()
         'FilesRefreshTimer.Enabled = My.Settings.ListAutoRefresh
@@ -1844,15 +1851,36 @@ mRetry:
                 Dim newItem = dbc.GetOrAddNewTreeItem(physName, newText, , rootId, created, personalNr)
                 Dim newRootPath = rootPath & "\" & physName
                 If useReference Then
-                    Dim code = StringExtensions.RandomString(10)
-                    newRootPath += "\" & code
-                    newItem = dbc.GetOrAddNewTreeItem(code, "Altdaten", , newItem.Id, created, Nothing)
+                    Dim newRootId = newItem.Id
+                    newItem = AddNewFolder(newRootId, "Bewerbungsunterlagen")
+                    newItem = AddNewFolder(newRootId, "Einstellung-Vereinbarungen - Arbeitsvertrag")
+                    newItem = AddNewFolder(newRootId, "Lohn - Gehalt - Steuer - Sozialversicherung")
+                    newItem = AddNewFolder(newRootId, "Darlehen - Pfändungen")
+                    newItem = AddNewFolder(newRootId, "Urlaub und Krankheit")
+                    newItem = AddNewFolder(newRootId, "Ausweise - Scheine - Zertifikate")
+                    newItem = AddNewFolder(newRootId, "Allgemeine Korrespondenz")
+                    newItem = AddNewFolder(newRootId, "Disziplinarmaßnahmen")
+                    newItem = AddNewFolder(newRootId, "Beurteilung")
+                    newItem = AddNewFolder(newRootId, "Ausscheiden-Vereinbarung")
+                    newItem = AddNewFolder(newRootId, "Klärung")
+                    newItem = AddNewFolder(newRootId, "Altdaten")
+                    newRootPath += "\" & newItem.NodeName
                 End If
                 MigrateTreeItemIndexes(treePath & "\" & physName + ".ESW", physName, newItem.Id)
                 Migrate(node, newItem.Id, newRootPath, created, False)
             End If
         Next
     End Sub
+
+    Private Function AddNewFolder(newRootId As Integer, newName As String) As OrgManTreeItem
+        Dim code = StringExtensions.RandomString(10)
+        Dim created As Boolean
+        Do While dbc.CheckIfCodeExists(newRootId, code)
+            code = StringExtensions.RandomString(10)
+        Loop
+        Dim newItem = dbc.GetOrAddNewTreeItem(code, newName, , newRootId, created, Nothing)
+        Return newItem
+    End Function
 
     Private Function ConvertToValidName(text As String) As String
         Dim newPath = text
@@ -1910,7 +1938,7 @@ mRetry:
                 'filename = filename & item.Fileextension
                 'FileIO.FileSystem.CopyFile(treePath & "\" & fileItem.Physicalname, rootPath & "\" & filename, FileIO.UIOption.OnlyErrorDialogs, FileIO.UICancelOption.ThrowException)
                 LongPathHandler.FileCopy(treePath & "\" & item.Physicalname, rootPath & "\" & item.Physicalname, True)
-                Dim newFile = dbc.AddNewListItem(treeItemId, item.Physicalname, displayname)
+                Dim newFile = dbc.AddNewListItem(treeItemId, item.Physicalname, displayname & "." & item.Fileextension)
                 MigrateFileIndexes(fname, item.Physicalname, newFile.Id, item.Version)
             End If
         Next
