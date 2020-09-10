@@ -640,5 +640,12 @@ Public Class MsSqlConnector
         End If
     End Function
 
+    Public Function GetDisplayNameFromPersonalNr(personalNr As Integer) As String
+        Dim query = From r In dbs.EposPersonals Where r.PersonalNr = personalNr
+        If query.Count() > 0 Then
+            Dim rec = query.FirstOrDefault()
+            GetDisplayNameFromPersonalNr = rec.Nachname & ", " & rec.Vorname
+        End If
+    End Function
 
 End Class

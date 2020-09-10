@@ -1,0 +1,38 @@
+1. _Ausgeschieden/_Ausgeschieden löschen
+2. _Ausgeschieden > "Alle 1 Ebene höher"
+3. "Dalis, Georgios -12334" umbenennen zu "Dalis, Georgios - 12334", "Stangenberg, Hanno -12337"
+"Frese  , Wolfgang 1100" zu "Frese, Wolfgang 1100"
+"Fröbisch, Björn 2015" zu "Fröbisch, Björn 2032" ??
+
+Frese, Wolfgang aufräumen
+  1. Unterordner "9" löschen, wenn leer
+
+unter Jacobs, Helmut 2054 Schulgin "1 Ebene höher"
+unter "Heuschkel , Hans - Jürgen 12117"  Vonrath "1 Ebene höher"
+
+-doppelt und ... umbenennen
+ 
+4. "Alle zusammenführen"
+5. "Name Dopplungen finden" (Bortz, Bruse 3x, Gebert Rudolf)
+(Manthey, Grosse, Beck. O., Borr, ignorieren)
+
+Bortz auf 12153 umbenennen
+Bruse auf 12072 umbenennen
+Brütt auf 12159
+Bünger auf 12158
+Jacobs auf 2054
+Kliszewski, Zbigniew Stanislaw auf 12184
+
+6. Alle 1x öffnen und Unterordner kontrollieren
+Dunckel, Hans-Georg 1047 gleicher Unterordner >> 1 pdf schon in 2008 >> Baum löschen
+Frese, Wolfgang alle 1x höher...
+Penz, Berndt 2057 ebenfalls
+
+7. Gleiche Namen zusammenführen
+   Frese, Wolfgang
+   Penz, Berndt 2057
+   
+   
+12087 >> löschen, wenn leer --umbenennen in "12087 Schiel, Stephanie"
+"12146 ," >> löschen, wenn leer?
+

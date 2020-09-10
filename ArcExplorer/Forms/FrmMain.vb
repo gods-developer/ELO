@@ -538,6 +538,7 @@ mRetry:
                     includeFiles = True
                 End If
             End If
+            TvwExplorer.SelectedNode.ExpandAll()
             DeleteTreeItem(TvwExplorer.SelectedNode, includeFiles)
             ClearFilePreview()
             LvwFiles.Items.Clear()
@@ -555,12 +556,12 @@ mRetry:
             DeleteTreeItem(node.Nodes(0), includeFiles)
         Loop
         If includeFiles Then
-            'DeleteFiles(node)
+            DeleteFiles(node)
         End If
         'Dim nodeId As Integer = GetIdFromTag(node.Tag)
         ''dbc.DeleteTreeItem(nodeId)
         Dim treePath As String = GetFullPathOfNode(node)
-        Directory.Delete(treePath)
+        'Directory.Delete(treePath)
         IO.File.Delete(treePath & ".ESW")
         node.Remove()
     End Sub
@@ -569,12 +570,14 @@ mRetry:
         Dim fullPath As String = GetFullPathOfNode(node)
         Dim files As List(Of ArcExplorerFileInfo) = GetFiles(fullPath, False, False)
         Dim cp As Integer, file As ArcExplorerFileInfo
-        Dim treeItemId As Integer = GetIdFromTag(node.Tag)
+        'Dim treeItemId As Integer = GetIdFromTag(node.Tag)
         For cp = 0 To files.Count - 1
             file = files.Item(cp)
-            Dim fileId = dbc.GetListItem(treeItemId, file.Filename).Id
-            DeleteListItem(fileId)
-            KillFileIfExists(fullPath + file.Filename)
+            'Dim fileId = dbc.GetListItem(treeItemId, file.Filename).Id
+            ''DeleteListItem(fileId)
+            KillFileIfExists(fullPath & "\" & file.Physicalname)
+            Dim fname = file.Physicalname.Substring(0, file.Physicalname.LastIndexOf("."))
+            KillFileIfExists(fullPath & "\" & fname & ".ESW")
         Next
         RemoveDirIfExists(fullPath)
     End Sub
@@ -719,7 +722,7 @@ mRetry:
             AddFileItem(file, cp)
         Next
         Dim span = DateTime.Now - startPoint
-        StatusLabelInfo.Text = files.Count & " Datei(en) in " & Math.Round(span.TotalSeconds) & " Sekunden"
+        StatusLabelInfo.Text = TvwExplorer.SelectedNode.Nodes.Count & " Ordner / " & files.Count & " Datei(en) in " & Math.Round(span.TotalSeconds) & " Sekunden"
         FilesAreLoading = False
         Me.Cursor = Cursors.Default
     End Sub
@@ -1833,7 +1836,7 @@ mRetry:
             MigrateFiles(rootId, treePath, rootPath)
         End If
         'Thread.Sleep(100)
-        Dim personalNr As String = Nothing
+        Dim personalNr As Integer = 0
         For Each node In rootNode.Nodes
             If node Is Nothing Then
                 Debug.Print("What?")
@@ -1847,8 +1850,14 @@ mRetry:
                 End If
                 If useReference Then
                     personalNr = GetPersonalNrFromNode(node)
+                    If personalNr > 0 Then
+                        Dim displayName = dbc.GetDisplayNameFromPersonalNr(personalNr)
+                        If Not String.IsNullOrEmpty(displayName) Then
+                            newText = displayName & " #" & personalNr
+                        End If
+                    End If
                 End If
-                Dim newItem = dbc.GetOrAddNewTreeItem(physName, newText, , rootId, created, personalNr)
+                Dim newItem = dbc.GetOrAddNewTreeItem(physName, newText, , rootId, created, IIf(personalNr > 0, personalNr, Nothing))
                 Dim newRootPath = rootPath & "\" & physName
                 If useReference Then
                     Dim newRootId = newItem.Id
@@ -2049,8 +2058,11 @@ mRetry:
                 CheckEmptyFolders(GetFullPathOfNode(checkedNodes.ElementAt(1)))
                 TvwExplorer.Nodes.Remove(checkedNodes.ElementAt(1))
                 LoadTree()
+                If checkedNames.Contains(processName) Then
+                    checkedNames.Remove(processName)
+                End If
             End If
-        End If
+            End If
     End Sub
 
     Private Sub MergeNodes(baseNode As TreeNode, secondNode As TreeNode)
@@ -2169,6 +2181,24 @@ mRetry:
             If child.Name <> node.Name Then
                 personalName = GetNameFromNode(child)
                 If personalName = baseName Then
+                    checkedNames.Add(personalName)
+                    child.Checked = True
+                    node.Checked = True
+                    'child.ExpandAll()
+                    'node.ExpandAll()
+                    Return True
+                End If
+            End If
+        Next
+        Return False
+    End Function
+
+    Private Function FindDoubleText(node As TreeNode, baseName As String) As Boolean
+        Dim nodeName As String, child As TreeNode
+        For Each child In TvwExplorer.SelectedNode.Nodes
+            If child.Name <> node.Name Then
+                nodeName = child.Text
+                If nodeName = baseName Then
                     child.Checked = True
                     node.Checked = True
                     'child.ExpandAll()
@@ -2267,6 +2297,9 @@ mRetry:
         LoadTree()
     End Sub
 
+    Private checkedNames As List(Of String) = New List(Of String)
+    Private processName As String
+
     Private Sub MenuFindDoubleNames_Click(sender As Object, e As EventArgs) Handles MenuFindDoubleNames.Click
         If TvwExplorer.SelectedNode Is Nothing Then
             Exit Sub
@@ -2274,9 +2307,13 @@ mRetry:
         'Dim parentNode = TvwExplorer.SelectedNode.Parent
         Dim child As TreeNode, personalName As String
         For Each child In TvwExplorer.SelectedNode.Nodes
+            child.Checked = False
+        Next
+        For Each child In TvwExplorer.SelectedNode.Nodes
             personalName = GetNameFromNode(child)
-            If personalName <> "" Then
+            If personalName <> "" And Not checkedNames.Contains(personalName) Then
                 If FindDoubleName(child, personalName) Then
+                    personalName = personalName
                     MenuCombine_Click(sender, e)
                     Exit For
                 End If
@@ -2311,6 +2348,47 @@ mRetry:
         For Each child In TvwExplorer.SelectedNode.Nodes
             child.Expand()
         Next
+    End Sub
+
+    Private Sub MenuCombineSameFolder_Click(sender As Object, e As EventArgs) Handles MenuCombineSameFolder.Click
+        If TvwExplorer.SelectedNode Is Nothing Then
+            Exit Sub
+        End If
+        Dim foundDouble As Boolean
+        Dim child As TreeNode, nodeName As String
+        foundDouble = True
+        Do While foundDouble
+            For Each child In TvwExplorer.SelectedNode.Nodes
+                nodeName = child.Text
+                If Not String.IsNullOrEmpty(nodeName) Then
+                    If FindDoubleText(child, nodeName) Then
+                        foundDouble = True
+                        Exit For
+                    End If
+                End If
+            Next
+            'Dim parentNode = TvwExplorer.SelectedNode.Parent
+            Dim checkedNodes As List(Of TreeNode) = New List(Of TreeNode)
+            For Each child In TvwExplorer.SelectedNode.Nodes
+                If child.Checked Then
+                    checkedNodes.Add(child)
+                End If
+            Next
+            If checkedNodes.Count = 2 Then
+                'If MsgBox("Knoten " & checkedNodes.ElementAt(0).Text & " und " & checkedNodes.ElementAt(1).Text & " zusammenführen?", MsgBoxStyle.Question + MsgBoxStyle.YesNo, "Nachfrage") = MsgBoxResult.Yes Then
+                MergeNodes(checkedNodes.ElementAt(0), checkedNodes.ElementAt(1))
+                CheckEmptyFolders(GetFullPathOfNode(checkedNodes.ElementAt(1)))
+                TvwExplorer.Nodes.Remove(checkedNodes.ElementAt(1))
+                checkedNodes.ElementAt(0).Checked = False
+                checkedNodes.ElementAt(0).Collapse()
+                checkedNodes.ElementAt(0).Nodes.Clear()
+                checkedNodes.ElementAt(0).Nodes.Add("..")
+                'LoadTree()
+                'End If
+            Else
+                Exit Do
+            End If
+        Loop
     End Sub
 
     Private Sub MenuShowFilePreviewer_Click(sender As Object, e As EventArgs) Handles MenuShowFilePreviewer.Click

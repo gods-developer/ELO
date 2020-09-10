@@ -179,6 +179,167 @@
           <Property Name="LastUpdateUser" Type="nvarchar" MaxLength="50" />
           <Property Name="RowVersion" Type="int" Nullable="false" />
         </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'SEE_Dev.DataMan.EposPersonal' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="EposPersonal">
+          <Key>
+            <PropertyRef Name="MandantNr" />
+            <PropertyRef Name="PersonalNr" />
+            <PropertyRef Name="KurzName" />
+            <PropertyRef Name="GabelstaplerSchein" />
+            <PropertyRef Name="KranfuehrerSchein" />
+            <PropertyRef Name="PersonalArtNr" />
+            <PropertyRef Name="Monteur" />
+            <PropertyRef Name="AngelegtDatum" />
+            <PropertyRef Name="AngelegtUser" />
+            <PropertyRef Name="AussendienstMitarbeiter" />
+            <PropertyRef Name="ArbeitsBerichteExport" />
+            <PropertyRef Name="UeberstundenKontoVerwenden" />
+            <PropertyRef Name="OnlineVerfuegbar" />
+            <PropertyRef Name="OnlineApplikationSupervisor" />
+            <PropertyRef Name="MobileAppPersonalStunden" />
+            <PropertyRef Name="MobileAppKundenInfo" />
+            <PropertyRef Name="MobileAppAuftragsEingabe" />
+            <PropertyRef Name="MobileAppSystemTools" />
+            <PropertyRef Name="MobileAppAuslieferung" />
+            <PropertyRef Name="MobileAppBilder" />
+            <PropertyRef Name="OnlineApplikationBesichtigung" />
+            <PropertyRef Name="ArbeitszeitAusSystemDaten" />
+            <PropertyRef Name="OnlineApplikationPersonalTermine" />
+            <PropertyRef Name="CreationUser" />
+          </Key>
+          <Property Name="MandantNr" Type="smallint" Nullable="false" />
+          <Property Name="PersonalNr" Type="int" Nullable="false" />
+          <Property Name="KurzName" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="Nachname" Type="nvarchar" MaxLength="20" />
+          <Property Name="Vorname" Type="nvarchar" MaxLength="20" />
+          <Property Name="Strasse" Type="nvarchar" MaxLength="40" />
+          <Property Name="Land" Type="nvarchar" MaxLength="3" />
+          <Property Name="PLZ" Type="nvarchar" MaxLength="7" />
+          <Property Name="Ort" Type="nvarchar" MaxLength="40" />
+          <Property Name="Telefon" Type="nvarchar" MaxLength="20" />
+          <Property Name="Telefon2" Type="nvarchar" MaxLength="20" />
+          <Property Name="Telefon3" Type="nvarchar" MaxLength="20" />
+          <Property Name="Geburtstag" Type="datetime" />
+          <Property Name="EintrittsDatum" Type="datetime" />
+          <Property Name="AustrittsDatum" Type="datetime" />
+          <Property Name="PersonalAusweisNr" Type="nvarchar" MaxLength="20" />
+          <Property Name="FuehrerscheinDatum" Type="datetime" />
+          <Property Name="GabelstaplerSchein" Type="bit" Nullable="false" />
+          <Property Name="KranfuehrerSchein" Type="bit" Nullable="false" />
+          <Property Name="FachNr" Type="smallint" />
+          <Property Name="PersonalArtNr" Type="smallint" Nullable="false" />
+          <Property Name="Monteur" Type="bit" Nullable="false" />
+          <Property Name="LeistungsNr" Type="int" />
+          <Property Name="LeistungsNrUeberstunden" Type="int" />
+          <Property Name="LeistungsNrNachtstunden" Type="int" />
+          <Property Name="LeistungsNrSamstagszuschlag" Type="int" />
+          <Property Name="LeistungsNrSonntagszuschlag" Type="int" />
+          <Property Name="LeistungsNrFeiertagszuschlag" Type="int" />
+          <Property Name="LeistungsNrAusloeseStunden" Type="int" />
+          <Property Name="LeistungsNrAusloeseTag" Type="int" />
+          <Property Name="WerkstattWagenLeistungNr" Type="int" />
+          <Property Name="PkwLeistungNr" Type="int" />
+          <Property Name="AngelegtDatum" Type="datetime" Nullable="false" />
+          <Property Name="AngelegtUser" Type="smallint" Nullable="false" />
+          <Property Name="AenderungDatum" Type="datetime" />
+          <Property Name="AenderungUser" Type="smallint" />
+          <Property Name="EMail" Type="nvarchar" MaxLength="50" />
+          <Property Name="EMail2" Type="nvarchar" MaxLength="50" />
+          <Property Name="FilialNr" Type="int" />
+          <Property Name="Bemerkung" Type="text" />
+          <Property Name="FuehrerscheinNr" Type="nvarchar" MaxLength="20" />
+          <Property Name="ReisepassNr" Type="nvarchar" MaxLength="20" />
+          <Property Name="PersonalBild" Type="text" />
+          <Property Name="PersonalBildName" Type="nvarchar" MaxLength="100" />
+          <Property Name="TagesSollStunden" Type="numeric" Precision="18" Scale="2" />
+          <Property Name="MonatsSollStunden" Type="numeric" Precision="18" Scale="2" />
+          <Property Name="AussendienstMitarbeiter" Type="bit" Nullable="false" />
+          <Property Name="PersonalNrExport" Type="nvarchar" MaxLength="10" />
+          <Property Name="PersonalNrTankstelle" Type="nvarchar" MaxLength="10" />
+          <Property Name="SpesenLandNr" Type="int" />
+          <Property Name="PersonalArtNr2" Type="smallint" />
+          <Property Name="PersonalKommunikationsId" Type="nvarchar" MaxLength="20" />
+          <Property Name="PersonalKommunikationsId2" Type="nvarchar" MaxLength="20" />
+          <Property Name="ZusatzFeld1" Type="nvarchar" MaxLength="50" />
+          <Property Name="ZusatzFeld2" Type="nvarchar" MaxLength="50" />
+          <Property Name="ZusatzFeld3" Type="nvarchar" MaxLength="50" />
+          <Property Name="ZusatzFeld4" Type="nvarchar" MaxLength="50" />
+          <Property Name="ZusatzFeld5" Type="nvarchar" MaxLength="50" />
+          <Property Name="ZusatzFeld6" Type="nvarchar" MaxLength="50" />
+          <Property Name="ZusatzFeld7" Type="nvarchar" MaxLength="50" />
+          <Property Name="ZusatzFeld8" Type="nvarchar" MaxLength="50" />
+          <Property Name="ZusatzFeld9" Type="nvarchar" MaxLength="50" />
+          <Property Name="ZusatzFeld10" Type="nvarchar" MaxLength="50" />
+          <Property Name="ZusatzFeldMemo1" Type="text" />
+          <Property Name="ZusatzFeldMemo2" Type="text" />
+          <Property Name="ZusatzFeldMemo3" Type="text" />
+          <Property Name="ZusatzFeldNum1" Type="numeric" Precision="18" Scale="2" />
+          <Property Name="ZusatzFeldNum2" Type="numeric" Precision="18" Scale="2" />
+          <Property Name="ZusatzFeldNum3" Type="numeric" Precision="18" Scale="2" />
+          <Property Name="ZusatzFeldNum4" Type="numeric" Precision="18" Scale="2" />
+          <Property Name="ZusatzFeldNum5" Type="numeric" Precision="18" Scale="2" />
+          <Property Name="ZusatzFeldNum6" Type="numeric" Precision="18" Scale="2" />
+          <Property Name="ZusatzFeldNum7" Type="numeric" Precision="18" Scale="2" />
+          <Property Name="ZusatzFeldNum8" Type="numeric" Precision="18" Scale="2" />
+          <Property Name="ZusatzFeldNum9" Type="numeric" Precision="18" Scale="2" />
+          <Property Name="ZusatzFeldNum10" Type="numeric" Precision="18" Scale="2" />
+          <Property Name="ZusatzFeldFarbe1" Type="nvarchar" MaxLength="20" />
+          <Property Name="ZusatzFeldFarbe2" Type="nvarchar" MaxLength="20" />
+          <Property Name="ZusatzFeldFarbe3" Type="nvarchar" MaxLength="20" />
+          <Property Name="ZusatzFeldDatum1" Type="datetime" />
+          <Property Name="ZusatzFeldDatum2" Type="datetime" />
+          <Property Name="ZusatzFeldDatum3" Type="datetime" />
+          <Property Name="ZusatzFeldDatum4" Type="datetime" />
+          <Property Name="ZusatzFeldDatum5" Type="datetime" />
+          <Property Name="FibuKennzeichen" Type="nvarchar" MaxLength="50" />
+          <Property Name="ArbeitsBerichteExport" Type="bit" Nullable="false" />
+          <Property Name="FahrerKartenNr" Type="nvarchar" MaxLength="20" />
+          <Property Name="UeberstundenKontoVerwenden" Type="bit" Nullable="false" />
+          <Property Name="UeberstundenKontoMaxStunden" Type="numeric" Precision="18" Scale="2" />
+          <Property Name="OnlineVerfuegbar" Type="bit" Nullable="false" />
+          <Property Name="ComplianceDatumAdresse" Type="datetime" />
+          <Property Name="OnlineApplikationSupervisor" Type="bit" Nullable="false" />
+          <Property Name="UeberstundenKontoNurZuschlagBezahlenBis" Type="numeric" Precision="18" Scale="2" />
+          <Property Name="UrlaubsAnspruchTage" Type="numeric" Precision="18" Scale="2" />
+          <Property Name="SageStdKST" Type="int" />
+          <Property Name="UserNr" Type="smallint" />
+          <Property Name="MobileAppPersonalStunden" Type="bit" Nullable="false" />
+          <Property Name="MobileAppKundenInfo" Type="bit" Nullable="false" />
+          <Property Name="MobileAppAuftragsEingabe" Type="bit" Nullable="false" />
+          <Property Name="MobileAppSystemTools" Type="bit" Nullable="false" />
+          <Property Name="UeberstundenKontoAbStunden" Type="numeric" Precision="18" Scale="2" />
+          <Property Name="DispoHinweisText" Type="nvarchar" MaxLength="200" />
+          <Property Name="MobileAppAuslieferung" Type="bit" Nullable="false" />
+          <Property Name="MobileAppBilder" Type="bit" Nullable="false" />
+          <Property Name="OnlineApplikationBesichtigung" Type="bit" Nullable="false" />
+          <Property Name="VertreterNr" Type="smallint" />
+          <Property Name="PersonalStundenArtNrArbeit" Type="smallint" />
+          <Property Name="PersonalStundenArtNrPause" Type="smallint" />
+          <Property Name="PersonalStundenArtNrWarten" Type="smallint" />
+          <Property Name="OnlineLoginName" Type="nvarchar" MaxLength="50" />
+          <Property Name="AP_FahrerLogin" Type="nvarchar" MaxLength="50" />
+          <Property Name="Anrede" Type="nvarchar" MaxLength="10" />
+          <Property Name="ArbeitszeitAusSystemDaten" Type="bit" Nullable="false" />
+          <Property Name="ArbeitszeitBeginn" Type="datetime" />
+          <Property Name="ArbeitszeitEnde" Type="datetime" />
+          <Property Name="ArbeitszeitBeginnMo" Type="datetime" />
+          <Property Name="ArbeitszeitEndeMo" Type="datetime" />
+          <Property Name="ArbeitszeitBeginnFr" Type="datetime" />
+          <Property Name="ArbeitszeitEndeFr" Type="datetime" />
+          <Property Name="UeberstundenBeginn" Type="datetime" />
+          <Property Name="UeberstundenEnde" Type="datetime" />
+          <Property Name="NachtstundenBeginn" Type="datetime" />
+          <Property Name="NachtstundenEnde" Type="datetime" />
+          <Property Name="Nachtstunden2Beginn" Type="datetime" />
+          <Property Name="Nachtstunden2Ende" Type="datetime" />
+          <Property Name="PausenBeginn" Type="datetime" />
+          <Property Name="PausenDauer" Type="numeric" Precision="18" Scale="2" />
+          <Property Name="OnlineApplikationPersonalTermine" Type="bit" Nullable="false" />
+          <Property Name="CreationUser" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="LastUpdateUser" Type="nvarchar" MaxLength="10" />
+          <Property Name="FirmenName" Type="nvarchar" MaxLength="40" />
+        </EntityType>
         <Association Name="FK_AppUserSettings_AppUser">
           <End Role="AppUser" Type="Self.AppUser" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -370,6 +531,141 @@
           <EntitySet Name="TreeItemIndexes" EntityType="Self.TreeItemIndexes" Schema="OrgMan" store:Type="Tables" />
           <EntitySet Name="TreeItems" EntityType="Self.TreeItems" Schema="OrgMan" store:Type="Tables" />
           <EntitySet Name="TreeItemUserRights" EntityType="Self.TreeItemUserRights" Schema="OrgMan" store:Type="Tables" />
+          <EntitySet Name="EposPersonal" EntityType="Self.EposPersonal" store:Type="Views" store:Schema="DataMan">
+            <DefiningQuery>SELECT 
+    [EposPersonal].[MandantNr] AS [MandantNr], 
+    [EposPersonal].[PersonalNr] AS [PersonalNr], 
+    [EposPersonal].[KurzName] AS [KurzName], 
+    [EposPersonal].[Nachname] AS [Nachname], 
+    [EposPersonal].[Vorname] AS [Vorname], 
+    [EposPersonal].[Strasse] AS [Strasse], 
+    [EposPersonal].[Land] AS [Land], 
+    [EposPersonal].[PLZ] AS [PLZ], 
+    [EposPersonal].[Ort] AS [Ort], 
+    [EposPersonal].[Telefon] AS [Telefon], 
+    [EposPersonal].[Telefon2] AS [Telefon2], 
+    [EposPersonal].[Telefon3] AS [Telefon3], 
+    [EposPersonal].[Geburtstag] AS [Geburtstag], 
+    [EposPersonal].[EintrittsDatum] AS [EintrittsDatum], 
+    [EposPersonal].[AustrittsDatum] AS [AustrittsDatum], 
+    [EposPersonal].[PersonalAusweisNr] AS [PersonalAusweisNr], 
+    [EposPersonal].[FuehrerscheinDatum] AS [FuehrerscheinDatum], 
+    [EposPersonal].[GabelstaplerSchein] AS [GabelstaplerSchein], 
+    [EposPersonal].[KranfuehrerSchein] AS [KranfuehrerSchein], 
+    [EposPersonal].[FachNr] AS [FachNr], 
+    [EposPersonal].[PersonalArtNr] AS [PersonalArtNr], 
+    [EposPersonal].[Monteur] AS [Monteur], 
+    [EposPersonal].[LeistungsNr] AS [LeistungsNr], 
+    [EposPersonal].[LeistungsNrUeberstunden] AS [LeistungsNrUeberstunden], 
+    [EposPersonal].[LeistungsNrNachtstunden] AS [LeistungsNrNachtstunden], 
+    [EposPersonal].[LeistungsNrSamstagszuschlag] AS [LeistungsNrSamstagszuschlag], 
+    [EposPersonal].[LeistungsNrSonntagszuschlag] AS [LeistungsNrSonntagszuschlag], 
+    [EposPersonal].[LeistungsNrFeiertagszuschlag] AS [LeistungsNrFeiertagszuschlag], 
+    [EposPersonal].[LeistungsNrAusloeseStunden] AS [LeistungsNrAusloeseStunden], 
+    [EposPersonal].[LeistungsNrAusloeseTag] AS [LeistungsNrAusloeseTag], 
+    [EposPersonal].[WerkstattWagenLeistungNr] AS [WerkstattWagenLeistungNr], 
+    [EposPersonal].[PkwLeistungNr] AS [PkwLeistungNr], 
+    [EposPersonal].[AngelegtDatum] AS [AngelegtDatum], 
+    [EposPersonal].[AngelegtUser] AS [AngelegtUser], 
+    [EposPersonal].[AenderungDatum] AS [AenderungDatum], 
+    [EposPersonal].[AenderungUser] AS [AenderungUser], 
+    [EposPersonal].[EMail] AS [EMail], 
+    [EposPersonal].[EMail2] AS [EMail2], 
+    [EposPersonal].[FilialNr] AS [FilialNr], 
+    [EposPersonal].[Bemerkung] AS [Bemerkung], 
+    [EposPersonal].[FuehrerscheinNr] AS [FuehrerscheinNr], 
+    [EposPersonal].[ReisepassNr] AS [ReisepassNr], 
+    [EposPersonal].[PersonalBild] AS [PersonalBild], 
+    [EposPersonal].[PersonalBildName] AS [PersonalBildName], 
+    [EposPersonal].[TagesSollStunden] AS [TagesSollStunden], 
+    [EposPersonal].[MonatsSollStunden] AS [MonatsSollStunden], 
+    [EposPersonal].[AussendienstMitarbeiter] AS [AussendienstMitarbeiter], 
+    [EposPersonal].[PersonalNrExport] AS [PersonalNrExport], 
+    [EposPersonal].[PersonalNrTankstelle] AS [PersonalNrTankstelle], 
+    [EposPersonal].[SpesenLandNr] AS [SpesenLandNr], 
+    [EposPersonal].[PersonalArtNr2] AS [PersonalArtNr2], 
+    [EposPersonal].[PersonalKommunikationsId] AS [PersonalKommunikationsId], 
+    [EposPersonal].[PersonalKommunikationsId2] AS [PersonalKommunikationsId2], 
+    [EposPersonal].[ZusatzFeld1] AS [ZusatzFeld1], 
+    [EposPersonal].[ZusatzFeld2] AS [ZusatzFeld2], 
+    [EposPersonal].[ZusatzFeld3] AS [ZusatzFeld3], 
+    [EposPersonal].[ZusatzFeld4] AS [ZusatzFeld4], 
+    [EposPersonal].[ZusatzFeld5] AS [ZusatzFeld5], 
+    [EposPersonal].[ZusatzFeld6] AS [ZusatzFeld6], 
+    [EposPersonal].[ZusatzFeld7] AS [ZusatzFeld7], 
+    [EposPersonal].[ZusatzFeld8] AS [ZusatzFeld8], 
+    [EposPersonal].[ZusatzFeld9] AS [ZusatzFeld9], 
+    [EposPersonal].[ZusatzFeld10] AS [ZusatzFeld10], 
+    [EposPersonal].[ZusatzFeldMemo1] AS [ZusatzFeldMemo1], 
+    [EposPersonal].[ZusatzFeldMemo2] AS [ZusatzFeldMemo2], 
+    [EposPersonal].[ZusatzFeldMemo3] AS [ZusatzFeldMemo3], 
+    [EposPersonal].[ZusatzFeldNum1] AS [ZusatzFeldNum1], 
+    [EposPersonal].[ZusatzFeldNum2] AS [ZusatzFeldNum2], 
+    [EposPersonal].[ZusatzFeldNum3] AS [ZusatzFeldNum3], 
+    [EposPersonal].[ZusatzFeldNum4] AS [ZusatzFeldNum4], 
+    [EposPersonal].[ZusatzFeldNum5] AS [ZusatzFeldNum5], 
+    [EposPersonal].[ZusatzFeldNum6] AS [ZusatzFeldNum6], 
+    [EposPersonal].[ZusatzFeldNum7] AS [ZusatzFeldNum7], 
+    [EposPersonal].[ZusatzFeldNum8] AS [ZusatzFeldNum8], 
+    [EposPersonal].[ZusatzFeldNum9] AS [ZusatzFeldNum9], 
+    [EposPersonal].[ZusatzFeldNum10] AS [ZusatzFeldNum10], 
+    [EposPersonal].[ZusatzFeldFarbe1] AS [ZusatzFeldFarbe1], 
+    [EposPersonal].[ZusatzFeldFarbe2] AS [ZusatzFeldFarbe2], 
+    [EposPersonal].[ZusatzFeldFarbe3] AS [ZusatzFeldFarbe3], 
+    [EposPersonal].[ZusatzFeldDatum1] AS [ZusatzFeldDatum1], 
+    [EposPersonal].[ZusatzFeldDatum2] AS [ZusatzFeldDatum2], 
+    [EposPersonal].[ZusatzFeldDatum3] AS [ZusatzFeldDatum3], 
+    [EposPersonal].[ZusatzFeldDatum4] AS [ZusatzFeldDatum4], 
+    [EposPersonal].[ZusatzFeldDatum5] AS [ZusatzFeldDatum5], 
+    [EposPersonal].[FibuKennzeichen] AS [FibuKennzeichen], 
+    [EposPersonal].[ArbeitsBerichteExport] AS [ArbeitsBerichteExport], 
+    [EposPersonal].[FahrerKartenNr] AS [FahrerKartenNr], 
+    [EposPersonal].[UeberstundenKontoVerwenden] AS [UeberstundenKontoVerwenden], 
+    [EposPersonal].[UeberstundenKontoMaxStunden] AS [UeberstundenKontoMaxStunden], 
+    [EposPersonal].[OnlineVerfuegbar] AS [OnlineVerfuegbar], 
+    [EposPersonal].[ComplianceDatumAdresse] AS [ComplianceDatumAdresse], 
+    [EposPersonal].[OnlineApplikationSupervisor] AS [OnlineApplikationSupervisor], 
+    [EposPersonal].[UeberstundenKontoNurZuschlagBezahlenBis] AS [UeberstundenKontoNurZuschlagBezahlenBis], 
+    [EposPersonal].[UrlaubsAnspruchTage] AS [UrlaubsAnspruchTage], 
+    [EposPersonal].[SageStdKST] AS [SageStdKST], 
+    [EposPersonal].[UserNr] AS [UserNr], 
+    [EposPersonal].[MobileAppPersonalStunden] AS [MobileAppPersonalStunden], 
+    [EposPersonal].[MobileAppKundenInfo] AS [MobileAppKundenInfo], 
+    [EposPersonal].[MobileAppAuftragsEingabe] AS [MobileAppAuftragsEingabe], 
+    [EposPersonal].[MobileAppSystemTools] AS [MobileAppSystemTools], 
+    [EposPersonal].[UeberstundenKontoAbStunden] AS [UeberstundenKontoAbStunden], 
+    [EposPersonal].[DispoHinweisText] AS [DispoHinweisText], 
+    [EposPersonal].[MobileAppAuslieferung] AS [MobileAppAuslieferung], 
+    [EposPersonal].[MobileAppBilder] AS [MobileAppBilder], 
+    [EposPersonal].[OnlineApplikationBesichtigung] AS [OnlineApplikationBesichtigung], 
+    [EposPersonal].[VertreterNr] AS [VertreterNr], 
+    [EposPersonal].[PersonalStundenArtNrArbeit] AS [PersonalStundenArtNrArbeit], 
+    [EposPersonal].[PersonalStundenArtNrPause] AS [PersonalStundenArtNrPause], 
+    [EposPersonal].[PersonalStundenArtNrWarten] AS [PersonalStundenArtNrWarten], 
+    [EposPersonal].[OnlineLoginName] AS [OnlineLoginName], 
+    [EposPersonal].[AP_FahrerLogin] AS [AP_FahrerLogin], 
+    [EposPersonal].[Anrede] AS [Anrede], 
+    [EposPersonal].[ArbeitszeitAusSystemDaten] AS [ArbeitszeitAusSystemDaten], 
+    [EposPersonal].[ArbeitszeitBeginn] AS [ArbeitszeitBeginn], 
+    [EposPersonal].[ArbeitszeitEnde] AS [ArbeitszeitEnde], 
+    [EposPersonal].[ArbeitszeitBeginnMo] AS [ArbeitszeitBeginnMo], 
+    [EposPersonal].[ArbeitszeitEndeMo] AS [ArbeitszeitEndeMo], 
+    [EposPersonal].[ArbeitszeitBeginnFr] AS [ArbeitszeitBeginnFr], 
+    [EposPersonal].[ArbeitszeitEndeFr] AS [ArbeitszeitEndeFr], 
+    [EposPersonal].[UeberstundenBeginn] AS [UeberstundenBeginn], 
+    [EposPersonal].[UeberstundenEnde] AS [UeberstundenEnde], 
+    [EposPersonal].[NachtstundenBeginn] AS [NachtstundenBeginn], 
+    [EposPersonal].[NachtstundenEnde] AS [NachtstundenEnde], 
+    [EposPersonal].[Nachtstunden2Beginn] AS [Nachtstunden2Beginn], 
+    [EposPersonal].[Nachtstunden2Ende] AS [Nachtstunden2Ende], 
+    [EposPersonal].[PausenBeginn] AS [PausenBeginn], 
+    [EposPersonal].[PausenDauer] AS [PausenDauer], 
+    [EposPersonal].[OnlineApplikationPersonalTermine] AS [OnlineApplikationPersonalTermine], 
+    [EposPersonal].[CreationUser] AS [CreationUser], 
+    [EposPersonal].[LastUpdateUser] AS [LastUpdateUser], 
+    [EposPersonal].[FirmenName] AS [FirmenName]
+    FROM [DataMan].[EposPersonal] AS [EposPersonal]</DefiningQuery>
+          </EntitySet>
           <AssociationSet Name="FK_AppUserSettings_AppUser" Association="Self.FK_AppUserSettings_AppUser">
             <End Role="AppUser" EntitySet="AppUser" />
             <End Role="AppUserSettings" EntitySet="AppUserSettings" />
@@ -492,6 +788,7 @@
             <End Role="TreeItem" EntitySet="TreeItems" />
             <End Role="TreeItemIndex" EntitySet="TreeItemIndexes" />
           </AssociationSet>
+          <EntitySet Name="EposPersonals" EntityType="OrgManModel.EposPersonal" />
         </EntityContainer>
         <EntityType Name="Setting">
           <Key>
@@ -873,6 +1170,165 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="EposPersonal">
+          <Key>
+            <PropertyRef Name="MandantNr" />
+            <PropertyRef Name="PersonalNr" />
+            <PropertyRef Name="KurzName" />
+            <PropertyRef Name="GabelstaplerSchein" />
+            <PropertyRef Name="KranfuehrerSchein" />
+            <PropertyRef Name="PersonalArtNr" />
+            <PropertyRef Name="Monteur" />
+            <PropertyRef Name="AngelegtDatum" />
+            <PropertyRef Name="AngelegtUser" />
+            <PropertyRef Name="AussendienstMitarbeiter" />
+            <PropertyRef Name="ArbeitsBerichteExport" />
+            <PropertyRef Name="UeberstundenKontoVerwenden" />
+            <PropertyRef Name="OnlineVerfuegbar" />
+            <PropertyRef Name="OnlineApplikationSupervisor" />
+            <PropertyRef Name="MobileAppPersonalStunden" />
+            <PropertyRef Name="MobileAppKundenInfo" />
+            <PropertyRef Name="MobileAppAuftragsEingabe" />
+            <PropertyRef Name="MobileAppSystemTools" />
+            <PropertyRef Name="MobileAppAuslieferung" />
+            <PropertyRef Name="MobileAppBilder" />
+            <PropertyRef Name="OnlineApplikationBesichtigung" />
+            <PropertyRef Name="ArbeitszeitAusSystemDaten" />
+            <PropertyRef Name="OnlineApplikationPersonalTermine" />
+            <PropertyRef Name="CreationUser" />
+          </Key>
+          <Property Name="MandantNr" Type="Int16" Nullable="false" />
+          <Property Name="PersonalNr" Type="Int32" Nullable="false" />
+          <Property Name="KurzName" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="Nachname" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Vorname" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Strasse" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+          <Property Name="Land" Type="String" MaxLength="3" FixedLength="false" Unicode="true" />
+          <Property Name="PLZ" Type="String" MaxLength="7" FixedLength="false" Unicode="true" />
+          <Property Name="Ort" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+          <Property Name="Telefon" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Telefon2" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Telefon3" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Geburtstag" Type="DateTime" Precision="3" />
+          <Property Name="EintrittsDatum" Type="DateTime" Precision="3" />
+          <Property Name="AustrittsDatum" Type="DateTime" Precision="3" />
+          <Property Name="PersonalAusweisNr" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="FuehrerscheinDatum" Type="DateTime" Precision="3" />
+          <Property Name="GabelstaplerSchein" Type="Boolean" Nullable="false" />
+          <Property Name="KranfuehrerSchein" Type="Boolean" Nullable="false" />
+          <Property Name="FachNr" Type="Int16" />
+          <Property Name="PersonalArtNr" Type="Int16" Nullable="false" />
+          <Property Name="Monteur" Type="Boolean" Nullable="false" />
+          <Property Name="LeistungsNr" Type="Int32" />
+          <Property Name="LeistungsNrUeberstunden" Type="Int32" />
+          <Property Name="LeistungsNrNachtstunden" Type="Int32" />
+          <Property Name="LeistungsNrSamstagszuschlag" Type="Int32" />
+          <Property Name="LeistungsNrSonntagszuschlag" Type="Int32" />
+          <Property Name="LeistungsNrFeiertagszuschlag" Type="Int32" />
+          <Property Name="LeistungsNrAusloeseStunden" Type="Int32" />
+          <Property Name="LeistungsNrAusloeseTag" Type="Int32" />
+          <Property Name="WerkstattWagenLeistungNr" Type="Int32" />
+          <Property Name="PkwLeistungNr" Type="Int32" />
+          <Property Name="AngelegtDatum" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="AngelegtUser" Type="Int16" Nullable="false" />
+          <Property Name="AenderungDatum" Type="DateTime" Precision="3" />
+          <Property Name="AenderungUser" Type="Int16" />
+          <Property Name="EMail" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="EMail2" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="FilialNr" Type="Int32" />
+          <Property Name="Bemerkung" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="FuehrerscheinNr" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="ReisepassNr" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="PersonalBild" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="PersonalBildName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="TagesSollStunden" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="MonatsSollStunden" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="AussendienstMitarbeiter" Type="Boolean" Nullable="false" />
+          <Property Name="PersonalNrExport" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="PersonalNrTankstelle" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="SpesenLandNr" Type="Int32" />
+          <Property Name="PersonalArtNr2" Type="Int16" />
+          <Property Name="PersonalKommunikationsId" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="PersonalKommunikationsId2" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="ZusatzFeld1" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ZusatzFeld2" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ZusatzFeld3" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ZusatzFeld4" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ZusatzFeld5" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ZusatzFeld6" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ZusatzFeld7" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ZusatzFeld8" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ZusatzFeld9" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ZusatzFeld10" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ZusatzFeldMemo1" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="ZusatzFeldMemo2" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="ZusatzFeldMemo3" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="ZusatzFeldNum1" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="ZusatzFeldNum2" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="ZusatzFeldNum3" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="ZusatzFeldNum4" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="ZusatzFeldNum5" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="ZusatzFeldNum6" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="ZusatzFeldNum7" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="ZusatzFeldNum8" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="ZusatzFeldNum9" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="ZusatzFeldNum10" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="ZusatzFeldFarbe1" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="ZusatzFeldFarbe2" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="ZusatzFeldFarbe3" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="ZusatzFeldDatum1" Type="DateTime" Precision="3" />
+          <Property Name="ZusatzFeldDatum2" Type="DateTime" Precision="3" />
+          <Property Name="ZusatzFeldDatum3" Type="DateTime" Precision="3" />
+          <Property Name="ZusatzFeldDatum4" Type="DateTime" Precision="3" />
+          <Property Name="ZusatzFeldDatum5" Type="DateTime" Precision="3" />
+          <Property Name="FibuKennzeichen" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ArbeitsBerichteExport" Type="Boolean" Nullable="false" />
+          <Property Name="FahrerKartenNr" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="UeberstundenKontoVerwenden" Type="Boolean" Nullable="false" />
+          <Property Name="UeberstundenKontoMaxStunden" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="OnlineVerfuegbar" Type="Boolean" Nullable="false" />
+          <Property Name="ComplianceDatumAdresse" Type="DateTime" Precision="3" />
+          <Property Name="OnlineApplikationSupervisor" Type="Boolean" Nullable="false" />
+          <Property Name="UeberstundenKontoNurZuschlagBezahlenBis" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="UrlaubsAnspruchTage" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="SageStdKST" Type="Int32" />
+          <Property Name="UserNr" Type="Int16" />
+          <Property Name="MobileAppPersonalStunden" Type="Boolean" Nullable="false" />
+          <Property Name="MobileAppKundenInfo" Type="Boolean" Nullable="false" />
+          <Property Name="MobileAppAuftragsEingabe" Type="Boolean" Nullable="false" />
+          <Property Name="MobileAppSystemTools" Type="Boolean" Nullable="false" />
+          <Property Name="UeberstundenKontoAbStunden" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="DispoHinweisText" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="MobileAppAuslieferung" Type="Boolean" Nullable="false" />
+          <Property Name="MobileAppBilder" Type="Boolean" Nullable="false" />
+          <Property Name="OnlineApplikationBesichtigung" Type="Boolean" Nullable="false" />
+          <Property Name="VertreterNr" Type="Int16" />
+          <Property Name="PersonalStundenArtNrArbeit" Type="Int16" />
+          <Property Name="PersonalStundenArtNrPause" Type="Int16" />
+          <Property Name="PersonalStundenArtNrWarten" Type="Int16" />
+          <Property Name="OnlineLoginName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="AP_FahrerLogin" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Anrede" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="ArbeitszeitAusSystemDaten" Type="Boolean" Nullable="false" />
+          <Property Name="ArbeitszeitBeginn" Type="DateTime" Precision="3" />
+          <Property Name="ArbeitszeitEnde" Type="DateTime" Precision="3" />
+          <Property Name="ArbeitszeitBeginnMo" Type="DateTime" Precision="3" />
+          <Property Name="ArbeitszeitEndeMo" Type="DateTime" Precision="3" />
+          <Property Name="ArbeitszeitBeginnFr" Type="DateTime" Precision="3" />
+          <Property Name="ArbeitszeitEndeFr" Type="DateTime" Precision="3" />
+          <Property Name="UeberstundenBeginn" Type="DateTime" Precision="3" />
+          <Property Name="UeberstundenEnde" Type="DateTime" Precision="3" />
+          <Property Name="NachtstundenBeginn" Type="DateTime" Precision="3" />
+          <Property Name="NachtstundenEnde" Type="DateTime" Precision="3" />
+          <Property Name="Nachtstunden2Beginn" Type="DateTime" Precision="3" />
+          <Property Name="Nachtstunden2Ende" Type="DateTime" Precision="3" />
+          <Property Name="PausenBeginn" Type="DateTime" Precision="3" />
+          <Property Name="PausenDauer" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="OnlineApplikationPersonalTermine" Type="Boolean" Nullable="false" />
+          <Property Name="CreationUser" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="LastUpdateUser" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="FirmenName" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1060,6 +1516,143 @@
                 <ScalarProperty Name="IndexValue" ColumnName="IndexValue" />
                 <ScalarProperty Name="IndexId" ColumnName="IndexId" />
                 <ScalarProperty Name="TreeItemId" ColumnName="TreeItemId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EposPersonals">
+            <EntityTypeMapping TypeName="OrgManModel.EposPersonal">
+              <MappingFragment StoreEntitySet="EposPersonal">
+                <ScalarProperty Name="FirmenName" ColumnName="FirmenName" />
+                <ScalarProperty Name="LastUpdateUser" ColumnName="LastUpdateUser" />
+                <ScalarProperty Name="CreationUser" ColumnName="CreationUser" />
+                <ScalarProperty Name="OnlineApplikationPersonalTermine" ColumnName="OnlineApplikationPersonalTermine" />
+                <ScalarProperty Name="PausenDauer" ColumnName="PausenDauer" />
+                <ScalarProperty Name="PausenBeginn" ColumnName="PausenBeginn" />
+                <ScalarProperty Name="Nachtstunden2Ende" ColumnName="Nachtstunden2Ende" />
+                <ScalarProperty Name="Nachtstunden2Beginn" ColumnName="Nachtstunden2Beginn" />
+                <ScalarProperty Name="NachtstundenEnde" ColumnName="NachtstundenEnde" />
+                <ScalarProperty Name="NachtstundenBeginn" ColumnName="NachtstundenBeginn" />
+                <ScalarProperty Name="UeberstundenEnde" ColumnName="UeberstundenEnde" />
+                <ScalarProperty Name="UeberstundenBeginn" ColumnName="UeberstundenBeginn" />
+                <ScalarProperty Name="ArbeitszeitEndeFr" ColumnName="ArbeitszeitEndeFr" />
+                <ScalarProperty Name="ArbeitszeitBeginnFr" ColumnName="ArbeitszeitBeginnFr" />
+                <ScalarProperty Name="ArbeitszeitEndeMo" ColumnName="ArbeitszeitEndeMo" />
+                <ScalarProperty Name="ArbeitszeitBeginnMo" ColumnName="ArbeitszeitBeginnMo" />
+                <ScalarProperty Name="ArbeitszeitEnde" ColumnName="ArbeitszeitEnde" />
+                <ScalarProperty Name="ArbeitszeitBeginn" ColumnName="ArbeitszeitBeginn" />
+                <ScalarProperty Name="ArbeitszeitAusSystemDaten" ColumnName="ArbeitszeitAusSystemDaten" />
+                <ScalarProperty Name="Anrede" ColumnName="Anrede" />
+                <ScalarProperty Name="AP_FahrerLogin" ColumnName="AP_FahrerLogin" />
+                <ScalarProperty Name="OnlineLoginName" ColumnName="OnlineLoginName" />
+                <ScalarProperty Name="PersonalStundenArtNrWarten" ColumnName="PersonalStundenArtNrWarten" />
+                <ScalarProperty Name="PersonalStundenArtNrPause" ColumnName="PersonalStundenArtNrPause" />
+                <ScalarProperty Name="PersonalStundenArtNrArbeit" ColumnName="PersonalStundenArtNrArbeit" />
+                <ScalarProperty Name="VertreterNr" ColumnName="VertreterNr" />
+                <ScalarProperty Name="OnlineApplikationBesichtigung" ColumnName="OnlineApplikationBesichtigung" />
+                <ScalarProperty Name="MobileAppBilder" ColumnName="MobileAppBilder" />
+                <ScalarProperty Name="MobileAppAuslieferung" ColumnName="MobileAppAuslieferung" />
+                <ScalarProperty Name="DispoHinweisText" ColumnName="DispoHinweisText" />
+                <ScalarProperty Name="UeberstundenKontoAbStunden" ColumnName="UeberstundenKontoAbStunden" />
+                <ScalarProperty Name="MobileAppSystemTools" ColumnName="MobileAppSystemTools" />
+                <ScalarProperty Name="MobileAppAuftragsEingabe" ColumnName="MobileAppAuftragsEingabe" />
+                <ScalarProperty Name="MobileAppKundenInfo" ColumnName="MobileAppKundenInfo" />
+                <ScalarProperty Name="MobileAppPersonalStunden" ColumnName="MobileAppPersonalStunden" />
+                <ScalarProperty Name="UserNr" ColumnName="UserNr" />
+                <ScalarProperty Name="SageStdKST" ColumnName="SageStdKST" />
+                <ScalarProperty Name="UrlaubsAnspruchTage" ColumnName="UrlaubsAnspruchTage" />
+                <ScalarProperty Name="UeberstundenKontoNurZuschlagBezahlenBis" ColumnName="UeberstundenKontoNurZuschlagBezahlenBis" />
+                <ScalarProperty Name="OnlineApplikationSupervisor" ColumnName="OnlineApplikationSupervisor" />
+                <ScalarProperty Name="ComplianceDatumAdresse" ColumnName="ComplianceDatumAdresse" />
+                <ScalarProperty Name="OnlineVerfuegbar" ColumnName="OnlineVerfuegbar" />
+                <ScalarProperty Name="UeberstundenKontoMaxStunden" ColumnName="UeberstundenKontoMaxStunden" />
+                <ScalarProperty Name="UeberstundenKontoVerwenden" ColumnName="UeberstundenKontoVerwenden" />
+                <ScalarProperty Name="FahrerKartenNr" ColumnName="FahrerKartenNr" />
+                <ScalarProperty Name="ArbeitsBerichteExport" ColumnName="ArbeitsBerichteExport" />
+                <ScalarProperty Name="FibuKennzeichen" ColumnName="FibuKennzeichen" />
+                <ScalarProperty Name="ZusatzFeldDatum5" ColumnName="ZusatzFeldDatum5" />
+                <ScalarProperty Name="ZusatzFeldDatum4" ColumnName="ZusatzFeldDatum4" />
+                <ScalarProperty Name="ZusatzFeldDatum3" ColumnName="ZusatzFeldDatum3" />
+                <ScalarProperty Name="ZusatzFeldDatum2" ColumnName="ZusatzFeldDatum2" />
+                <ScalarProperty Name="ZusatzFeldDatum1" ColumnName="ZusatzFeldDatum1" />
+                <ScalarProperty Name="ZusatzFeldFarbe3" ColumnName="ZusatzFeldFarbe3" />
+                <ScalarProperty Name="ZusatzFeldFarbe2" ColumnName="ZusatzFeldFarbe2" />
+                <ScalarProperty Name="ZusatzFeldFarbe1" ColumnName="ZusatzFeldFarbe1" />
+                <ScalarProperty Name="ZusatzFeldNum10" ColumnName="ZusatzFeldNum10" />
+                <ScalarProperty Name="ZusatzFeldNum9" ColumnName="ZusatzFeldNum9" />
+                <ScalarProperty Name="ZusatzFeldNum8" ColumnName="ZusatzFeldNum8" />
+                <ScalarProperty Name="ZusatzFeldNum7" ColumnName="ZusatzFeldNum7" />
+                <ScalarProperty Name="ZusatzFeldNum6" ColumnName="ZusatzFeldNum6" />
+                <ScalarProperty Name="ZusatzFeldNum5" ColumnName="ZusatzFeldNum5" />
+                <ScalarProperty Name="ZusatzFeldNum4" ColumnName="ZusatzFeldNum4" />
+                <ScalarProperty Name="ZusatzFeldNum3" ColumnName="ZusatzFeldNum3" />
+                <ScalarProperty Name="ZusatzFeldNum2" ColumnName="ZusatzFeldNum2" />
+                <ScalarProperty Name="ZusatzFeldNum1" ColumnName="ZusatzFeldNum1" />
+                <ScalarProperty Name="ZusatzFeldMemo3" ColumnName="ZusatzFeldMemo3" />
+                <ScalarProperty Name="ZusatzFeldMemo2" ColumnName="ZusatzFeldMemo2" />
+                <ScalarProperty Name="ZusatzFeldMemo1" ColumnName="ZusatzFeldMemo1" />
+                <ScalarProperty Name="ZusatzFeld10" ColumnName="ZusatzFeld10" />
+                <ScalarProperty Name="ZusatzFeld9" ColumnName="ZusatzFeld9" />
+                <ScalarProperty Name="ZusatzFeld8" ColumnName="ZusatzFeld8" />
+                <ScalarProperty Name="ZusatzFeld7" ColumnName="ZusatzFeld7" />
+                <ScalarProperty Name="ZusatzFeld6" ColumnName="ZusatzFeld6" />
+                <ScalarProperty Name="ZusatzFeld5" ColumnName="ZusatzFeld5" />
+                <ScalarProperty Name="ZusatzFeld4" ColumnName="ZusatzFeld4" />
+                <ScalarProperty Name="ZusatzFeld3" ColumnName="ZusatzFeld3" />
+                <ScalarProperty Name="ZusatzFeld2" ColumnName="ZusatzFeld2" />
+                <ScalarProperty Name="ZusatzFeld1" ColumnName="ZusatzFeld1" />
+                <ScalarProperty Name="PersonalKommunikationsId2" ColumnName="PersonalKommunikationsId2" />
+                <ScalarProperty Name="PersonalKommunikationsId" ColumnName="PersonalKommunikationsId" />
+                <ScalarProperty Name="PersonalArtNr2" ColumnName="PersonalArtNr2" />
+                <ScalarProperty Name="SpesenLandNr" ColumnName="SpesenLandNr" />
+                <ScalarProperty Name="PersonalNrTankstelle" ColumnName="PersonalNrTankstelle" />
+                <ScalarProperty Name="PersonalNrExport" ColumnName="PersonalNrExport" />
+                <ScalarProperty Name="AussendienstMitarbeiter" ColumnName="AussendienstMitarbeiter" />
+                <ScalarProperty Name="MonatsSollStunden" ColumnName="MonatsSollStunden" />
+                <ScalarProperty Name="TagesSollStunden" ColumnName="TagesSollStunden" />
+                <ScalarProperty Name="PersonalBildName" ColumnName="PersonalBildName" />
+                <ScalarProperty Name="PersonalBild" ColumnName="PersonalBild" />
+                <ScalarProperty Name="ReisepassNr" ColumnName="ReisepassNr" />
+                <ScalarProperty Name="FuehrerscheinNr" ColumnName="FuehrerscheinNr" />
+                <ScalarProperty Name="Bemerkung" ColumnName="Bemerkung" />
+                <ScalarProperty Name="FilialNr" ColumnName="FilialNr" />
+                <ScalarProperty Name="EMail2" ColumnName="EMail2" />
+                <ScalarProperty Name="EMail" ColumnName="EMail" />
+                <ScalarProperty Name="AenderungUser" ColumnName="AenderungUser" />
+                <ScalarProperty Name="AenderungDatum" ColumnName="AenderungDatum" />
+                <ScalarProperty Name="AngelegtUser" ColumnName="AngelegtUser" />
+                <ScalarProperty Name="AngelegtDatum" ColumnName="AngelegtDatum" />
+                <ScalarProperty Name="PkwLeistungNr" ColumnName="PkwLeistungNr" />
+                <ScalarProperty Name="WerkstattWagenLeistungNr" ColumnName="WerkstattWagenLeistungNr" />
+                <ScalarProperty Name="LeistungsNrAusloeseTag" ColumnName="LeistungsNrAusloeseTag" />
+                <ScalarProperty Name="LeistungsNrAusloeseStunden" ColumnName="LeistungsNrAusloeseStunden" />
+                <ScalarProperty Name="LeistungsNrFeiertagszuschlag" ColumnName="LeistungsNrFeiertagszuschlag" />
+                <ScalarProperty Name="LeistungsNrSonntagszuschlag" ColumnName="LeistungsNrSonntagszuschlag" />
+                <ScalarProperty Name="LeistungsNrSamstagszuschlag" ColumnName="LeistungsNrSamstagszuschlag" />
+                <ScalarProperty Name="LeistungsNrNachtstunden" ColumnName="LeistungsNrNachtstunden" />
+                <ScalarProperty Name="LeistungsNrUeberstunden" ColumnName="LeistungsNrUeberstunden" />
+                <ScalarProperty Name="LeistungsNr" ColumnName="LeistungsNr" />
+                <ScalarProperty Name="Monteur" ColumnName="Monteur" />
+                <ScalarProperty Name="PersonalArtNr" ColumnName="PersonalArtNr" />
+                <ScalarProperty Name="FachNr" ColumnName="FachNr" />
+                <ScalarProperty Name="KranfuehrerSchein" ColumnName="KranfuehrerSchein" />
+                <ScalarProperty Name="GabelstaplerSchein" ColumnName="GabelstaplerSchein" />
+                <ScalarProperty Name="FuehrerscheinDatum" ColumnName="FuehrerscheinDatum" />
+                <ScalarProperty Name="PersonalAusweisNr" ColumnName="PersonalAusweisNr" />
+                <ScalarProperty Name="AustrittsDatum" ColumnName="AustrittsDatum" />
+                <ScalarProperty Name="EintrittsDatum" ColumnName="EintrittsDatum" />
+                <ScalarProperty Name="Geburtstag" ColumnName="Geburtstag" />
+                <ScalarProperty Name="Telefon3" ColumnName="Telefon3" />
+                <ScalarProperty Name="Telefon2" ColumnName="Telefon2" />
+                <ScalarProperty Name="Telefon" ColumnName="Telefon" />
+                <ScalarProperty Name="Ort" ColumnName="Ort" />
+                <ScalarProperty Name="PLZ" ColumnName="PLZ" />
+                <ScalarProperty Name="Land" ColumnName="Land" />
+                <ScalarProperty Name="Strasse" ColumnName="Strasse" />
+                <ScalarProperty Name="Vorname" ColumnName="Vorname" />
+                <ScalarProperty Name="Nachname" ColumnName="Nachname" />
+                <ScalarProperty Name="KurzName" ColumnName="KurzName" />
+                <ScalarProperty Name="PersonalNr" ColumnName="PersonalNr" />
+                <ScalarProperty Name="MandantNr" ColumnName="MandantNr" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

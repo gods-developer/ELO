@@ -33,11 +33,11 @@
     <ProductName>ELO Archiv Explorer</ProductName>
     <PublisherName>DigiSped</PublisherName>
     <SuiteName>ArcExplorer</SuiteName>
-    <MinimumRequiredVersion>1.0.0.31</MinimumRequiredVersion>
+    <MinimumRequiredVersion>1.0.0.36</MinimumRequiredVersion>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
     <TrustUrlParameters>true</TrustUrlParameters>
-    <ApplicationRevision>32</ApplicationRevision>
+    <ApplicationRevision>37</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -218,6 +218,9 @@
       <DependentUpon>OrgManModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\AppUserSetting.vb">
+      <DependentUpon>OrgManModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\EposPersonal.vb">
       <DependentUpon>OrgManModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\ListItem.vb">

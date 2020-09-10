@@ -34,5 +34,6 @@ Partial Public Class OrgManEntities
     Public Overridable Property ListItemIndexes() As DbSet(Of ListItemIndex)
     Public Overridable Property ListItems() As DbSet(Of ListItem)
     Public Overridable Property TreeItemIndexes() As DbSet(Of TreeItemIndex)
+    Public Overridable Property EposPersonals() As DbSet(Of EposPersonal)
 
 End Class
