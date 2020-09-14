@@ -35,6 +35,7 @@ Partial Class FrmMain
         Me.MenuFindDoubleNames = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuCombineAll = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuCombine = New System.Windows.Forms.ToolStripMenuItem()
+        Me.MenuCombineSameFolder = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuMoveHigher = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuMoveAllHigher = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSeparator2 = New System.Windows.Forms.ToolStripSeparator()
@@ -75,7 +76,8 @@ Partial Class FrmMain
         Me.MainStatusStrip = New System.Windows.Forms.StatusStrip()
         Me.StatusLabelInfo = New System.Windows.Forms.ToolStripStatusLabel()
         Me.FilesRefreshTimer = New System.Windows.Forms.Timer(Me.components)
-        Me.MenuCombineSameFolder = New System.Windows.Forms.ToolStripMenuItem()
+        Me.MenuCountFiles = New System.Windows.Forms.ToolStripMenuItem()
+        Me.MenuCombineSameFolderAl = New System.Windows.Forms.ToolStripMenuItem()
         Me.ContextMenuExplorer.SuspendLayout()
         CType(Me.MainSplitContainer, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.MainSplitContainer.Panel1.SuspendLayout()
@@ -92,9 +94,9 @@ Partial Class FrmMain
         'ContextMenuExplorer
         '
         Me.ContextMenuExplorer.Font = New System.Drawing.Font("Calibri", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.ContextMenuExplorer.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.MenuCut, Me.MenuCopy, Me.MenuPaste, Me.MenuRename, Me.MenuDelete, Me.ToolStripSeparator6, Me.MenuFindDoubles, Me.MenuFindDoubleNames, Me.MenuCombineAll, Me.MenuCombine, Me.MenuCombineSameFolder, Me.MenuMoveHigher, Me.MenuMoveAllHigher, Me.ToolStripSeparator2, Me.MenuMigrate, Me.ToolStripSeparator1, Me.MenuExpandAll, Me.MenuExpandFirst, Me.MenuRefresh, Me.MenuOpenInExplorer, Me.MenuEloIndex, Me.MenuWinProperties})
+        Me.ContextMenuExplorer.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.MenuCut, Me.MenuCopy, Me.MenuPaste, Me.MenuRename, Me.MenuDelete, Me.ToolStripSeparator6, Me.MenuFindDoubles, Me.MenuFindDoubleNames, Me.MenuCombineAll, Me.MenuCombine, Me.MenuCombineSameFolderAl, Me.MenuCombineSameFolder, Me.MenuMoveHigher, Me.MenuMoveAllHigher, Me.MenuCountFiles, Me.ToolStripSeparator2, Me.MenuMigrate, Me.ToolStripSeparator1, Me.MenuExpandAll, Me.MenuExpandFirst, Me.MenuRefresh, Me.MenuOpenInExplorer, Me.MenuEloIndex, Me.MenuWinProperties})
         Me.ContextMenuExplorer.Name = "mnuContextExplorer"
-        Me.ContextMenuExplorer.Size = New System.Drawing.Size(254, 462)
+        Me.ContextMenuExplorer.Size = New System.Drawing.Size(254, 506)
         '
         'MenuCut
         '
@@ -154,6 +156,12 @@ Partial Class FrmMain
         Me.MenuCombine.Name = "MenuCombine"
         Me.MenuCombine.Size = New System.Drawing.Size(253, 22)
         Me.MenuCombine.Text = "Zusammenführen"
+        '
+        'MenuCombineSameFolder
+        '
+        Me.MenuCombineSameFolder.Name = "MenuCombineSameFolder"
+        Me.MenuCombineSameFolder.Size = New System.Drawing.Size(253, 22)
+        Me.MenuCombineSameFolder.Text = "Gleiche Namen zusammenführen"
         '
         'MenuMoveHigher
         '
@@ -450,11 +458,17 @@ Partial Class FrmMain
         '
         Me.FilesRefreshTimer.Interval = 2000
         '
-        'MenuCombineSameFolder
+        'MenuCountFiles
         '
-        Me.MenuCombineSameFolder.Name = "MenuCombineSameFolder"
-        Me.MenuCombineSameFolder.Size = New System.Drawing.Size(253, 22)
-        Me.MenuCombineSameFolder.Text = "Gleiche Namen zusammenführen"
+        Me.MenuCountFiles.Name = "MenuCountFiles"
+        Me.MenuCountFiles.Size = New System.Drawing.Size(253, 22)
+        Me.MenuCountFiles.Text = "Dateien zählen"
+        '
+        'MenuCombineSameFolderAl
+        '
+        Me.MenuCombineSameFolderAl.Name = "MenuCombineSameFolderAl"
+        Me.MenuCombineSameFolderAl.Size = New System.Drawing.Size(253, 22)
+        Me.MenuCombineSameFolderAl.Text = "Alle 1. Ebene gl. Namen zus."
         '
         'FrmMain
         '
@@ -534,4 +548,6 @@ Partial Class FrmMain
     Friend WithEvents MenuExpandFirst As ToolStripMenuItem
     Friend WithEvents ToolStripSeparator2 As ToolStripSeparator
     Friend WithEvents MenuCombineSameFolder As ToolStripMenuItem
+    Friend WithEvents MenuCountFiles As ToolStripMenuItem
+    Friend WithEvents MenuCombineSameFolderAl As ToolStripMenuItem
 End Class

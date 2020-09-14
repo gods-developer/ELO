@@ -91,7 +91,7 @@ Public Class FrmMain
         For Each param In parameters
             If param <> exe And param.StartsWith("init.dir=") Then
                 initDir = param.Substring(param.IndexOf("=") + 1)
-            ElseIf param <> exe And param.StartsWith("init.env=") Then
+            ElseIf param <> exe And param.StartsWith("init.environ=") Then
                 initEnv = param.Substring(param.IndexOf("=") + 1)
             End If
         Next
@@ -150,10 +150,10 @@ Public Class FrmMain
         GetEswValue = IniFileHelper.IniReadValue(item & ".ESW", "GENERAL", key, "???")
     End Function
 
-    Private Function SetEswValue(item As String, key As String, val As String) As String
+    Private Sub SetEswValue(item As String, key As String, val As String)
         'Dim fname = item.Substring(0, item.LastIndexOf("."))
         IniFileHelper.IniWriteValue(item & ".ESW", "GENERAL", key, val)
-    End Function
+    End Sub
 
     Private Sub LoadTree()
         ClearFilePreview()
@@ -1827,6 +1827,9 @@ mRetry:
         End If
         rootNode.Expand()
         Dim treePath As String = GetFullPathOfNode(rootNode)
+        If GetEswValue(treePath, "FileCount") = "0" Then
+            Exit Sub
+        End If
         Dim node As TreeNode
         StatusLabelInfo.Text = "Ordner " + GetTreePathOfNode(rootNode) + " wird verarbeitet..."
         Me.Refresh()
@@ -2193,9 +2196,9 @@ mRetry:
         Return False
     End Function
 
-    Private Function FindDoubleText(node As TreeNode, baseName As String) As Boolean
+    Private Function FindDoubleText(rootNode As TreeNode, node As TreeNode, baseName As String) As Boolean
         Dim nodeName As String, child As TreeNode
-        For Each child In TvwExplorer.SelectedNode.Nodes
+        For Each child In rootNode.Nodes
             If child.Name <> node.Name Then
                 nodeName = child.Text
                 If nodeName = baseName Then
@@ -2361,7 +2364,7 @@ mRetry:
             For Each child In TvwExplorer.SelectedNode.Nodes
                 nodeName = child.Text
                 If Not String.IsNullOrEmpty(nodeName) Then
-                    If FindDoubleText(child, nodeName) Then
+                    If FindDoubleText(TvwExplorer.SelectedNode, child, nodeName) Then
                         foundDouble = True
                         Exit For
                     End If
@@ -2391,6 +2394,18 @@ mRetry:
         Loop
     End Sub
 
+    Private Sub MenuCountFiles_Click(sender As Object, e As EventArgs) Handles MenuCountFiles.Click
+        If TvwExplorer.SelectedNode Is Nothing Then
+            Exit Sub
+        End If
+        Dim treePath As String = GetFullPathOfNode(TvwExplorer.SelectedNode)
+        OpenCancelForm()
+        Me.Refresh()
+        Dim count As Integer
+        CountFilesInNode(TvwExplorer.SelectedNode, count)
+        SetEswValue(treePath, "FileCount", count)
+    End Sub
+
     Private Sub MenuShowFilePreviewer_Click(sender As Object, e As EventArgs) Handles MenuShowFilePreviewer.Click
         MenuShowFilePreviewer.Checked = Not MenuShowFilePreviewer.Checked
         SaveSetting(Application.ProductName, "Window", "ShowFilePreviewer", MenuShowFilePreviewer.Checked.ToString())
@@ -2402,6 +2417,55 @@ mRetry:
         End If
     End Sub
 
+    Private Sub MenuCombineSameFolderAl_Click(sender As Object, e As EventArgs) Handles MenuCombineSameFolderAl.Click
+        If TvwExplorer.SelectedNode Is Nothing Then
+            Exit Sub
+        End If
+        Dim child As TreeNode
+        For Each child In TvwExplorer.SelectedNode.Nodes
+            CombineSameFolder(child)
+        Next
+    End Sub
+
+    Private Sub CombineSameFolder(node As TreeNode)
+        node.Expand()
+        Dim foundDouble As Boolean
+        Dim child As TreeNode, nodeName As String
+        foundDouble = True
+        Do While foundDouble
+            For Each child In node.Nodes
+                nodeName = child.Text
+                If Not String.IsNullOrEmpty(nodeName) Then
+                    If FindDoubleText(node, child, nodeName) Then
+                        foundDouble = True
+                        Exit For
+                    End If
+                End If
+            Next
+            'Dim parentNode = TvwExplorer.SelectedNode.Parent
+            Dim checkedNodes As List(Of TreeNode) = New List(Of TreeNode)
+            For Each child In node.Nodes
+                If child.Checked Then
+                    checkedNodes.Add(child)
+                End If
+            Next
+            If checkedNodes.Count = 2 Then
+                'If MsgBox("Knoten " & checkedNodes.ElementAt(0).Text & " und " & checkedNodes.ElementAt(1).Text & " zusammenführen?", MsgBoxStyle.Question + MsgBoxStyle.YesNo, "Nachfrage") = MsgBoxResult.Yes Then
+                MergeNodes(checkedNodes.ElementAt(0), checkedNodes.ElementAt(1))
+                CheckEmptyFolders(GetFullPathOfNode(checkedNodes.ElementAt(1)))
+                TvwExplorer.Nodes.Remove(checkedNodes.ElementAt(1))
+                checkedNodes.ElementAt(0).Checked = False
+                checkedNodes.ElementAt(0).Collapse()
+                checkedNodes.ElementAt(0).Nodes.Clear()
+                checkedNodes.ElementAt(0).Nodes.Add("..")
+                'LoadTree()
+                'End If
+            Else
+                Exit Do
+            End If
+        Loop
+    End Sub
+
     Private Sub ContextMenuExplorer_Opening(sender As Object, e As System.ComponentModel.CancelEventArgs) Handles ContextMenuExplorer.Opening
         'MenuNewFolder.Enabled = Not TvwExplorer.SelectedNode Is Nothing
         MenuCut.Enabled = Not TvwExplorer.SelectedNode Is Nothing
@@ -2411,5 +2475,42 @@ mRetry:
         Dim newFile As OrgManListItem = dbc.AddNewListItem(treeItemId, fileName, displayname)
         AddNewListItem = newFile
     End Function
+
+    Private Sub CountFilesInNode(rootNode As TreeNode, ByRef count As Integer)
+        If Me.Cancel Then
+            Exit Sub
+        End If
+        'If rootId.ToString().EndsWith("0") Then
+        Application.DoEvents()
+        'End If
+        rootNode.Expand()
+        Dim sumCount As Integer
+        Dim treePath As String = GetFullPathOfNode(rootNode)
+        Dim ff As String
+        For Each ff In Directory.GetFiles(treePath)
+            If Not ff.ToLower().EndsWith(".esw") Then
+                sumCount = sumCount + 1
+            End If
+        Next
+        Dim node As TreeNode
+        StatusLabelInfo.Text = "Ordner " + GetTreePathOfNode(rootNode) + " wird verarbeitet..."
+        Me.Refresh()
+        For Each node In rootNode.Nodes
+            If node Is Nothing Then
+                Debug.Print("What?")
+            Else 'If node?.Checked Then
+                'Dim newName = ConvertToValidName(node.Text).Trim()
+                Dim physName = GetPhysicalNameFromTag(node.Tag)
+                If Me.Cancel Then
+                    Exit Sub
+                End If
+                Dim cnt As Integer
+                CountFilesInNode(node, cnt)
+                SetEswValue(treePath & "\" & physName, "FileCount", cnt)
+                sumCount += cnt
+            End If
+        Next
+        count = sumCount
+    End Sub
 
 End Class

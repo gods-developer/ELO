@@ -644,7 +644,7 @@ Public Class MsSqlConnector
         Dim query = From r In dbs.EposPersonals Where r.PersonalNr = personalNr
         If query.Count() > 0 Then
             Dim rec = query.FirstOrDefault()
-            GetDisplayNameFromPersonalNr = rec.Nachname & ", " & rec.Vorname
+            GetDisplayNameFromPersonalNr = rec.Nachname?.Trim() & ", " & rec.Vorname?.Trim()
         End If
     End Function
 

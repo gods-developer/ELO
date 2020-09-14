@@ -28,7 +28,7 @@ Dunckel, Hans-Georg 1047 gleicher Unterordner >> 1 pdf schon in 2008 >> Baum lö
 Frese, Wolfgang alle 1x höher...
 Penz, Berndt 2057 ebenfalls
 
-7. Gleiche Namen zusammenführen
+7. Gleiche Namen zusammenführen oder "Alle 1. Ebene gl. Namen zus."
    Frese, Wolfgang
    Penz, Berndt 2057
    
@@ -36,3 +36,6 @@ Penz, Berndt 2057 ebenfalls
 12087 >> löschen, wenn leer --umbenennen in "12087 Schiel, Stephanie"
 "12146 ," >> löschen, wenn leer?
 
+8. Dateien zählen über alles
+
+9. Migration starten!
