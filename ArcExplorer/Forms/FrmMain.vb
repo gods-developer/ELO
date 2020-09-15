@@ -2404,6 +2404,9 @@ mRetry:
         Dim count As Integer
         CountFilesInNode(TvwExplorer.SelectedNode, count)
         SetEswValue(treePath, "FileCount", count)
+        CancelForm.Close()
+        CancelForm = Nothing
+        StatusLabelInfo.Text = count & " Dateien gefunden"
     End Sub
 
     Private Sub MenuShowFilePreviewer_Click(sender As Object, e As EventArgs) Handles MenuShowFilePreviewer.Click

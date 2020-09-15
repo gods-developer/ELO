@@ -33,11 +33,11 @@
     <ProductName>ELO Archiv Explorer</ProductName>
     <PublisherName>DigiSped</PublisherName>
     <SuiteName>ArcExplorer</SuiteName>
-    <MinimumRequiredVersion>1.0.0.37</MinimumRequiredVersion>
+    <MinimumRequiredVersion>1.0.0.38</MinimumRequiredVersion>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
     <TrustUrlParameters>true</TrustUrlParameters>
-    <ApplicationRevision>38</ApplicationRevision>
+    <ApplicationRevision>39</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -442,6 +442,7 @@
     <Content Include="EcdLinkIcon.ico" />
     <Content Include="MainIconD.ico" />
     <Content Include="mdf_ndf_dbfiles.ico" />
+    <Content Include="Schritte.txt" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="IWshRuntimeLibrary">
