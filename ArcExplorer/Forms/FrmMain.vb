@@ -1778,7 +1778,7 @@ mRetry:
         Dim newName = GetPhysicalNameFromTag(TvwExplorer.SelectedNode.Tag)
         newName = New DirectoryInfo(newName).Name
         Dim newText = TvwExplorer.SelectedNode.Text
-        newName = ConvertToValidName(newText)
+        'newName = ConvertToValidName(newText)
         Dim newRootPath = Me.DefaultRootPath & "\" & newName
         Dim dlgResult = SelectRootPath(newRootPath)
         If dlgResult = DialogResult.Cancel Then
