@@ -1,8 +1,10 @@
+0. Alles zippen
 1. _Ausgeschieden/_Ausgeschieden löschen
 2. _Ausgeschieden > "Alle 1 Ebene höher"
 3. "Dalis, Georgios -12334" umbenennen zu "Dalis, Georgios - 12334", "Stangenberg, Hanno -12337"
 "Frese  , Wolfgang 1100" zu "Frese, Wolfgang 1100"
 "Fröbisch, Björn 2015" zu "Fröbisch, Björn 2032" ??
+Lamkiewicz, Peter 12168 umbennen
 
 Frese, Wolfgang aufräumen
   1. Unterordner "9" löschen, wenn leer
@@ -16,6 +18,9 @@ unter "Heuschkel , Hans - Jürgen 12117"  Vonrath "1 Ebene höher"
 5. "Name Dopplungen finden" (Bortz, Bruse 3x, Gebert Rudolf)
 (Manthey, Grosse, Beck. O., Borr, ignorieren)
 
+Gebert versaut, Hilfe!!
+Neustart, dann Bortz und Bruse erneut
+
 Bortz auf 12153 umbenennen
 Bruse auf 12072 umbenennen
 Brütt auf 12159
@@ -27,6 +32,17 @@ Kliszewski, Zbigniew Stanislaw auf 12184
 Dunckel, Hans-Georg 1047 gleicher Unterordner >> 1 pdf schon in 2008 >> Baum löschen
 Frese, Wolfgang alle 1x höher...
 Penz, Berndt 2057 ebenfalls
+Bruse, Peter 1 höher
+
+6a. nochmal ID und Namen zusammenführen
+
+evl. nochmal ab 6 beginnen?
+
+Lamkiewicz, Peter 12168??
+
+1100 Frese, Wolfgang unterordner 1x hoch
+
+Lamkiewicz umbennen auf 12177
 
 7. Gleiche Namen zusammenführen oder "Alle 1. Ebene gl. Namen zus."
    Frese, Wolfgang
@@ -37,5 +53,7 @@ Penz, Berndt 2057 ebenfalls
 "12146 ," >> löschen, wenn leer?
 
 8. Dateien zählen über alles
+
+Platz schaffen in FS und DB
 
 9. Migration starten!

@@ -1844,6 +1844,10 @@ mRetry:
             If node Is Nothing Then
                 Debug.Print("What?")
             ElseIf node?.Checked Then
+                Dim nodeTreePath = GetFullPathOfNode(node)
+                If GetEswValue(nodeTreePath, "FileCount") = "0" Then
+                    Continue For
+                End If
                 'Dim newName = ConvertToValidName(node.Text).Trim()
                 Dim physName = GetPhysicalNameFromTag(node.Tag)
                 Dim newText = GetEswValue(treePath & "\" & physName, "SHORTDESC")

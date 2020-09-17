@@ -33,11 +33,11 @@
     <ProductName>ELO Archiv Explorer</ProductName>
     <PublisherName>DigiSped</PublisherName>
     <SuiteName>ArcExplorer</SuiteName>
-    <MinimumRequiredVersion>1.0.0.39</MinimumRequiredVersion>
+    <MinimumRequiredVersion>1.0.0.41</MinimumRequiredVersion>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
     <TrustUrlParameters>true</TrustUrlParameters>
-    <ApplicationRevision>40</ApplicationRevision>
+    <ApplicationRevision>42</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
