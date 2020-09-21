@@ -53,6 +53,7 @@ Public Class FrmMain
 
     Private initDir As String
     Private initEnv As String
+    Private initUseReference As Boolean = False
 
     Private Sub CheckDbConnection()
         If Not dbc Is Nothing Then
@@ -93,6 +94,8 @@ Public Class FrmMain
                 initDir = param.Substring(param.IndexOf("=") + 1)
             ElseIf param <> exe And param.StartsWith("init.environ=") Then
                 initEnv = param.Substring(param.IndexOf("=") + 1)
+            ElseIf param <> exe And param.StartsWith("init.use.reference=") Then
+                initUseReference = Boolean.Parse(param.Substring(param.IndexOf("=") + 1))
             End If
         Next
         'initDir = Command() '"A:\Elo_Neuarchiv_29..09.2019 0930\000353F6"
@@ -1806,7 +1809,7 @@ mRetry:
             'End If
             OpenCancelForm()
             Me.Refresh()
-            Migrate(TvwExplorer.SelectedNode, rootNode.Id, newRootPath, created, True)
+            Migrate(TvwExplorer.SelectedNode, rootNode.Id, newRootPath, created, initUseReference)
         Catch ex As Exception
             DsErrorHandler.ShowAndSaveException(NameOf(MenuMigrate_Click), ex)  'MsgBox(ex.Message, MsgBoxStyle.Critical, "Fehler")
         End Try
@@ -1975,6 +1978,7 @@ mRetry:
         AddGeneralTreeItemKeyToDatabase(treeItemId, fname, "ACL")
         'AddGeneralKeyToDatabase(fileId, fname, "SREG")
         AddGeneralTreeItemKeyToDatabase(treeItemId, fname, "GUID")
+        AddGeneralTreeItemKeyToDatabase(treeItemId, fname, "FileCount")
         For Each section In sections
             If section.StartsWith("KEY") Then
                 Dim keyName = IniFileHelper.IniReadValue(fname, section, "KEYNAME")
